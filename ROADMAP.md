@@ -15,8 +15,8 @@
 | ---------------- | ------ |
 | Fases totales    | 6      |
 | Subfases totales | 17     |
-| Completadas      | 1 / 17 |
-| % avance         | ~6%    |
+| Completadas      | 2 / 17 |
+| % avance         | ~12%   |
 
 ## Detalle por fase
 
@@ -25,7 +25,7 @@
 **Estado:** 🔄 En curso · **A cargo de:** dev integrador (secuencial)
 
 - ✅ F1.1 [A] — Setup & tooling (Next+TS+Tailwind+shadcn, hooks, CI, tests)
-- ⏳ F1.2 [A] — Base de datos, RLS y seed
+- ✅ F1.2 [A] — Base de datos, RLS y seed
 - ⏳ F1.3 [A] — Sistema de diseño (kitchen-sink)
 - ⏳ F1.4 [A] — Acceso + shell + perfil
 
@@ -78,6 +78,7 @@
 
 > Anotar fecha y commit cada vez que se cierra una subfase.
 
-| Fecha      | Subfase              | Módulo | Commit  | Notas                                                                                         |
-| ---------- | -------------------- | ------ | ------- | --------------------------------------------------------------------------------------------- |
-| 2026-07-10 | F1.1 Setup & tooling | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio |
+| Fecha      | Subfase              | Módulo | Commit  | Notas                                                                                                                 |
+| ---------- | -------------------- | ------ | ------- | --------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-10 | F1.1 Setup & tooling | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                         |
+| 2026-07-10 | F1.2 BD, RLS y seed  | A      | (pend.) | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos |
