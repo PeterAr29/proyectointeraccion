@@ -1,32 +1,36 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F1.3)
-**Última subfase completada:** F1.3 — Sistema de diseño (kitchen-sink) (módulo A)
-**Próxima subfase:** F1.4 — Acceso + shell + perfil (módulo A, dev integrador) — última de la fundación
+**Última actualización:** 2026-07-10 (cierre F1.4 — **Fase 1 completada**)
+**Última subfase completada:** F1.4 — Acceso + shell + perfil (módulo A)
+**Próxima subfase:** F2.1 — Catálogo: listado, búsqueda y filtros (módulo B, **reclamable**)
 
 ## Progreso global
 
-- Fases completadas: 0/6
-- Subfases completadas: 3/17
-- Porcentaje estimado: ~18%
+- Fases completadas: **1/6** (Fase 1 · Fundación & Acceso)
+- Subfases completadas: 4/17
+- Porcentaje estimado: ~24%
+- **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
 
 ## Resumen de lo construido hasta ahora
 
-**F1.3 completada.** El sistema de diseño reutilizable existe y está mostrado en
-`/kitchen-sink` (build prerenderizado estático). Es el catálogo de UI que
-consumirán B–E; todo recibe props (sin datos reales):
+**F1.4 completada — cierra la Fase 1.** El acceso funciona end-to-end contra
+Supabase Auth y las rutas están protegidas:
 
-- **Componentes de dominio:** `StatusBadge` (semáforo de estados con los enums de
-  la BD) y `BookCover` (portada con imagen o gradiente estable por título).
-- **Feedback:** `Skeleton` (+ variantes), `EmptyState`, `ErrorState`, `Modal`
-  (primitivo accesible: role dialog, Escape, foco, scroll-lock), `Dialog` (10
-  diálogos globales por variante) y `Toast` (`ToastProvider` + `useToast`).
-- **Primitivo:** `components/ui/button.tsx` (`Button`, 6 variantes con cva).
-- **Utils:** `lib/utils/dates.ts` (DD/MM/AAAA, maneja date-only sin corrimiento
-  UTC) y `currency.ts` (`S/`), ambos con tests. **17/17 tests en verde.**
-- Accesibilidad AA (foco visible, contraste, roles ARIA en diálogos/toasts).
-- Pendiente para F1.4: montar `<ToastProvider>` en el shell. Detalle y firmas de
-  cada componente en `progreso/fase-1.3-A.md`.
+- **Acceso:** login por código universitario, registro (auto-login) y
+  recuperación; validación Zod en cliente y servidor. Rate limiting + bloqueo
+  tras 5 intentos (A04/A07); logs con PII enmascarada (A09); anti-enumeración.
+- **`middleware.ts`:** deny-by-default, refresca sesión y protege `(app)`;
+  redirige a login sin sesión y a `/inicio` si ya hay sesión.
+- **Shell responsive:** Sidebar 240px (ítem activo azul), Topbar con campana,
+  MobileNav (drawer <768px); `ToastProvider` montado para toda la app.
+- **`lib/services/users.ts`:** única puerta a `profiles` (perfil propio por RLS;
+  resolución de correo y alta de cuenta con cliente admin **server-only**).
+- **Perfil:** ver y editar datos de contacto (acceso/rectificación, Ley 29733).
+- **Verificado:** typecheck/lint/build/audit-high verdes; 17/17 unit; **e2e de
+  login 3/3** contra el Supabase remoto (María). Detalle en `progreso/fase-1.4-A.md`.
+
+**F1.3 (previa):** sistema de diseño en `/kitchen-sink` (StatusBadge, BookCover,
+Skeleton/Empty/Error, Modal, 10 diálogos globales, Toast) + utils dates/currency.
 
 ### Construido en subfases previas
 
@@ -44,13 +48,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                    | Dev        | Desde      |
-| --------------------------- | ------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | En curso (F1.4 siguiente) | integrador | 2026-07-10 |
-| B — Catálogo                | Bloqueado por A           | —          | —          |
-| C — Circulación             | Bloqueado por B           | —          | —          |
-| D — Multas & Notificaciones | Bloqueado por C           | —          | —          |
-| E — Administración          | Bloqueado por B, C, D     | —          | —          |
+| Módulo                      | Estado                      | Dev        | Desde      |
+| --------------------------- | --------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
+| B — Catálogo                | **Disponible** (reclamable) | —          | —          |
+| C — Circulación             | Bloqueado por B             | —          | —          |
+| D — Multas & Notificaciones | Bloqueado por C             | —          | —          |
+| E — Administración          | Bloqueado por B, C, D       | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 
@@ -68,7 +72,10 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Deudas técnicas anotadas
 
-- **Auth:** activar _Leaked Password Protection_ (HaveIBeenPwned) en Supabase Auth al implementar F1.4 (advisor de seguridad, alineado con A07). Es un ajuste de dashboard/config, no de migración.
+- **Auth:** activar _Leaked Password Protection_ (HaveIBeenPwned) en Supabase Auth (advisor de seguridad, alineado con A07). Es un ajuste de dashboard/config, no de migración. **Pendiente tras F1.4.**
+- **Recuperación de contraseña:** el flujo llama `resetPasswordForEmail`, pero el envío real requiere configurar SMTP en Supabase Auth (no configurado en el MVP). Flujo/validación correctos; falta la config de correo.
+- **Rate limiting en memoria (F1.4):** `lib/utils/rate-limit.ts` es por-instancia (se reinicia con el proceso, no se comparte entre lambdas). Suficiente para el piloto; en producción multi-instancia movería a Upstash/Redis.
+- **CI e2e:** añadir `npx playwright install --with-deps chromium` antes de `npm run test:e2e` en el pipeline (localmente ya se instaló el navegador).
 - **RLS/advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/is_librarian` (revela solo el rol del propio llamante, ningún dato ajeno). Endurecimiento opcional: mover la función a un esquema no expuesto por PostgREST. Ver `fase-1.2-A.md`.
 - 2FA para el rol bibliotecario (fuera del MVP; anotado en especificaciones §5.8).
 - Notificaciones por email/push (F4 solo genera notificaciones in-app).
