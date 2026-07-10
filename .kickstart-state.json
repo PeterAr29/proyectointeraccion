@@ -1,0 +1,95 @@
+{
+  "version": "2.0",
+  "fecha_generacion": "2026-07-10",
+  "skill_version": "project-kickstart v2.0",
+  "proyecto": {
+    "nombre": "BiblioTEC",
+    "descripcion": "Sistema web de gestión de biblioteca universitaria (catálogo, préstamos, reservas, devoluciones, multas, notificaciones) con foco en UX evaluable (Nielsen + SUS). Proyecto académico de IHC.",
+    "tipo": "web app con usuarios (frontend + backend)",
+    "tamaño": "mediano",
+    "num_devs": "1 (solo, con posible incorporación futura)",
+    "modo_equipo": "preparado, inactivo (trabajo solo por ahora)"
+  },
+  "equipo": {
+    "modulos": [
+      { "id": "A", "nombre": "Plataforma & Acceso", "frontera": "lib/supabase/*, lib/services/users.ts, components/ui+feedback, shell, middleware", "depende_de": [] },
+      { "id": "B", "nombre": "Catálogo", "frontera": "lib/services/books.ts (+ favoritos)", "depende_de": ["A"] },
+      { "id": "C", "nombre": "Circulación", "frontera": "lib/services/loans.ts, reservations.ts", "depende_de": ["A", "B"] },
+      { "id": "D", "nombre": "Multas & Notificaciones", "frontera": "lib/services/fines.ts, notifications.ts", "depende_de": ["A", "C"] },
+      { "id": "E", "nombre": "Administración", "frontera": "consume todos los services", "depende_de": ["A", "B", "C", "D"] }
+    ],
+    "metodologia": "scrum-lite",
+    "dedicacion": "full-time",
+    "tablero": "markdown (progreso/tablero-equipo.md); github-project cuando se sume otra persona",
+    "usa_github_issues": false,
+    "review_obligatorio": false,
+    "nota": "Trabajo solo por ahora; sin review. PRs/review/reclamo se activan al sumar un 2do dev."
+  },
+  "config": {
+    "idioma": "español",
+    "formato": "md",
+    "modo": "completo"
+  },
+  "contexto_inicial": {
+    "tenia_contexto_previo": true,
+    "archivos_referenciados": ["contexto/ContextoInicial.md", "design/BiblioTEC_ Sistema de gestión/BiblioTEC.dc.html"]
+  },
+  "stack": {
+    "lenguaje_principal": "TypeScript (strict)",
+    "framework": "Next.js 15 (App Router)",
+    "base_datos": "PostgreSQL vía Supabase (RLS)",
+    "otros": ["Supabase Auth/Storage/Realtime", "Tailwind CSS", "shadcn/ui", "react-hook-form", "Zod", "lucide-react", "Vercel", "Vitest", "Playwright"]
+  },
+  "arquitectura": "Next.js App Router (Server Components) + Supabase, con capa de servicios obligatoria (lib/services/*) como frontera entre módulos; RLS como autorización real. Módulos verticales por dominio (A-E).",
+  "seguridad": {
+    "owasp_aplicado": "asvs_l1",
+    "owasp_top10": "completo",
+    "ampliada": ["secrets", "deps", "logging", "threat_model", "backup", "regulacion"],
+    "regulacion": "ley29733"
+  },
+  "practicas_dev": {
+    "testing_strategy": "Vitest unit/integration ≥60% en lógica de negocio + Playwright e2e de flujos críticos",
+    "pre_commit_hooks": ["eslint", "prettier", "gitleaks", "check-added-large-files", "end-of-file-fixer"],
+    "adr_inicial": true,
+    "branching": "trunk-ligero: main protegida + ramas modulo/tarea, PR con review + CI"
+  },
+  "respuestas_entrevista": {
+    "usuarios_roles": "estudiante, bibliotecario (admin)",
+    "funcionalidades_top": ["catálogo+búsqueda", "préstamos", "reservas", "renovar/devolver", "multas", "notificaciones", "favoritos", "historial", "perfil", "panel admin (dashboard, CRUD, reportes, config)"],
+    "restricciones": "proyecto de curso IHC, stack cerrado, planes gratuitos Vercel/Supabase, UX evaluable como entregable",
+    "datos_sensibilidad": "medio",
+    "entorno_ejecucion": "cloud público (Vercel + Supabase), internet",
+    "criterio_exito": "SUS ≥75, flujos críticos e2e verdes, OWASP aplicado, evaluación IHC documentada"
+  },
+  "fases_planeadas": [
+    { "id": "F1", "titulo": "Fundación & Acceso [A]", "subfases": [
+      { "id": "F1.1", "titulo": "Setup & tooling" },
+      { "id": "F1.2", "titulo": "Base de datos, RLS y seed" },
+      { "id": "F1.3", "titulo": "Sistema de diseño (kitchen-sink)" },
+      { "id": "F1.4", "titulo": "Acceso + shell + perfil" }
+    ]},
+    { "id": "F2", "titulo": "Catálogo [B]", "subfases": [
+      { "id": "F2.1", "titulo": "Listado, búsqueda y filtros" },
+      { "id": "F2.2", "titulo": "Detalle de libro + favoritos" }
+    ]},
+    { "id": "F3", "titulo": "Circulación [C]", "subfases": [
+      { "id": "F3.1", "titulo": "Reservas y préstamos" },
+      { "id": "F3.2", "titulo": "Mis préstamos (renovar/devolver/vencidos)" },
+      { "id": "F3.3", "titulo": "Historial" }
+    ]},
+    { "id": "F4", "titulo": "Multas & Notificaciones [D]", "subfases": [
+      { "id": "F4.1", "titulo": "Cálculo de multas" },
+      { "id": "F4.2", "titulo": "Motor de notificaciones + vista" }
+    ]},
+    { "id": "F5", "titulo": "Administración [E]", "subfases": [
+      { "id": "F5.1", "titulo": "Dashboard con KPIs" },
+      { "id": "F5.2", "titulo": "CRUD de libros y usuarios" },
+      { "id": "F5.3", "titulo": "Préstamos, devoluciones y multas" },
+      { "id": "F5.4", "titulo": "Reportes y configuración" }
+    ]},
+    { "id": "F6", "titulo": "Evaluación IHC & Producción", "subfases": [
+      { "id": "F6.1", "titulo": "Evaluación de usabilidad (Nielsen + SUS)" },
+      { "id": "F6.2", "titulo": "Endurecimiento y despliegue" }
+    ]}
+  ]
+}

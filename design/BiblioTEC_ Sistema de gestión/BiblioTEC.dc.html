@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; color: #1E3A5F; background: #F8FAFC; -webkit-font-smoothing: antialiased; }
+  a { color: #1D4ED8; text-decoration: none; }
+  a:hover { color: #1E40AF; text-decoration: underline; }
+  button { font-family: inherit; }
+  input, select, textarea { font-family: inherit; }
+  ::placeholder { color: #94A3B8; }
+  *:focus-visible { outline: 2px solid #1D4ED8; outline-offset: 2px; }
+  @keyframes bt-spin { to { transform: rotate(360deg); } }
+  @keyframes bt-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes bt-toast { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes bt-shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+  .bt-sk { background: linear-gradient(90deg, #EEF2F7 0px, #F8FAFC 200px, #EEF2F7 400px); background-size: 800px 100%; animation: bt-shimmer 1.2s infinite linear; }
+  .bt-scroll { overflow-x: auto; }
+</style>
+</helmet>
+
+<div style="{{ ui.root }}">
+
+  <sc-if value="{{ show.auth }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100vh;display:flex;align-items:stretch;background:#F8FAFC;">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#1D4ED8,#1E3A5F);position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;opacity:0.15;background:radial-gradient(circle at 30% 20%, #fff, transparent 45%);"></div>
+        <div style="position:relative;text-align:center;color:#fff;padding:48px;">
+          <div style="display:flex;gap:10px;align-items:flex-end;justify-content:center;margin-bottom:32px;">
+            <div style="width:34px;height:130px;background:#93C5FD;border-radius:4px;"></div>
+            <div style="width:34px;height:170px;background:#BFDBFE;border-radius:4px;"></div>
+            <div style="width:34px;height:100px;background:#60A5FA;border-radius:4px;"></div>
+            <div style="width:34px;height:150px;background:#DBEAFE;border-radius:4px;"></div>
+            <div style="width:34px;height:120px;background:#93C5FD;border-radius:4px;"></div>
+          </div>
+          <div style="width:220px;height:10px;background:rgba(255,255,255,0.25);border-radius:4px;margin:0 auto 40px;"></div>
+          <div style="font-size:26px;font-weight:800;letter-spacing:-0.02em;">BiblioTEC</div>
+          <div style="font-size:15px;opacity:0.85;margin-top:8px;max-width:320px;">Sistema de gestión de biblioteca universitaria</div>
+        </div>
+      </div>
+
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px;">
+        <div style="width:100%;max-width:380px;">
+
+          <sc-if value="{{ show.login }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;box-shadow:0 6px 24px rgba(30,58,95,0.08);padding:36px;">
+              <div style="display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:6px;">
+                <span style="color:#1D4ED8;">{{ logoIcon }}</span>
+                <span style="font-size:22px;font-weight:800;letter-spacing:-0.02em;color:#1E3A5F;">BiblioTEC</span>
+              </div>
+              <div style="text-align:center;font-size:18px;font-weight:700;color:#1E3A5F;margin-top:14px;">Bienvenido de nuevo</div>
+              <div style="text-align:center;font-size:13px;color:#64748B;margin-top:4px;margin-bottom:22px;">Inicia sesión para continuar</div>
+
+              <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:10px;background:#FEE2E2;border:1px solid #FECACA;border-radius:8px;padding:12px 14px;margin-bottom:18px;">
+                  <span style="color:#DC2626;flex-shrink:0;">{{ warnIcon }}</span>
+                  <div><div style="font-weight:600;color:#DC2626;font-size:13px;">Error de autenticación</div><div style="font-size:12px;color:#B91C1C;margin-top:2px;">Código o contraseña incorrectos.</div></div>
+                </div>
+              </sc-if>
+
+              <label style="display:block;font-size:13px;font-weight:500;color:#1E3A5F;margin-bottom:6px;">Código universitario</label>
+              <input value="{{ forms.login.code }}" onChange="{{ onLoginCode }}" placeholder="Ej: 202100123" style="width:100%;height:42px;padding:0 12px;border:1px solid #CBD5E1;border-radius:8px;font-size:14px;color:#1E3A5F;margin-bottom:16px;" />
+
+              <label style="display:block;font-size:13px;font-weight:500;color:#1E3A5F;margin-bottom:6px;">Contraseña</label>
+              <div style="position:relative;margin-bottom:8px;">
+                <input value="{{ forms.login.pass }}" onChange="{{ onLoginPass }}" type="{{ passType }}" placeholder="••••••••" style="width:100%;height:42px;padding:0 40px 0 12px;border:1px solid #CBD5E1;border-radius:8px;font-size:14px;color:#1E3A5F;" />
+                <button onClick="{{ togglePass }}" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#64748B;cursor:pointer;padding:6px;display:flex;">{{ eyeIcon }}</button>
+              </div>
+              <div style="text-align:right;margin-bottom:20px;"><a href="#" onClick="{{ goRecuperar }}" style="font-size:12px;">¿Olvidaste tu contraseña?</a></div>
+
+              <button onClick="{{ doLogin }}" style="{{ ui.btnPrimaryFull }}" style-hover="{{ ui.btnPrimaryFullHover }}">Iniciar sesión</button>
+              <div style="text-align:center;font-size:13px;color:#64748B;margin-top:18px;">¿No tienes cuenta? <a href="#" onClick="{{ goRegistro }}">Regístrate aquí</a></div>
+              <div style="text-align:center;font-size:11px;color:#94A3B8;margin-top:16px;line-height:1.6;">Prueba: <b>202100123</b> (estudiante) · <b>900000001</b> (bibliotecario)</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.recuperar }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;box-shadow:0 6px 24px rgba(30,58,95,0.08);padding:36px;">
+              <div style="text-align:center;font-size:19px;font-weight:700;color:#1E3A5F;">Recuperar contraseña</div>
+              <div style="text-align:center;font-size:13px;color:#64748B;margin-top:8px;margin-bottom:24px;line-height:1.5;">Ingresa tu código universitario y te enviaremos un enlace para restablecer tu contraseña.</div>
+              <label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">Código universitario</label>
+              <input value="{{ forms.recuperar.code }}" onChange="{{ onRecCode }}" placeholder="Ej: 202100123" style="width:100%;height:42px;padding:0 12px;border:1px solid #CBD5E1;border-radius:8px;font-size:14px;margin-bottom:20px;" />
+              <button onClick="{{ doRecuperar }}" style="{{ ui.btnPrimaryFull }}" style-hover="{{ ui.btnPrimaryFullHover }}">Enviar enlace</button>
+              <div style="text-align:center;margin-top:18px;"><a href="#" onClick="{{ goLogin }}" style="font-size:13px;">Volver al login</a></div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.registro }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;box-shadow:0 6px 24px rgba(30,58,95,0.08);padding:32px;">
+              <div style="text-align:center;font-size:19px;font-weight:700;color:#1E3A5F;margin-bottom:20px;">Crear cuenta</div>
+              <sc-for list="{{ regFields }}" as="f" hint-placeholder-count="6">
+                <div style="margin-bottom:14px;">
+                  <label style="display:block;font-size:13px;font-weight:500;margin-bottom:6px;">{{ f.label }}</label>
+                  <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+                    <select value="{{ f.value }}" onChange="{{ f.onChange }}" style="width:100%;height:42px;padding:0 10px;border:1px solid #CBD5E1;border-radius:8px;font-size:14px;background:#fff;color:#1E3A5F;">
+                      <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="4"><option>{{ o }}</option></sc-for>
+                    </select>
+                  </sc-if>
+                  <sc-if value="{{ f.isInput }}" hint-placeholder-val="{{ true }}">
+                    <input value="{{ f.value }}" onChange="{{ f.onChange }}" type="{{ f.type }}" placeholder="{{ f.ph }}" style="{{ f.inputStyle }}" />
+                  </sc-if>
+                  <sc-if value="{{ f.err }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#DC2626;margin-top:4px;">{{ f.err }}</div></sc-if>
+                </div>
+              </sc-for>
+              <button onClick="{{ doRegistro }}" style="{{ ui.btnPrimaryFull }}" style-hover="{{ ui.btnPrimaryFullHover }}">Crear cuenta</button>
+              <div style="text-align:center;margin-top:16px;"><a href="#" onClick="{{ goLogin }}" style="font-size:13px;">Volver al login</a></div>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ show.app }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;min-height:100vh;background:#F8FAFC;">
+
+      <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ mobileNavOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closeMobileNav }}" style="position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:40;"></div>
+        </sc-if>
+      </sc-if>
+
+      <aside style="{{ ui.sidebar }}">
+        <div style="display:flex;align-items:center;gap:9px;padding:0 20px;height:64px;border-bottom:1px solid #EFF6FF;flex-shrink:0;">
+          <span style="color:#1D4ED8;">{{ logoIcon }}</span>
+          <span style="font-size:18px;font-weight:800;letter-spacing:-0.02em;color:#1E3A5F;">BiblioTEC</span>
+        </div>
+        <nav style="flex:1;padding:14px 12px;overflow-y:auto;">
+          <sc-for list="{{ nav }}" as="item" hint-placeholder-count="8">
+            <button onClick="{{ item.onClick }}" style="{{ item.style }}">
+              <span style="display:flex;flex-shrink:0;color:{{ item.iconColor }};">{{ item.icon }}</span>
+              <span>{{ item.label }}</span>
+              <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;background:#DC2626;color:#fff;font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;">{{ item.badge }}</span></sc-if>
+            </button>
+          </sc-for>
+        </nav>
+      </aside>
+
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+        <header style="height:64px;background:#fff;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:20;">
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toggleMobileNav }}" style="background:none;border:none;cursor:pointer;color:#1E3A5F;display:flex;padding:6px;">{{ menuIcon }}</button>
+          </sc-if>
+          <div style="position:relative;flex:1;max-width:440px;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94A3B8;">{{ searchIconSm }}</span>
+            <input value="{{ topSearch }}" onChange="{{ onTopSearch }}" placeholder="Buscar libros, autores, temas..." style="width:100%;height:40px;padding:0 12px 0 38px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;background:#F8FAFC;color:#1E3A5F;" />
+          </div>
+          <div style="margin-left:auto;position:relative;">
+            <button onClick="{{ toggleNotif }}" style="position:relative;background:none;border:none;cursor:pointer;color:#64748B;padding:8px;display:flex;">
+              {{ bellIcon }}
+              <sc-if value="{{ unreadCount }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:2px;right:2px;background:#DC2626;color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;">{{ unreadCount }}</span></sc-if>
+            </button>
+            <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;right:0;top:48px;width:340px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;box-shadow:0 12px 32px rgba(30,58,95,0.15);z-index:30;overflow:hidden;animation:bt-in 0.15s ease;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #F1F5F9;"><span style="font-weight:700;font-size:14px;">Notificaciones</span><button onClick="{{ markAllRead }}" style="background:none;border:none;color:#1D4ED8;font-size:12px;cursor:pointer;font-weight:500;">Marcar leídas</button></div>
+                <sc-for list="{{ notifications }}" as="n" hint-placeholder-count="3">
+                  <div onClick="{{ n.onRead }}" style="{{ n.rowStyle }}">
+                    <span style="flex-shrink:0;color:{{ n.color }};">{{ n.icon }}</span>
+                    <div style="flex:1;"><div style="font-size:13px;color:#1E3A5F;line-height:1.4;">{{ n.text }}</div><div style="font-size:11px;color:#94A3B8;margin-top:3px;">{{ n.age }}</div></div>
+                    <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ false }}"><span style="width:8px;height:8px;border-radius:50%;background:#1D4ED8;flex-shrink:0;margin-top:5px;"></span></sc-if>
+                  </div>
+                </sc-for>
+                <div style="padding:10px 16px;border-top:1px solid #F1F5F9;text-align:center;"><a href="#" onClick="{{ goNotifPage }}" style="font-size:13px;">Ver todas</a></div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding-left:8px;border-left:1px solid #E2E8F0;">
+            <div style="width:34px;height:34px;border-radius:50%;background:{{ avatarBg }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">{{ userInitials }}</div>
+            <div style="line-height:1.2;"><div style="font-size:13px;font-weight:600;color:#1E3A5F;">{{ user.name }}</div><div style="font-size:11px;color:#94A3B8;">{{ roleLabel }}</div></div>
+          </div>
+        </header>
+
+        <main style="flex:1;padding:28px;overflow-y:auto;">
+          {{ screen }}
+        </main>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ toast.style }}">
+      <span style="flex-shrink:0;">{{ toast.icon }}</span>
+      <span style="font-size:14px;font-weight:500;">{{ toast.msg }}</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;">
+      <div onClick="{{ stop }}" style="{{ modal.style }}">
+        {{ modal.body }}
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ dlg }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeDlg }}" style="position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:70;display:flex;align-items:center;justify-content:center;padding:24px;">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:8px;box-shadow:0 20px 48px rgba(15,23,42,0.25);padding:28px;width:100%;max-width:380px;text-align:center;position:relative;animation:bt-in 0.18s ease;">
+        <button onClick="{{ closeDlg }}" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#94A3B8;cursor:pointer;display:flex;">{{ xIcon }}</button>
+        <div style="width:56px;height:56px;border-radius:50%;background:{{ dlg.tintBg }};color:{{ dlg.tint }};display:flex;align-items:center;justify-content:center;margin:6px auto 16px;">{{ dlg.icon }}</div>
+        <div style="font-size:17px;font-weight:700;color:{{ dlg.tint }};margin-bottom:8px;">{{ dlg.title }}</div>
+        <div style="font-size:13px;color:#64748B;line-height:1.5;margin-bottom:22px;">{{ dlg.msg }}</div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <sc-for list="{{ dlg.actions }}" as="a" hint-placeholder-count="1">
+            <button onClick="{{ a.onClick }}" style="{{ a.style }}">{{ a.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="position:fixed;right:20px;bottom:20px;z-index:50;">
+    <sc-if value="{{ simOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#0F172A;color:#fff;border-radius:10px;box-shadow:0 16px 40px rgba(15,23,42,0.35);padding:14px;width:230px;margin-bottom:10px;animation:bt-in 0.15s ease;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#94A3B8;margin-bottom:10px;">Simular fallo</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <sc-for list="{{ simItems }}" as="s" hint-placeholder-count="6">
+            <button onClick="{{ s.onClick }}" style="text-align:left;background:#1E293B;border:1px solid #334155;color:#E2E8F0;border-radius:6px;padding:8px 10px;font-size:12px;cursor:pointer;" style-hover="{{ ui.simItemHover }}">{{ s.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <button onClick="{{ toggleSim }}" style="background:#0F172A;color:#fff;border:none;border-radius:10px;height:44px;padding:0 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,0.3);display:flex;align-items:center;gap:8px;">{{ bugIcon }} Simular fallo</button>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;760px&quot;},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;estudiante&quot;,&quot;bibliotecario&quot;],&quot;default&quot;:&quot;login&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;primaryColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1D4ED8&quot;,&quot;options&quot;:[&quot;#1D4ED8&quot;,&quot;#0D9488&quot;,&quot;#7C3AED&quot;,&quot;#B91C1C&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Tema&quot;}}">
+class Component extends DCLogic {
+  today = new Date(2024, 4, 20);
+  C = { primary:'#1D4ED8', primaryHover:'#1E40AF', text:'#1E3A5F', sec:'#64748B', bg:'#F8FAFC', card:'#FFFFFF', blue50:'#EFF6FF', border:'#BFDBFE', line:'#E2E8F0' };
+  covers = [['#1e3a8a','#2563eb'],['#7f1d1d','#b91c1c'],['#0f766e','#0d9488'],['#312e81','#6d28d9'],['#334155','#475569'],['#9a3412','#c2410c'],['#14532d','#16a34a'],['#831843','#be185d'],['#78350f','#b45309'],['#155e75','#0891b2']];
+
+  state = {
+    route: 'login', role: null, user: null,
+    login: { code:'', pass:'' }, showPass:false,
+    recuperar: { code:'' },
+    registro: { name:'', code:'', carrera:'Ingeniería de Sistemas', email:'', pass:'', pass2:'' },
+    regErrors: {},
+    loginError:false,
+    topSearch:'', catSearch:'', catError:false,
+    catCats: { 'Todas':true }, catAvail:'Todas',
+    notifOpen:false, mobileNavOpen:false, narrow:false,
+    modal:null, dlg:null, toast:null, simOpen:false,
+    selectedBook:null, favTab:false,
+    editProfile:false, profile:{ email:'maria.garcia@univ.edu.pe', phone:'987 654 321' },
+    adminTab:'Pendientes', devSearch:'', devFound:null,
+    newBook:{ title:'',author:'',publisher:'',year:'',isbn:'',category:'Ingeniería',location:'Estantería 3 – Fila A',qty:'' },
+    newBookErr:{},
+    config:{ dias:14, multa:1.0, maxRen:3, notif:true },
+    books: [
+      { id:'bd', title:'Bases de Datos', author:'Héctor García Molina', publisher:'Pearson', year:2020, isbn:'978-612-00-1234-5', category:'Ingeniería', location:'Estantería 3 – Fila B', status:'Disponible', qty:3, cover:0, desc:'Introducción completa al diseño, implementación y gestión de bases de datos relacionales.' },
+      { id:'alg', title:'Algoritmos', author:'T. Cormen', publisher:'MIT Press', year:2019, isbn:'978-0-262-03384-8', category:'Ingeniería', location:'Estantería 3 – Fila C', status:'Reservado', qty:1, cover:1, desc:'Referencia esencial sobre el diseño y análisis de algoritmos.' },
+      { id:'red', title:'Redes de Computadoras', author:'A. Tanenbaum', publisher:'Pearson', year:2011, isbn:'978-607-32-0817-8', category:'Ingeniería', location:'Estantería 4 – Fila B', status:'Reservado', qty:2, cover:2, desc:'Fundamentos y arquitectura de las redes de computadoras modernas.' },
+      { id:'ia', title:'Inteligencia Artificial', author:'S. Russell', publisher:'Pearson', year:2010, isbn:'978-84-8322-503-5', category:'Ingeniería', location:'Estantería 5 – Fila A', status:'Prestado', qty:1, cover:3, desc:'Un enfoque moderno a la inteligencia artificial y el aprendizaje automático.' },
+      { id:'so', title:'Sistemas Operativos Modernos', author:'Andrew S. Tanenbaum', publisher:'Pearson', year:2023, isbn:'978-612-00-5678-9', category:'Ingeniería', location:'Estantería 4 – Fila A', status:'Disponible', qty:4, cover:4, desc:'Conceptos, diseño e implementación de los sistemas operativos actuales.' },
+      { id:'java', title:'Programación en Java', author:'H. Schildt', publisher:'McGraw-Hill', year:2021, isbn:'978-1-260-46341-5', category:'Ingeniería', location:'Estantería 3 – Fila A', status:'Disponible', qty:5, cover:5, desc:'Guía práctica del lenguaje Java y la programación orientada a objetos.' },
+      { id:'ed', title:'Estructuras de Datos', author:'M. A. Weiss', publisher:'Pearson', year:2018, isbn:'978-0-13-284737-7', category:'Ingeniería', location:'Estantería 3 – Fila D', status:'Disponible', qty:2, cover:6, desc:'Estudio de estructuras de datos y su aplicación en la programación.' },
+      { id:'ana', title:'Anatomía Humana', author:'H. Rouvière', publisher:'Masson', year:2005, isbn:'978-84-458-1359-1', category:'Medicina', location:'Estantería 6 – Fila A', status:'Disponible', qty:2, cover:7, desc:'Tratado de anatomía humana descriptiva y topográfica.' },
+      { id:'der', title:'Derecho Constitucional', author:'M. Aragón', publisher:'Civitas', year:2016, isbn:'978-84-470-5321-0', category:'Derecho', location:'Estantería 7 – Fila B', status:'Reservado', qty:1, cover:8, desc:'Principios y fundamentos del derecho constitucional.' },
+      { id:'adm', title:'Administración', author:'S. Robbins', publisher:'Pearson', year:2017, isbn:'978-607-32-3906-6', category:'Administración', location:'Estantería 8 – Fila A', status:'Disponible', qty:3, cover:9, desc:'Fundamentos de la administración moderna de organizaciones.' }
+    ],
+    loans: [
+      { id:'l1', bookId:'bd', title:'Bases de Datos', user:'202100123', loan:'11/05/2024', due:'25/05/2024', status:'Activo' },
+      { id:'l2', bookId:'ia', title:'Inteligencia Artificial', user:'202100123', loan:'05/05/2024', due:'19/05/2024', status:'Vencido' },
+      { id:'l3', bookId:'red', title:'Redes de Computadoras', user:'202100123', loan:'01/05/2024', due:'15/05/2024', status:'Devuelto' }
+    ],
+    history: [
+      { title:'Algoritmos', loan:'10/04/2024', due:'24/04/2024', status:'Devuelto' },
+      { title:'Programación en Java', loan:'15/03/2024', due:'29/03/2024', status:'Devuelto' },
+      { title:'Estructuras de Datos', loan:'01/03/2024', due:'15/03/2024', status:'Devuelto' },
+      { title:'Sistemas Operativos Modernos', loan:'10/02/2024', due:'24/02/2024', status:'Devuelto' }
+    ],
+    favorites: ['bd','ia'],
+    selLoans: {},
+    notifications: [
+      { id:'n1', ico:'warn', text:'Tu préstamo de "Bases de Datos" vence en 2 días.', age:'Hoy', unread:true },
+      { id:'n2', ico:'check', text:'El libro "Algoritmos" ya está disponible para ti.', age:'Ayer', unread:true },
+      { id:'n3', ico:'clock', text:'Recordatorio: tienes 1 libro por devolver.', age:'Hace 2 días', unread:false }
+    ],
+    users: [
+      { code:'202100123', name:'María García López', carrera:'Ing. de Sistemas', activos:2, multas:0, estado:'Activo' },
+      { code:'202100124', name:'Juan Pérez', carrera:'Ing. Civil', activos:1, multas:0, estado:'Activo' },
+      { code:'202100125', name:'Ana Torres', carrera:'Medicina', activos:1, multas:0, estado:'Activo' },
+      { code:'202100126', name:'Luis Díaz', carrera:'Derecho', activos:1, multas:5.0, estado:'Activo' }
+    ],
+    adminLoans: [
+      { id:'a1', user:'Juan Pérez', title:'Bases de Datos', loan:'11/05/2024', due:'25/05/2024', status:'Activo', tab:'Activos' },
+      { id:'a2', user:'Ana Torres', title:'Algoritmos', loan:'13/05/2024', due:'26/05/2024', status:'Activo', tab:'Activos' },
+      { id:'a3', user:'Luis Díaz', title:'Redes de Computadoras', loan:'15/05/2024', due:'27/05/2024', status:'Activo', tab:'Activos' },
+      { id:'a4', user:'María García', title:'Inteligencia Artificial', loan:'05/05/2024', due:'19/05/2024', status:'Vencido', tab:'Vencidos' },
+      { id:'a5', user:'Carlos Ruiz', title:'Sistemas Operativos', loan:'—', due:'—', status:'Pendiente', tab:'Pendientes' },
+      { id:'a6', user:'Sofía Mendoza', title:'Programación en Java', loan:'—', due:'—', status:'Pendiente', tab:'Pendientes' }
+    ],
+    fines: [
+      { id:'f1', user:'Luis Díaz', title:'Redes de Computadoras', dias:5, monto:5.0, estado:'Pendiente' },
+      { id:'f2', user:'Ana Torres', title:'Algoritmos', dias:2, monto:2.0, estado:'Pagada' }
+    ]
+  };
+
+  componentDidMount() {
+    this._resize = () => this.setState({ narrow: window.innerWidth < 900 });
+    this._resize();
+    window.addEventListener('resize', this._resize);
+    const s = this.props.startScreen;
+    if (s === 'estudiante') this._loginAs('student');
+    else if (s === 'bibliotecario') this._loginAs('librarian');
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._resize); }
+
+  // ---- helpers ----
+  fmt(d) { const p = n => String(n).padStart(2,'0'); return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear(); }
+  iso(d) { const p = n => String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+  plus(d, n) { const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+  parseIso(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+  set(k, v) { this.setState({ [k]: v }); }
+  setIn(obj, key, v) { this.setState(s => ({ [obj]: { ...s[obj], [key]: v } })); }
+  mk(obj, key) { return e => this.setIn(obj, key, e.target.value); }
+  stop = (e) => { if (e) e.stopPropagation(); };
+
+  showToast(msg, kind='success') {
+    clearTimeout(this._tt);
+    this.setState({ toast: { msg, kind } });
+    this._tt = setTimeout(() => this.setState({ toast: null }), 3200);
+  }
+
+  statusStyle(s) {
+    const map = {
+      'Disponible':['#DCFCE7','#16A34A'], 'Reservado':['#FEF3C7','#D97706'], 'Prestado':['#FEE2E2','#DC2626'],
+      'Activo':['#DBEAFE','#1D4ED8'], 'Vencido':['#FEE2E2','#DC2626'], 'Devuelto':['#DCFCE7','#16A34A'],
+      'Pendiente':['#FEF3C7','#D97706'], 'Pagada':['#DCFCE7','#16A34A'], 'Bloqueado':['#FEE2E2','#DC2626']
+    };
+    const [bg,c] = map[s] || ['#F1F5F9','#64748B'];
+    return { display:'inline-flex', alignItems:'center', background:bg, color:c, fontSize:'12px', fontWeight:600, padding:'3px 10px', borderRadius:'999px', whiteSpace:'nowrap' };
+  }
+  coverStyle(idx, h='100%') {
+    const [a,b] = this.covers[idx % this.covers.length];
+    return { background:'linear-gradient(140deg,'+a+','+b+')', borderRadius:'6px', height:h, display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'10px', color:'#fff', boxShadow:'inset 0 0 0 1px rgba(255,255,255,0.12), 0 2px 6px rgba(15,23,42,0.15)' };
+  }
+
+  icon(name, size=20, sw=2) {
+    const P = {
+      home:['M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z','M9 22V12h6v10'],
+      book:['M4 19.5A2.5 2.5 0 0 1 6.5 17H20','M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'],
+      loans:['M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'],
+      clock:['M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z','M12 7v5l3 2'],
+      heart:['M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z'],
+      bell:['M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9','M13.7 21a2 2 0 0 1-3.4 0'],
+      user:['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2','M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
+      logout:['M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4','M16 17l5-5-5-5','M21 12H9'],
+      grid:['M3 3h7v7H3z','M14 3h7v7h-7z','M14 14h7v7h-7z','M3 14h7v7H3z'],
+      users:['M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2','M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z','M23 21v-2a4 4 0 0 0-3-3.87','M16 3.13a4 4 0 0 1 0 7.75'],
+      returns:['M3 12a9 9 0 1 0 3-6.7L3 8','M3 3v5h5'],
+      money:['M12 1v22','M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'],
+      report:['M12 20V10','M18 20V4','M6 20v-4'],
+      settings:['M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z','M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'],
+      search:['M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z','M21 21l-4.3-4.3'],
+      filter:['M22 3H2l8 9.46V19l4 2v-8.54z'],
+      edit:['M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7','M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z'],
+      trash:['M3 6h18','M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'],
+      renew:['M23 4v6h-6','M1 20v-6h6','M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'],
+      eye:['M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z','M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'],
+      eyeoff:['M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18 18 0 0 1 5.06-5.94M9.9 4.24A9 9 0 0 1 12 4c7 0 11 8 11 8a18 18 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24','M1 1l22 22'],
+      check:['M20 6L9 17l-5-5'],
+      x:['M18 6L6 18','M6 6l12 12'],
+      warn:['M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z','M12 9v4','M12 17h.01'],
+      lock:['M5 11h14v10H5z','M8 11V7a4 4 0 0 1 8 0v4'],
+      wifi:['M1 1l22 22','M16.72 11.06A10.94 10.94 0 0 1 19 12.55','M5 12.55a10.94 10.94 0 0 1 5.17-2.39','M10.71 5.05A16 16 0 0 1 22.58 9','M1.42 9a15.91 15.91 0 0 1 4.7-2.88','M8.53 16.11a6 6 0 0 1 6.95 0','M12 20h.01'],
+      question:['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z','M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3','M12 17h.01'],
+      plus:['M12 5v14','M5 12h14'],
+      menu:['M3 6h18','M3 12h18','M3 18h18'],
+      arrowleft:['M19 12H5','M12 19l-7-7 7-7'],
+      export:['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4','M7 10l5 5 5-5','M12 15V3'],
+      bug:['M8 2l1.88 1.88','M14.12 3.88L16 2','M9 7.13v-1a3.003 3.003 0 1 1 6 0v1','M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z','M12 20v-9','M6.53 9C4.6 8.8 3 7.1 3 5','M6 13H2','M3 21c0-2.1 1.7-3.9 3.8-4','M20.97 5c0 2.1-1.6 3.8-3.5 4','M22 13h-4','M17.2 17c2.1.1 3.8 1.9 3.8 4']
+    };
+    const paths = (P[name]||[]).map((d,i) => React.createElement('path', { key:i, d }));
+    return React.createElement('svg', { width:size, height:size, viewBox:'0 0 24 24', fill:'none', stroke:'currentColor', strokeWidth:sw, strokeLinecap:'round', strokeLinejoin:'round' }, paths);
+  }
+
+  // ---- auth ----
+  _loginAs(role) {
+    if (role === 'student') this.setState({ role:'student', route:'s_inicio', user:{ name:'María García López', code:'202100123', carrera:'Ing. de Sistemas' }, loginError:false });
+    else this.setState({ role:'librarian', route:'a_dashboard', user:{ name:'Bibliotecario', code:'900000001', carrera:'Administración' }, loginError:false });
+  }
+  doLogin = () => {
+    const { code, pass } = this.state.login;
+    if (!code.trim() || !pass.trim()) { this.openDlg('campos'); return; }
+    if (code.trim() === '202100123') this._loginAs('student');
+    else if (code.trim() === '900000001') this._loginAs('librarian');
+    else this.setState({ loginError:true });
+  };
+  logout = () => this.setState({ role:null, route:'login', user:null, login:{code:'',pass:''}, notifOpen:false, mobileNavOpen:false });
+  doRecuperar = () => { if (!this.state.recuperar.code.trim()) { this.openDlg('campos'); return; } this.setState({ route:'login', recuperar:{code:''} }); this.showToast('Enlace de recuperación enviado a tu correo.'); };
+  doRegistro = () => {
+    const r = this.state.registro, e = {};
+    if (!r.name.trim()) e.name = 'Ingresa tu nombre completo.';
+    if (!/^\d{6,}$/.test(r.code.trim())) e.code = 'Código universitario inválido.';
+    if (!/^[^@]+@[^@]+\.[^@]+$/.test(r.email.trim())) e.email = 'Correo electrónico inválido.';
+    if (r.pass.length < 6) e.pass = 'Mínimo 6 caracteres.';
+    if (r.pass !== r.pass2) e.pass2 = 'Las contraseñas no coinciden.';
+    this.setState({ regErrors:e });
+    if (Object.keys(e).length === 0) { this.setState({ route:'login', registro:{ name:'',code:'',carrera:'Ingeniería de Sistemas',email:'',pass:'',pass2:'' } }); this.showToast('Cuenta creada correctamente. Inicia sesión.'); }
+  };
+
+  // ---- navigation ----
+  go = (route) => this.setState({ route, notifOpen:false, mobileNavOpen:false, selLoans:{} });
+  openBook = (id) => this.setState({ selectedBook:id, route:'s_detalle', notifOpen:false, mobileNavOpen:false });
+
+  // ---- actions ----
+  toggleFav = (id) => this.setState(s => ({ favorites: s.favorites.includes(id) ? s.favorites.filter(x=>x!==id) : [...s.favorites, id] }));
+  addNotif(text) { this.setState(s => ({ notifications:[{ id:'n'+Date.now(), ico:'check', text, age:'Ahora', unread:true }, ...s.notifications] })); }
+
+  openReserve = (id) => { const b = this.state.books.find(x=>x.id===id); this.setState({ modal:{ kind:'reserve', bookId:id }, dlg:null }); };
+  openLoan = (id) => {
+    const b = this.state.books.find(x=>x.id===id);
+    if (b.status !== 'Disponible') { this.setState({ modal:{ kind:'unavailable', bookId:id } }); return; }
+    this.setState({ modal:{ kind:'loan', bookId:id, date:this.iso(this.plus(this.today,14)) } });
+  };
+  closeModal = () => this.setState({ modal:null });
+
+  confirmReserve = () => {
+    const id = this.state.modal.bookId;
+    this.setState(s => ({ books: s.books.map(b => b.id===id ? { ...b, status:'Reservado' } : b), modal:null }));
+    const b = this.state.books.find(x=>x.id===id);
+    this.addNotif('Has reservado "'+b.title+'". Te avisaremos cuando esté disponible.');
+    this.showToast('Reserva confirmada correctamente.');
+  };
+  confirmLoan = () => {
+    const m = this.state.modal, id = m.bookId;
+    const chosen = this.parseIso(m.date);
+    const t0 = new Date(this.today); t0.setHours(0,0,0,0);
+    if (chosen < t0) { this.openDlg('fecha'); return; }
+    const b = this.state.books.find(x=>x.id===id);
+    const nl = { id:'l'+Date.now(), bookId:id, title:b.title, user:'202100123', loan:this.fmt(this.today), due:this.fmt(chosen), status:'Activo' };
+    this.setState(s => ({ books: s.books.map(x=>x.id===id?{...x,status:'Prestado'}:x), loans:[nl, ...s.loans], modal:null }));
+    this.addNotif('Préstamo de "'+b.title+'" registrado. Devuélvelo antes del '+this.fmt(chosen)+'.');
+    this.showToast('Préstamo solicitado correctamente.');
+  };
+
+  toggleSel = (id) => this.setState(s => ({ selLoans:{ ...s.selLoans, [id]: !s.selLoans[id] } }));
+  renewLoans = (ids) => {
+    const nd = this.fmt(this.plus(this.today,14));
+    this.setState(s => ({ loans: s.loans.map(l => ids.includes(l.id) ? { ...l, due:nd, status:'Activo' } : l), selLoans:{}, modal:{ kind:'renewOk', date:nd } }));
+  };
+  renewSelected = () => { const ids = Object.keys(this.state.selLoans).filter(k=>this.state.selLoans[k]); if (ids.length===0) { this.openDlg('campos'); return; } this.renewLoans(ids); };
+  returnLoan = (id) => {
+    const l = this.state.loans.find(x=>x.id===id);
+    this.setState(s => ({ loans: s.loans.map(x=>x.id===id?{...x,status:'Devuelto',due:this.fmt(this.today)}:x), books: s.books.map(b=>b.id===l.bookId?{...b,status:'Disponible'}:b) }));
+    this.showToast('Devolución registrada correctamente.');
+  };
+
+  markAllRead = () => this.setState(s => ({ notifications: s.notifications.map(n=>({...n,unread:false})) }));
+  readNotif = (id) => this.setState(s => ({ notifications: s.notifications.map(n=>n.id===id?{...n,unread:false}:n) }));
+
+  // admin
+  openNewBook = () => this.setState({ modal:{ kind:'newBook' }, newBookErr:{} });
+  saveNewBook = () => {
+    const nb = this.state.newBook, e = {};
+    ['title','author','isbn','qty'].forEach(k => { if (!String(nb[k]).trim()) e[k]='Campo obligatorio'; });
+    if (Object.keys(e).length) { this.setState({ newBookErr:e }); return; }
+    const b = { id:'b'+Date.now(), title:nb.title, author:nb.author, publisher:nb.publisher||'—', year:Number(nb.year)||new Date().getFullYear(), isbn:nb.isbn, category:nb.category, location:nb.location, status:'Disponible', qty:Number(nb.qty)||1, cover:Math.floor(Math.random()*10), desc:'Registro creado desde el módulo bibliotecario.' };
+    this.setState(s => ({ books:[b, ...s.books], modal:null, newBook:{ title:'',author:'',publisher:'',year:'',isbn:'',category:'Ingeniería',location:'Estantería 3 – Fila A',qty:'' } }));
+    this.showToast('Libro registrado y añadido al catálogo.');
+  };
+  deleteBook = (id) => this.openDlg('delBook', id);
+  confirmDelete = (id) => { this.setState(s => ({ books: s.books.filter(b=>b.id!==id), dlg:null })); this.showToast('Libro eliminado correctamente.'); };
+  approveLoan = (id, ok) => { this.setState(s => ({ adminLoans: s.adminLoans.filter(a=>a.id!==id) })); this.showToast(ok?'Préstamo aprobado.':'Solicitud rechazada.'); };
+  registerDevolucion = () => {
+    const q = this.state.devSearch.trim();
+    if (!q) { this.openDlg('campos'); return; }
+    const dias = 3, monto = dias * this.state.config.multa;
+    this.setState({ devFound:{ user:q, title:'Inteligencia Artificial', due:'19/05/2024', dias, monto } });
+  };
+  confirmDevolucion = () => { this.showToast('Devolución registrada. Multa generada: S/ '+this.state.devFound.monto.toFixed(2)); this.setState({ devFound:null, devSearch:'' }); };
+  payFine = (id) => { this.setState(s => ({ fines: s.fines.map(f=>f.id===id?{...f,estado:'Pagada'}:f) })); this.showToast('Multa marcada como pagada.'); };
+  saveConfig = () => this.showToast('Configuración guardada correctamente.');
+  saveProfile = () => { this.setState({ editProfile:false }); this.showToast('Información actualizada correctamente.'); };
+
+  // dialogs
+  openDlg = (key, arg) => this.setState({ dlg:{ key, arg } });
+  closeDlg = () => this.setState({ dlg:null });
+  toggleSim = () => this.setState(s => ({ simOpen: !s.simOpen }));
+  toggleNotif = () => this.setState(s => ({ notifOpen: !s.notifOpen }));
+  toggleMobileNav = () => this.setState(s => ({ mobileNavOpen: !s.mobileNavOpen }));
+
+  dlgConfig(d) {
+    const btn = (label, kind, onClick) => ({ label, onClick, style: this.btnStyle(kind) });
+    const close = () => this.closeDlg();
+    const toLogin = () => this.logout();
+    switch (d.key) {
+      case 'exito': return { tint:'#16A34A', tintBg:'#DCFCE7', icon:this.icon('check',26), title:'Operación exitosa', msg:'Operación realizada correctamente.', actions:[btn('Aceptar','primary',close)] };
+      case 'adv': return { tint:'#D97706', tintBg:'#FEF3C7', icon:this.icon('warn',26), title:'Advertencia', msg:'El libro ya está reservado por otro usuario.', actions:[btn('Entendido','warn',close)] };
+      case 'error': return { tint:'#DC2626', tintBg:'#FEE2E2', icon:this.icon('x',26), title:'Error', msg:'No se pudo completar la operación.', actions:[btn('Cerrar','danger',close)] };
+      case 'confirm': return { tint:'#1D4ED8', tintBg:'#EFF6FF', icon:this.icon('question',26), title:'Confirmación', msg:'¿Deseas confirmar esta acción?', actions:[btn('Cancelar','secondary',close), btn('Confirmar','primary',()=>{this.closeDlg();this.showToast('Acción confirmada.');})] };
+      case 'expirada': return { tint:'#DC2626', tintBg:'#FEE2E2', icon:this.icon('lock',26), title:'Sesión expirada', msg:'Tu sesión ha expirado. Por favor inicia sesión nuevamente.', actions:[btn('Ir al login','danger',toLogin)] };
+      case 'conexion': return { tint:'#DC2626', tintBg:'#FEE2E2', icon:this.icon('wifi',26), title:'Sin conexión', msg:'No se pudo conectar al servidor. Verifica tu conexión a internet.', actions:[btn('Reintentar','primary',close)] };
+      case 'otroDisp': return { tint:'#DC2626', tintBg:'#FEE2E2', icon:this.icon('lock',26), title:'Sesión iniciada en otro dispositivo', msg:'Tu cuenta se ha iniciado en otro dispositivo. Por seguridad, tu sesión ha sido cerrada.', actions:[btn('Ir al login','danger',toLogin)] };
+      case 'denegado': return { tint:'#DC2626', tintBg:'#FEE2E2', icon:this.icon('lock',26), title:'Acceso denegado', msg:'No tienes permisos para realizar esta acción.', actions:[btn('Aceptar','danger',close)] };
+      case 'campos': return { tint:'#D97706', tintBg:'#FEF3C7', icon:this.icon('warn',26), title:'Campos incompletos', msg:'Por favor completa todos los campos obligatorios.', actions:[btn('Aceptar','warn',close)] };
+      case 'fecha': return { tint:'#DC2626', tintBg:'#FEE2E2', icon:this.icon('warn',26), title:'Fecha inválida', msg:'La fecha de devolución no puede ser menor a la fecha actual.', actions:[btn('Aceptar','danger',close)] };
+      case 'delBook': return { tint:'#DC2626', tintBg:'#FEE2E2', icon:this.icon('trash',24), title:'Eliminar libro', msg:'¿Deseas confirmar esta acción? El libro se eliminará del catálogo.', actions:[btn('Cancelar','secondary',close), btn('Eliminar','danger',()=>this.confirmDelete(d.arg))] };
+      default: return { tint:'#1D4ED8', tintBg:'#EFF6FF', icon:this.icon('question',26), title:'Aviso', msg:'', actions:[btn('Aceptar','primary',close)] };
+    }
+  }
+
+  btnStyle(kind) {
+    const base = { height:'40px', padding:'0 18px', borderRadius:'8px', fontSize:'14px', fontWeight:600, cursor:'pointer', border:'none', transition:'all .15s', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'8px' };
+    const m = {
+      primary:{ background:this.C.primary, color:'#fff' },
+      secondary:{ background:'#fff', color:this.C.text, border:'1px solid #CBD5E1' },
+      danger:{ background:'#DC2626', color:'#fff' },
+      warn:{ background:'#D97706', color:'#fff' },
+      ghost:{ background:'#EFF6FF', color:this.C.primary }
+    };
+    return { ...base, ...(m[kind]||m.primary) };
+  }
+  el(tag, props, ...kids) { return React.createElement(tag, props, ...kids); }
+
+  // ---- screen renderer ----
+  renderVals() {
+    const S = this.state;
+    const C = this.C;
+    this.C.primary = this.props.primaryColor || '#1D4ED8';
+    const role = S.role;
+    const book = S.books.find(b => b.id === S.selectedBook);
+    const unreadCount = S.notifications.filter(n => n.unread).length;
+
+    const ui = {
+      root: {},
+      btnPrimaryFull: { width:'100%', height:'44px', background:C.primary, color:'#fff', border:'none', borderRadius:'8px', fontSize:'15px', fontWeight:600, cursor:'pointer', transition:'background .15s' },
+      btnPrimaryFullHover: { background:C.primaryHover },
+      simItemHover: { background:'#334155' },
+      sidebar: {
+        width:'240px', background:'#fff', borderRight:'1px solid '+C.line, display:'flex', flexDirection:'column',
+        position: S.narrow ? 'fixed' : 'sticky', top:0, height:'100vh', zIndex:45,
+        transform: (S.narrow && !S.mobileNavOpen) ? 'translateX(-100%)' : 'translateX(0)', transition:'transform .2s ease', flexShrink:0
+      }
+    };
+
+    // nav
+    const items = role === 'student'
+      ? [['s_inicio','Inicio','home'],['s_catalogo','Catálogo','book'],['s_prestamos','Mis préstamos','loans'],['s_historial','Historial','clock'],['s_favoritos','Favoritos','heart'],['s_notif','Notificaciones','bell'],['s_perfil','Perfil','user'],['logout','Cerrar sesión','logout']]
+      : [['a_dashboard','Dashboard','grid'],['a_libros','Libros','book'],['a_usuarios','Usuarios','users'],['a_prestamos','Préstamos','loans'],['a_devoluciones','Devoluciones','returns'],['a_multas','Multas','money'],['a_reportes','Reportes','report'],['a_config','Configuración','settings'],['logout','Cerrar sesión','logout']];
+    const nav = items.map(([key,label,ic]) => {
+      const active = key === S.route;
+      const isLogout = key === 'logout';
+      return {
+        label, icon:this.icon(ic,19), iconColor: active ? C.primary : (isLogout ? '#DC2626' : '#64748B'),
+        badge: key==='s_notif' && unreadCount ? unreadCount : null,
+        onClick: isLogout ? this.logout : () => this.go(key),
+        style: {
+          width:'100%', display:'flex', alignItems:'center', gap:'11px', padding:'10px 12px', marginBottom:'2px',
+          border:'none', borderLeft: active ? '3px solid '+C.primary : '3px solid transparent',
+          background: active ? '#EFF6FF' : 'transparent', color: active ? C.primary : (isLogout ? '#DC2626' : '#334155'),
+          fontSize:'14px', fontWeight: active ? 600 : 500, borderRadius: active ? '0 8px 8px 0' : '8px', cursor:'pointer', textAlign:'left', transition:'background .12s'
+        }
+      };
+    });
+
+    // notifications for dropdown
+    const nico = { warn:['#D97706',this.icon('warn',18)], check:['#16A34A',this.icon('check',18)], clock:['#1D4ED8',this.icon('clock',18)] };
+    const notifications = S.notifications.map(n => {
+      const [color, icon] = nico[n.ico] || nico.clock;
+      return { text:n.text, age:n.age, unread:n.unread, color, icon, onRead:()=>this.readNotif(n.id),
+        rowStyle:{ display:'flex', gap:'11px', padding:'12px 16px', borderBottom:'1px solid #F8FAFC', cursor:'pointer', background: n.unread ? '#F8FBFF' : '#fff' } };
+    });
+
+    // toast
+    let toast = null;
+    if (S.toast) {
+      const tc = { success:['#16A34A','#DCFCE7',this.icon('check',18)], error:['#DC2626','#FEE2E2',this.icon('x',18)], warn:['#D97706','#FEF3C7',this.icon('warn',18)] }[S.toast.kind] || ['#16A34A','#DCFCE7',this.icon('check',18)];
+      toast = { msg:S.toast.msg, icon: this.el('span',{style:{color:tc[0],display:'flex'}}, tc[2]),
+        style:{ position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)', zIndex:80, background:'#fff', border:'1px solid '+tc[1], borderLeft:'4px solid '+tc[0], borderRadius:'10px', boxShadow:'0 12px 32px rgba(15,23,42,0.18)', padding:'13px 20px', display:'flex', alignItems:'center', gap:'11px', color:C.text, animation:'bt-toast .25s ease' } };
+    }
+
+    // dialog
+    let dlg = null;
+    if (S.dlg) { const c = this.dlgConfig(S.dlg); dlg = c; }
+
+    // modal
+    let modal = null;
+    if (S.modal) modal = this.buildModal(S.modal);
+
+    // simulate items
+    const simItems = [
+      ['Éxito','exito'],['Advertencia','adv'],['Error','error'],['Confirmación','confirm'],['Sesión expirada','expirada'],['Sin conexión','conexion'],['Otro dispositivo','otroDisp'],['Acceso denegado','denegado'],['Campos incompletos','campos'],['Fecha inválida','fecha']
+    ].map(([label,key]) => ({ label, onClick:()=>{ this.setState({simOpen:false}); this.openDlg(key); } }));
+
+    // registro fields
+    const rf = (label,key,type='text',ph='')=>({ label, isInput:true, isSelect:false, value:S.registro[key], onChange:this.mk('registro',key), type, ph, err:S.regErrors[key]||'', inputStyle:{ width:'100%', height:'42px', padding:'0 12px', border:'1px solid '+(S.regErrors[key]?'#FCA5A5':'#CBD5E1'), borderRadius:'8px', fontSize:'14px', color:C.text } });
+    const regFields = [
+      rf('Nombre completo','name','text','Ej: María García López'),
+      rf('Código universitario','code','text','Ej: 202100123'),
+      { label:'Carrera', isSelect:true, isInput:false, value:S.registro.carrera, onChange:this.mk('registro','carrera'), options:['Ingeniería de Sistemas','Ingeniería Civil','Medicina','Derecho','Administración','Humanidades','Ciencias'], err:'' },
+      rf('Correo','email','email','tucorreo@univ.edu.pe'),
+      rf('Contraseña','pass','password','••••••••'),
+      rf('Confirmar contraseña','pass2','password','••••••••')
+    ];
+
+    return {
+      ui, nav, notifications, toast, dlg, modal, simItems, regFields,
+      show: { auth: !role, login:S.route==='login', recuperar:S.route==='recuperar', registro:S.route==='registro', app: !!role },
+      forms: { login:S.login, recuperar:S.recuperar, registro:S.registro },
+      loginError: S.loginError,
+      passType: S.showPass ? 'text' : 'password',
+      onLoginCode: this.mk('login','code'), onLoginPass: this.mk('login','pass'),
+      onRecCode: this.mk('recuperar','code'),
+      togglePass: () => this.setState(s=>({showPass:!s.showPass})),
+      eyeIcon: this.icon(S.showPass ? 'eyeoff' : 'eye', 18),
+      doLogin:this.doLogin, doRecuperar:this.doRecuperar, doRegistro:this.doRegistro,
+      goRecuperar:(e)=>{e.preventDefault();this.go('recuperar');}, goRegistro:(e)=>{e.preventDefault();this.go('registro');}, goLogin:(e)=>{e.preventDefault();this.go('login');},
+      logoIcon:this.icon('book',24), warnIcon:this.icon('warn',20), searchIconSm:this.icon('search',18), bellIcon:this.icon('bell',20), menuIcon:this.icon('menu',22), xIcon:this.icon('x',18), bugIcon:this.icon('bug',16),
+      user:S.user||{name:'',code:'',carrera:''}, roleLabel: role==='student'?'Estudiante':'Bibliotecario', userInitials:(S.user?S.user.name:'?').split(' ').map(w=>w[0]).slice(0,2).join(''), avatarBg: role==='student'?'#1D4ED8':'#0F766E',
+      narrow:S.narrow, mobileNavOpen:S.mobileNavOpen, closeMobileNav:()=>this.setState({mobileNavOpen:false}), toggleMobileNav:this.toggleMobileNav,
+      topSearch:S.topSearch, onTopSearch:(e)=>{ this.setState({topSearch:e.target.value}); if(role==='student'){ this.setState({catSearch:e.target.value, route:'s_catalogo'}); } },
+      notifOpen:S.notifOpen, toggleNotif:this.toggleNotif, unreadCount, markAllRead:this.markAllRead, goNotifPage:(e)=>{e.preventDefault();this.go(role==='student'?'s_notif':'a_dashboard');},
+      simOpen:S.simOpen, toggleSim:this.toggleSim,
+      closeModal:this.closeModal, closeDlg:this.closeDlg, stop:this.stop,
+      screen: this.renderScreen()
+    };
+  }
+
+  // ---------- MODALS ----------
+  buildModal(m) {
+    const S = this.state, C = this.C;
+    const wrap = (node, w='440px') => ({ style:{ background:'#fff', borderRadius:'10px', boxShadow:'0 24px 60px rgba(15,23,42,0.28)', width:'100%', maxWidth:w, padding:'26px', position:'relative', animation:'bt-in .18s ease' }, body:node });
+    const closeBtn = this.el('button',{ key:'c', onClick:this.closeModal, style:{ position:'absolute', top:'16px', right:'16px', background:'none', border:'none', color:'#94A3B8', cursor:'pointer', display:'flex' } }, this.icon('x',18));
+    const head = (t) => this.el('div',{ key:'h', style:{ fontSize:'18px', fontWeight:700, color:C.text, marginBottom:'18px' } }, t);
+    const miniBook = (b) => this.el('div',{ key:'mb', style:{ display:'flex', gap:'14px', alignItems:'center', background:'#F8FAFC', border:'1px solid '+C.line, borderRadius:'8px', padding:'12px', marginBottom:'18px' } },
+      this.el('div',{ style:{ ...this.coverStyle(b.cover), width:'46px', height:'62px', flexShrink:0, padding:'0' } }),
+      this.el('div',{},
+        this.el('div',{ style:{ fontWeight:600, color:C.text, fontSize:'15px' } }, b.title),
+        this.el('div',{ style:{ color:C.sec, fontSize:'13px', marginTop:'2px' } }, 'Autor: '+b.author),
+        this.el('div',{ style:{ marginTop:'6px' } }, this.el('span',{ style:this.statusStyle(b.status) }, b.status))
+      ));
+    const foot = (cancelLabel, okLabel, okFn, okKind='primary') => this.el('div',{ key:'f', style:{ display:'flex', gap:'10px', justifyContent:'flex-end', marginTop:'20px' } },
+      this.el('button',{ onClick:this.closeModal, style:this.btnStyle('secondary') }, cancelLabel),
+      this.el('button',{ onClick:okFn, style:this.btnStyle(okKind) }, okLabel));
+
+    if (m.kind === 'reserve') {
+      const b = S.books.find(x=>x.id===m.bookId);
+      return wrap([closeBtn, head('Reservar libro'),
+        this.el('div',{ key:'t', style:{ color:C.sec, fontSize:'14px', marginBottom:'14px' } }, 'Vas a reservar el siguiente libro:'),
+        miniBook(b),
+        this.el('div',{ key:'d', style:{ fontSize:'14px', color:C.text } }, this.el('span',{ style:{color:C.sec} }, 'Fecha estimada de disponibilidad: '), this.fmt(this.plus(this.today, 12))),
+        foot('Cancelar','Confirmar reserva', this.confirmReserve)]);
+    }
+    if (m.kind === 'loan') {
+      const b = S.books.find(x=>x.id===m.bookId);
+      return wrap([closeBtn, head('Solicitar préstamo'),
+        this.el('div',{ key:'t', style:{ color:C.sec, fontSize:'14px', marginBottom:'14px' } }, 'Vas a solicitar el préstamo del siguiente libro:'),
+        miniBook(b),
+        this.el('label',{ key:'l', style:{ display:'block', fontSize:'13px', fontWeight:500, marginBottom:'6px', color:C.text } }, 'Fecha de devolución'),
+        this.el('input',{ key:'i', type:'date', value:m.date, min:this.iso(this.today), onChange:(e)=>this.setState(s=>({modal:{...s.modal,date:e.target.value}})), style:{ width:'100%', height:'42px', padding:'0 12px', border:'1px solid #CBD5E1', borderRadius:'8px', fontSize:'14px', color:C.text } }),
+        foot('Cancelar','Confirmar préstamo', this.confirmLoan)]);
+    }
+    if (m.kind === 'unavailable') {
+      return wrap([closeBtn,
+        this.el('div',{ key:'b', style:{ background:'#FEE2E2', border:'1px solid #FECACA', borderRadius:'8px', padding:'18px', display:'flex', gap:'12px' } },
+          this.el('span',{ style:{ color:'#DC2626', flexShrink:0 } }, this.icon('warn',22)),
+          this.el('div',{},
+            this.el('div',{ style:{ fontWeight:700, color:'#DC2626', fontSize:'15px', marginBottom:'6px' } }, 'No disponible'),
+            this.el('div',{ style:{ fontSize:'13px', color:'#B91C1C', lineHeight:1.5 } }, 'Lo sentimos, este libro no está disponible actualmente. Puedes reservarlo y te notificaremos cuando esté disponible.'))),
+        this.el('div',{ key:'f', style:{ display:'flex', gap:'10px', justifyContent:'center', marginTop:'18px' } },
+          this.el('button',{ onClick:this.closeModal, style:this.btnStyle('secondary') }, 'Entendido'),
+          this.el('button',{ onClick:()=>this.openReserve(m.bookId), style:this.btnStyle('primary') }, 'Reservar'))]);
+    }
+    if (m.kind === 'renewOk') {
+      return wrap([
+        this.el('div',{ key:'i', style:{ width:'56px', height:'56px', borderRadius:'50%', background:'#DCFCE7', color:'#16A34A', display:'flex', alignItems:'center', justifyContent:'center', margin:'4px auto 16px' } }, this.icon('check',26)),
+        this.el('div',{ key:'t', style:{ textAlign:'center', fontSize:'17px', fontWeight:700, color:'#16A34A' } }, '¡Préstamo renovado!'),
+        this.el('div',{ key:'m', style:{ textAlign:'center', fontSize:'13px', color:C.sec, marginTop:'8px' } }, 'La nueva fecha de devolución es:'),
+        this.el('div',{ key:'d', style:{ textAlign:'center', fontSize:'22px', fontWeight:800, color:C.text, margin:'8px 0 20px' } }, m.date),
+        this.el('button',{ key:'b', onClick:this.closeModal, style:{ ...this.btnStyle('primary'), width:'100%' } }, 'Aceptar')], '360px');
+    }
+    if (m.kind === 'newBook') {
+      const nb = S.newBook, err = S.newBookErr;
+      const field = (label,key,req,type='text') => this.el('div',{ key, style:{ marginBottom:'12px' } },
+        this.el('label',{ style:{ display:'block', fontSize:'13px', fontWeight:500, marginBottom:'5px', color:C.text } }, label, req?this.el('span',{style:{color:'#DC2626'}},' *'):null),
+        this.el('input',{ value:nb[key], onChange:this.mk('newBook',key), type, style:{ width:'100%', height:'40px', padding:'0 12px', border:'1px solid '+(err[key]?'#FCA5A5':'#CBD5E1'), borderRadius:'8px', fontSize:'14px', color:C.text } }),
+        err[key]?this.el('div',{ style:{ fontSize:'12px', color:'#DC2626', marginTop:'3px' } }, err[key]):null);
+      const sel = (label,key,opts) => this.el('div',{ key, style:{ marginBottom:'12px' } },
+        this.el('label',{ style:{ display:'block', fontSize:'13px', fontWeight:500, marginBottom:'5px', color:C.text } }, label),
+        this.el('select',{ value:nb[key], onChange:this.mk('newBook',key), style:{ width:'100%', height:'40px', padding:'0 10px', border:'1px solid #CBD5E1', borderRadius:'8px', fontSize:'14px', background:'#fff', color:C.text } }, opts.map(o=>this.el('option',{key:o},o))));
+      return wrap([closeBtn, head('Registrar nuevo libro'),
+        this.el('div',{ key:'g', style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0 14px' } },
+          field('Título','title',true), field('Autor','author',true),
+          field('Editorial','publisher',false), field('Año','year',false,'number'),
+          field('ISBN','isbn',true),
+          sel('Categoría','category',['Ingeniería','Medicina','Derecho','Administración','Humanidades','Ciencias']),
+          sel('Ubicación','location',['Estantería 3 – Fila A','Estantería 3 – Fila B','Estantería 4 – Fila A','Estantería 4 – Fila B','Estantería 5 – Fila A']),
+          field('Cantidad','qty',true,'number')),
+        foot('Cancelar','Guardar', this.saveNewBook)], '600px');
+    }
+    return wrap(null);
+  }
+
+  // ---------- SCREENS ----------
+  card(children, extra={}) { return this.el('div',{ style:{ background:'#fff', border:'1px solid '+this.C.line, borderRadius:'10px', ...extra } }, children); }
+  h1(t, sub) { return this.el('div',{ key:'h', style:{ marginBottom:'22px' } }, this.el('div',{ style:{ fontSize:'24px', fontWeight:800, color:this.C.text, letterSpacing:'-0.02em' } }, t), sub?this.el('div',{ style:{ fontSize:'14px', color:this.C.sec, marginTop:'4px' } }, sub):null); }
+  bookCover(b, h) { return this.el('div',{ style:this.coverStyle(b.cover,h) }, this.el('div',{ style:{ fontSize:'13px', fontWeight:700, lineHeight:1.2 } }, b.title)); }
+  pill(s) { return this.el('span',{ style:this.statusStyle(s) }, s); }
+  iconBtn(name, title, onClick, color='#64748B') { return this.el('button',{ title, onClick, style:{ background:'none', border:'1px solid '+this.C.line, borderRadius:'6px', width:'32px', height:'32px', display:'inline-flex', alignItems:'center', justifyContent:'center', cursor:'pointer', color } }, this.icon(name,16)); }
+
+  emptyState(icon, title, msg, ctaLabel, ctaFn) {
+    return this.el('div',{ style:{ textAlign:'center', padding:'60px 20px' } },
+      this.el('div',{ style:{ color:'#CBD5E1', display:'flex', justifyContent:'center', marginBottom:'16px' } }, this.icon(icon, 64, 1.5)),
+      this.el('div',{ style:{ fontSize:'17px', fontWeight:700, color:this.C.text } }, title),
+      this.el('div',{ style:{ fontSize:'14px', color:this.C.sec, marginTop:'6px' } }, msg),
+      ctaLabel?this.el('button',{ onClick:ctaFn, style:{ ...this.btnStyle('primary'), marginTop:'20px' } }, ctaLabel):null);
+  }
+
+  table(cols, rows) {
+    const C = this.C;
+    return this.el('div',{ style:{ overflowX:'auto', border:'1px solid '+C.line, borderRadius:'10px', background:'#fff' } },
+      this.el('table',{ style:{ width:'100%', borderCollapse:'collapse', minWidth:'640px' } },
+        this.el('thead',{}, this.el('tr',{ style:{ background:'#F8FAFC' } }, cols.map((c,i)=>this.el('th',{ key:i, style:{ textAlign:'left', padding:'12px 16px', fontSize:'12px', fontWeight:600, color:C.sec, textTransform:'uppercase', letterSpacing:'0.03em', borderBottom:'1px solid '+C.line, whiteSpace:'nowrap' } }, c)))),
+        this.el('tbody',{}, rows.map((r,ri)=>this.el('tr',{ key:ri, style:{ borderBottom: ri<rows.length-1?'1px solid #F1F5F9':'none' } }, r.map((cell,ci)=>this.el('td',{ key:ci, style:{ padding:'13px 16px', fontSize:'14px', color:C.text, verticalAlign:'middle' } }, cell)))))));
+  }
+
+  renderScreen() {
+    const r = this.state.route;
+    const m = {
+      s_inicio:()=>this.scDashboard(), s_catalogo:()=>this.scCatalogo(), s_detalle:()=>this.scDetalle(),
+      s_prestamos:()=>this.scPrestamos(), s_historial:()=>this.scHistorial(), s_favoritos:()=>this.scFavoritos(),
+      s_notif:()=>this.scNotif(), s_perfil:()=>this.scPerfil(),
+      a_dashboard:()=>this.scAdminDash(), a_libros:()=>this.scAdminLibros(), a_usuarios:()=>this.scAdminUsuarios(),
+      a_prestamos:()=>this.scAdminPrestamos(), a_devoluciones:()=>this.scDevoluciones(), a_multas:()=>this.scMultas(),
+      a_reportes:()=>this.scReportes(), a_config:()=>this.scConfig()
+    };
+    return (m[r] || (()=>null))();
+  }
+
+  scDashboard() {
+    const S = this.state, C = this.C;
+    const activos = S.loans.filter(l=>l.status!=='Devuelto').length;
+    const reservas = S.books.filter(b=>b.status==='Reservado').length ? 1 : 0;
+    const multas = 0;
+    const metric = (label,value,color,ic) => this.el('div',{ key:label, style:{ flex:1, minWidth:'180px', background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'20px', display:'flex', alignItems:'center', gap:'16px' } },
+      this.el('div',{ style:{ width:'46px', height:'46px', borderRadius:'10px', background:'#EFF6FF', color:C.primary, display:'flex', alignItems:'center', justifyContent:'center' } }, this.icon(ic,22)),
+      this.el('div',{}, this.el('div',{ style:{ fontSize:'28px', fontWeight:800, color, lineHeight:1 } }, value), this.el('div',{ style:{ fontSize:'13px', color:C.sec, marginTop:'5px' } }, label)));
+    const most = S.books.slice(0,4);
+    return this.el('div',{},
+      this.h1('¡Hola, María!','Bienvenida a tu biblioteca'),
+      this.el('div',{ style:{ display:'flex', gap:'16px', flexWrap:'wrap', marginBottom:'28px' } },
+        metric('Préstamos activos', activos, C.text, 'loans'),
+        metric('Reservas activas', reservas, C.text, 'clock'),
+        metric('Multas pendientes', 'S/ '+multas.toFixed(2), multas>0?'#DC2626':C.text, 'money')),
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'14px' } },
+        this.el('div',{ style:{ fontSize:'17px', fontWeight:700, color:C.text } }, 'Libros más prestados'),
+        this.el('a',{ href:'#', onClick:(e)=>{e.preventDefault();this.go('s_catalogo');}, style:{ fontSize:'14px' } }, 'Ver catálogo completo →')),
+      this.el('div',{ style:{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:'18px' } },
+        most.map(b => this.el('div',{ key:b.id, onClick:()=>this.openBook(b.id), style:{ cursor:'pointer', background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'12px', transition:'box-shadow .15s' } },
+          this.bookCover(b,'160px'),
+          this.el('div',{ style:{ fontSize:'14px', fontWeight:600, color:C.text, marginTop:'10px' } }, b.title),
+          this.el('div',{ style:{ fontSize:'12px', color:C.sec, marginTop:'2px' } }, b.author),
+          this.el('div',{ style:{ marginTop:'8px' } }, this.pill(b.status))))));
+  }
+
+  scCatalogo() {
+    const S = this.state, C = this.C;
+    const cats = ['Ingeniería','Medicina','Derecho','Administración','Humanidades','Ciencias','Todas'];
+    const active = Object.keys(S.catCats).filter(k=>S.catCats[k] && k!=='Todas');
+    const q = S.catSearch.trim().toLowerCase();
+    let results = S.books.filter(b => {
+      const okCat = S.catCats['Todas'] || active.length===0 || active.includes(b.category);
+      const okQ = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
+      const okAvail = S.catAvail==='Todas' || b.status===S.catAvail;
+      return okCat && okQ && okAvail;
+    });
+    const toggleCat = (c) => this.setState(s => { const cc = {...s.catCats}; if (c==='Todas'){ return { catCats:{Todas:true} }; } cc[c]=!cc[c]; delete cc['Todas']; if(Object.values(cc).every(v=>!v)) cc['Todas']=true; return { catCats:cc }; });
+
+    const sidebar = this.el('aside',{ key:'side', style:{ width:'230px', flexShrink:0 } },
+      this.el('div',{ style:{ background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'18px' } },
+        this.el('div',{ style:{ fontSize:'14px', fontWeight:700, color:C.text, marginBottom:'12px' } }, 'Categorías'),
+        cats.map(c => this.el('label',{ key:c, style:{ display:'flex', alignItems:'center', gap:'9px', padding:'6px 0', fontSize:'14px', color:C.text, cursor:'pointer' } },
+          this.el('input',{ type:'checkbox', checked: c==='Todas'?!!S.catCats['Todas']:!!S.catCats[c], onChange:()=>toggleCat(c), style:{ width:'16px', height:'16px', accentColor:C.primary } }), c)),
+        this.el('div',{ style:{ borderTop:'1px solid '+C.line, margin:'14px 0' } }),
+        this.el('div',{ style:{ fontSize:'13px', fontWeight:600, color:C.text, marginBottom:'8px' } }, 'Disponibilidad'),
+        this.el('select',{ value:S.catAvail, onChange:(e)=>this.setState({catAvail:e.target.value}), style:{ width:'100%', height:'38px', padding:'0 10px', border:'1px solid #CBD5E1', borderRadius:'8px', fontSize:'14px', background:'#fff', color:C.text } },
+          ['Todas','Disponible','Reservado','Prestado'].map(o=>this.el('option',{key:o},o)))));
+
+    const topbar = this.el('div',{ key:'top', style:{ display:'flex', gap:'12px', marginBottom:'18px', flexWrap:'wrap' } },
+      this.el('div',{ style:{ position:'relative', flex:1, minWidth:'220px' } },
+        this.el('span',{ style:{ position:'absolute', left:'12px', top:'50%', transform:'translateY(-50%)', color:'#94A3B8' } }, this.icon('search',18)),
+        this.el('input',{ value:S.catSearch, onChange:(e)=>this.setState({catSearch:e.target.value, catError:false}), placeholder:'Buscar libros, autores, temas...', style:{ width:'100%', height:'42px', padding:'0 12px 0 38px', border:'1px solid '+C.line, borderRadius:'8px', fontSize:'14px', color:C.text } })),
+      ['Autor','Editorial','Año'].map(l => this.el('select',{ key:l, style:{ height:'42px', padding:'0 10px', border:'1px solid '+C.line, borderRadius:'8px', fontSize:'14px', background:'#fff', color:C.sec } }, this.el('option',{},l))),
+      this.el('button',{ style:this.btnStyle('secondary') }, this.icon('filter',16), 'Filtros'));
+
+    let content;
+    if (S.catError) {
+      content = this.el('div',{},
+        this.el('div',{ style:{ background:'#FEE2E2', border:'1px solid #FECACA', borderRadius:'8px', padding:'14px 16px', display:'flex', gap:'10px', marginBottom:'20px' } },
+          this.el('span',{ style:{ color:'#DC2626' } }, this.icon('warn',20)),
+          this.el('div',{}, this.el('div',{ style:{ fontWeight:700, color:'#DC2626', fontSize:'14px' } }, 'Error en la búsqueda'), this.el('div',{ style:{ fontSize:'13px', color:'#B91C1C', marginTop:'2px' } }, 'No se pudo completar la búsqueda. Intenta nuevamente.'))),
+        this.emptyState('search','No se encontraron resultados','Intenta con otras palabras clave.','Limpiar búsqueda',()=>this.setState({catSearch:'',catError:false})));
+    } else if (results.length === 0) {
+      content = this.emptyState('search','No se encontraron resultados','Intenta con otras palabras clave.','Limpiar búsqueda',()=>this.setState({catSearch:'',catCats:{Todas:true},catAvail:'Todas'}));
+    } else {
+      content = this.el('div',{},
+        this.el('div',{ style:{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:'18px' } },
+          results.map(b => this.el('div',{ key:b.id, onClick:()=>this.openBook(b.id), style:{ cursor:'pointer', background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'12px' } },
+            this.bookCover(b,'170px'),
+            this.el('div',{ style:{ fontSize:'14px', fontWeight:600, color:C.text, marginTop:'10px' } }, b.title),
+            this.el('div',{ style:{ fontSize:'12px', color:C.sec, marginTop:'2px' } }, b.author),
+            this.el('div',{ style:{ marginTop:'8px' } }, this.pill(b.status))))),
+        this.el('div',{ style:{ display:'flex', gap:'6px', justifyContent:'center', marginTop:'28px' } },
+          ['1','2','3','…','12'].map((p,i)=>this.el('button',{ key:i, style:{ minWidth:'36px', height:'36px', borderRadius:'8px', border:'1px solid '+C.line, background:i===0?C.primary:'#fff', color:i===0?'#fff':C.text, fontSize:'14px', fontWeight:600, cursor:'pointer' } }, p))));
+    }
+
+    return this.el('div',{},
+      this.h1('Catálogo de libros','Explora y solicita los libros de la biblioteca'),
+      this.el('div',{ style:{ display:'flex', gap:'22px', alignItems:'flex-start', flexWrap:'wrap' } },
+        sidebar,
+        this.el('div',{ style:{ flex:1, minWidth:'300px' } }, topbar, content)));
+  }
+
+  scDetalle() {
+    const C = this.C, b = this.state.books.find(x=>x.id===this.state.selectedBook);
+    if (!b) return this.emptyState('book','Libro no encontrado','','Volver al catálogo',()=>this.go('s_catalogo'));
+    const isFav = this.state.favorites.includes(b.id);
+    const rows = [['Autor',b.author],['Editorial',b.publisher],['Año',String(b.year)],['ISBN',b.isbn],['Categoría',b.category],['Ubicación',b.location]];
+    return this.el('div',{},
+      this.el('a',{ href:'#', onClick:(e)=>{e.preventDefault();this.go('s_catalogo');}, style:{ display:'inline-flex', alignItems:'center', gap:'6px', fontSize:'14px', marginBottom:'18px' } }, this.icon('arrowleft',16), 'Volver al catálogo'),
+      this.el('div',{ style:{ display:'flex', gap:'32px', flexWrap:'wrap', background:'#fff', border:'1px solid '+C.line, borderRadius:'12px', padding:'28px' } },
+        this.el('div',{ style:{ width:'220px', flexShrink:0 } }, this.el('div',{ style:this.coverStyle(b.cover,'300px') }, this.el('div',{ style:{ fontSize:'18px', fontWeight:700 } }, b.title))),
+        this.el('div',{ style:{ flex:1, minWidth:'280px' } },
+          this.el('div',{ style:{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px' } },
+            this.el('div',{ style:{ fontSize:'24px', fontWeight:800, color:C.text } }, b.title),
+            this.el('button',{ onClick:()=>this.toggleFav(b.id), title:'Favorito', style:{ background:isFav?'#FEE2E2':'#F8FAFC', border:'1px solid '+(isFav?'#FECACA':C.line), color:isFav?'#DC2626':'#94A3B8', width:'40px', height:'40px', borderRadius:'8px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 } }, this.icon('heart',20))),
+          this.el('div',{ style:{ margin:'12px 0 18px' } }, this.pill(b.status)),
+          this.el('div',{ style:{ display:'grid', gridTemplateColumns:'auto 1fr', gap:'8px 20px', fontSize:'14px' } },
+            rows.map(([k,v],i)=>[this.el('div',{ key:'k'+i, style:{ color:C.sec } }, k), this.el('div',{ key:'v'+i, style:{ color:C.text, fontWeight:500 } }, v)])),
+          this.el('div',{ style:{ fontSize:'14px', color:C.sec, fontWeight:600, margin:'20px 0 6px' } }, 'Descripción'),
+          this.el('div',{ style:{ fontSize:'14px', color:C.text, lineHeight:1.6 } }, b.desc),
+          this.el('div',{ style:{ display:'flex', gap:'12px', marginTop:'24px', flexWrap:'wrap' } },
+            this.el('button',{ onClick:()=>this.openReserve(b.id), style:this.btnStyle('secondary') }, 'Reservar'),
+            this.el('button',{ onClick:()=>this.openLoan(b.id), disabled:b.status!=='Disponible', style:{ ...this.btnStyle('primary'), opacity:b.status==='Disponible'?1:0.45, cursor:b.status==='Disponible'?'pointer':'not-allowed' } }, 'Solicitar préstamo')))));
+  }
+
+  scPrestamos() {
+    const S = this.state, C = this.C;
+    const mine = S.loans.filter(l=>l.user==='202100123');
+    if (mine.filter(l=>l.status!=='Devuelto').length===0 && mine.length===0) return this.el('div',{}, this.h1('Mis préstamos'), this.emptyState('loans','Aún no tienes préstamos activos','Explora el catálogo y solicita tu primer libro.','Ir al catálogo',()=>this.go('s_catalogo')));
+    const overdue = mine.filter(l=>l.status==='Vencido').length;
+    const rows = mine.map(l => [
+      this.el('input',{ type:'checkbox', checked:!!S.selLoans[l.id], onChange:()=>this.toggleSel(l.id), disabled:l.status==='Devuelto', style:{ width:'16px', height:'16px', accentColor:C.primary } }),
+      this.el('span',{ style:{ fontWeight:600 } }, l.title), l.loan, l.due, this.pill(l.status),
+      this.el('div',{ style:{ display:'flex', gap:'8px' } },
+        this.iconBtn('renew','Renovar', ()=>this.renewLoans([l.id]), l.status==='Devuelto'?'#CBD5E1':C.primary),
+        this.iconBtn('returns','Devolver', ()=>this.returnLoan(l.id), l.status==='Devuelto'?'#CBD5E1':'#16A34A'))
+    ]);
+    return this.el('div',{},
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'22px', flexWrap:'wrap', gap:'12px' } },
+        this.el('div',{}, this.el('div',{ style:{ fontSize:'24px', fontWeight:800, color:C.text } }, 'Mis préstamos'), this.el('div',{ style:{ fontSize:'14px', color:C.sec, marginTop:'4px' } }, 'Gestiona tus libros prestados')),
+        this.el('button',{ onClick:this.renewSelected, style:this.btnStyle('primary') }, this.icon('renew',16), 'Renovar seleccionado')),
+      overdue?this.el('div',{ style:{ background:'#FEE2E2', border:'1px solid #FECACA', borderRadius:'8px', padding:'12px 16px', marginBottom:'16px', display:'flex', gap:'10px', alignItems:'center', color:'#B91C1C', fontSize:'14px' } }, this.el('span',{style:{color:'#DC2626'}},this.icon('warn',18)), 'Tienes '+overdue+' libro vencido. Por favor devuélvelo lo antes posible.'):null,
+      this.table(['','Libro','Fecha préstamo','Fecha devolución','Estado','Acciones'], rows));
+  }
+
+  scHistorial() {
+    const C = this.C;
+    const rows = this.state.history.map(h => [this.el('span',{style:{fontWeight:600}},h.title), h.loan, h.due, this.pill(h.status)]);
+    return this.el('div',{},
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'22px', flexWrap:'wrap', gap:'12px' } },
+        this.el('div',{}, this.el('div',{ style:{ fontSize:'24px', fontWeight:800, color:C.text } }, 'Historial de préstamos'), this.el('div',{ style:{ fontSize:'14px', color:C.sec, marginTop:'4px' } }, 'Todos tus préstamos devueltos')),
+        this.el('div',{ style:{ display:'flex', gap:'10px' } },
+          this.el('select',{ style:{ height:'40px', padding:'0 10px', border:'1px solid '+C.line, borderRadius:'8px', fontSize:'14px', background:'#fff', color:C.text } }, ['2024','2023','2022'].map(o=>this.el('option',{key:o},o))),
+          this.el('button',{ onClick:()=>this.showToast('Historial exportado (PDF simulado).'), style:this.btnStyle('secondary') }, this.icon('export',16), 'Exportar'))),
+      this.table(['Libro','Fecha préstamo','Fecha devolución','Estado'], rows));
+  }
+
+  scFavoritos() {
+    const S = this.state, C = this.C;
+    const favs = S.books.filter(b=>S.favorites.includes(b.id));
+    if (favs.length===0) return this.el('div',{}, this.h1('Favoritos'), this.emptyState('heart','Aún no tienes favoritos','Marca libros con el corazón para guardarlos aquí.','Ir al catálogo',()=>this.go('s_catalogo')));
+    return this.el('div',{},
+      this.h1('Favoritos','Libros que has guardado'),
+      this.el('div',{ style:{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:'18px' } },
+        favs.map(b => this.el('div',{ key:b.id, style:{ background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'12px', position:'relative' } },
+          this.el('div',{ onClick:()=>this.openBook(b.id), style:{cursor:'pointer'} }, this.bookCover(b,'170px'),
+            this.el('div',{ style:{ fontSize:'14px', fontWeight:600, color:C.text, marginTop:'10px' } }, b.title),
+            this.el('div',{ style:{ fontSize:'12px', color:C.sec, marginTop:'2px' } }, b.author)),
+          this.el('button',{ onClick:()=>this.toggleFav(b.id), title:'Quitar', style:{ position:'absolute', top:'18px', right:'18px', background:'#fff', border:'none', color:'#DC2626', width:'32px', height:'32px', borderRadius:'8px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 6px rgba(15,23,42,0.15)' } }, this.icon('heart',18))))));
+  }
+
+  scNotif() {
+    const C = this.C;
+    const nico = { warn:['#D97706',this.icon('warn',20)], check:['#16A34A',this.icon('check',20)], clock:['#1D4ED8',this.icon('clock',20)] };
+    return this.el('div',{},
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'22px' } }, this.h1('Notificaciones'), this.el('button',{ onClick:this.markAllRead, style:this.btnStyle('secondary') }, 'Marcar todas como leídas')),
+      this.el('div',{ style:{ background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', overflow:'hidden' } },
+        this.state.notifications.map((n,i)=>{ const [color,icon]=nico[n.ico]||nico.clock; return this.el('div',{ key:n.id, onClick:()=>this.readNotif(n.id), style:{ display:'flex', gap:'14px', padding:'16px 20px', borderBottom:i<this.state.notifications.length-1?'1px solid #F1F5F9':'none', background:n.unread?'#F8FBFF':'#fff', cursor:'pointer', alignItems:'center' } },
+          this.el('div',{ style:{ width:'40px', height:'40px', borderRadius:'10px', background:'#F8FAFC', color, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 } }, icon),
+          this.el('div',{ style:{ flex:1 } }, this.el('div',{ style:{ fontSize:'14px', color:C.text } }, n.text), this.el('div',{ style:{ fontSize:'12px', color:'#94A3B8', marginTop:'3px' } }, n.age)),
+          n.unread?this.el('span',{ style:{ width:'9px', height:'9px', borderRadius:'50%', background:C.primary, flexShrink:0 } }):null); })));
+  }
+
+  scPerfil() {
+    const S = this.state, C = this.C, ed = S.editProfile;
+    const field = (label,key,type='text') => this.el('div',{ key, style:{ marginBottom:'16px' } },
+      this.el('label',{ style:{ display:'block', fontSize:'13px', fontWeight:500, color:C.sec, marginBottom:'6px' } }, label),
+      this.el('input',{ value:S.profile[key], onChange:this.mk('profile',key), disabled:!ed, type, style:{ width:'100%', height:'42px', padding:'0 12px', border:'1px solid '+(ed?'#CBD5E1':C.line), borderRadius:'8px', fontSize:'14px', color:C.text, background:ed?'#fff':'#F8FAFC' } }));
+    return this.el('div',{},
+      this.h1('Perfil','Tu información personal'),
+      this.el('div',{ style:{ maxWidth:'560px', background:'#fff', border:'1px solid '+C.line, borderRadius:'12px', padding:'28px' } },
+        this.el('div',{ style:{ display:'flex', alignItems:'center', gap:'18px', marginBottom:'24px' } },
+          this.el('div',{ style:{ width:'72px', height:'72px', borderRadius:'50%', background:'#1D4ED8', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'26px', fontWeight:700 } }, 'MG'),
+          this.el('div',{}, this.el('div',{ style:{ fontSize:'20px', fontWeight:700, color:C.text } }, 'María García López'),
+            this.el('div',{ style:{ fontSize:'13px', color:C.sec, marginTop:'3px' } }, 'Código: 202100123'),
+            this.el('div',{ style:{ fontSize:'13px', color:C.sec } }, 'Carrera: Ingeniería de Sistemas'))),
+        field('Correo','email','email'), field('Teléfono','phone','tel'),
+        ed
+          ? this.el('div',{ style:{ display:'flex', gap:'10px' } }, this.el('button',{ onClick:this.saveProfile, style:this.btnStyle('primary') }, 'Guardar'), this.el('button',{ onClick:()=>this.setState({editProfile:false}), style:this.btnStyle('secondary') }, 'Cancelar'))
+          : this.el('button',{ onClick:()=>this.setState({editProfile:true}), style:this.btnStyle('primary') }, this.icon('edit',16), 'Editar información')));
+  }
+
+  // ---------- ADMIN ----------
+  scAdminDash() {
+    const S = this.state, C = this.C;
+    const kpi = (label,value,color,ic) => this.el('div',{ key:label, style:{ flex:1, minWidth:'190px', background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'20px' } },
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'center' } }, this.el('div',{ style:{ fontSize:'13px', color:C.sec } }, label), this.el('span',{ style:{ color:C.primary } }, this.icon(ic,20))),
+      this.el('div',{ style:{ fontSize:'30px', fontWeight:800, color, marginTop:'10px' } }, value));
+    const rows = S.adminLoans.filter(a=>a.tab==='Activos').map(a=>[a.user, a.title, a.loan, a.due, this.pill(a.status)]);
+    return this.el('div',{},
+      this.h1('Panel administrativo','Resumen general de la biblioteca'),
+      this.el('div',{ style:{ display:'flex', gap:'16px', flexWrap:'wrap', marginBottom:'28px' } },
+        kpi('Total de libros','1,245',C.text,'book'), kpi('Usuarios registrados','856',C.text,'users'), kpi('Préstamos activos','128',C.text,'loans'), kpi('Multas pendientes','35','#DC2626','money')),
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'14px' } },
+        this.el('div',{ style:{ fontSize:'17px', fontWeight:700, color:C.text } }, 'Préstamos recientes'),
+        this.el('a',{ href:'#', onClick:(e)=>{e.preventDefault();this.go('a_prestamos');}, style:{ fontSize:'14px' } }, 'Ver todos los préstamos →')),
+      this.table(['Usuario','Libro','Fecha préstamo','Fecha devolución','Estado'], rows));
+  }
+
+  scAdminLibros() {
+    const S = this.state, C = this.C;
+    const rows = S.books.map(b => [this.el('span',{style:{fontWeight:600}},b.title), b.author, b.category, b.isbn, this.pill(b.status),
+      this.el('div',{ style:{ display:'flex', gap:'8px' } }, this.iconBtn('edit','Editar',()=>this.showToast('Editar "'+b.title+'" (demo).'),C.primary), this.iconBtn('trash','Eliminar',()=>this.deleteBook(b.id),'#DC2626'))]);
+    return this.el('div',{},
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'22px', flexWrap:'wrap', gap:'12px' } },
+        this.el('div',{}, this.el('div',{ style:{ fontSize:'24px', fontWeight:800, color:C.text } }, 'Gestión de libros'), this.el('div',{ style:{ fontSize:'14px', color:C.sec, marginTop:'4px' } }, S.books.length+' libros en el catálogo')),
+        this.el('button',{ onClick:this.openNewBook, style:this.btnStyle('primary') }, this.icon('plus',16), 'Registrar nuevo libro')),
+      this.table(['Título','Autor','Categoría','ISBN','Estado','Acciones'], rows));
+  }
+
+  scAdminUsuarios() {
+    const C = this.C;
+    const rows = this.state.users.map(u => [u.code, this.el('span',{style:{fontWeight:600}},u.name), u.carrera, String(u.activos), 'S/ '+u.multas.toFixed(2), this.pill(u.estado),
+      this.el('div',{ style:{ display:'flex', gap:'8px' } }, this.iconBtn('eye','Ver',()=>this.showToast('Ficha de '+u.name+' (demo).'),C.primary), this.iconBtn('lock','Bloquear',()=>this.showToast(u.name+' bloqueado (demo).'),'#DC2626'))]);
+    return this.el('div',{}, this.h1('Gestión de usuarios','Administra las cuentas registradas'), this.table(['Código','Nombre','Carrera','Préstamos activos','Multas','Estado','Acciones'], rows));
+  }
+
+  scAdminPrestamos() {
+    const S = this.state, C = this.C;
+    const tabs = ['Pendientes','Activos','Vencidos'];
+    const list = S.adminLoans.filter(a=>a.tab===S.adminTab);
+    const rows = list.map(a => {
+      const acts = S.adminTab==='Pendientes'
+        ? this.el('div',{ style:{ display:'flex', gap:'8px' } }, this.el('button',{ onClick:()=>this.approveLoan(a.id,true), style:{ ...this.btnStyle('primary'), height:'32px', padding:'0 12px', fontSize:'13px' } }, 'Aprobar'), this.el('button',{ onClick:()=>this.approveLoan(a.id,false), style:{ ...this.btnStyle('secondary'), height:'32px', padding:'0 12px', fontSize:'13px' } }, 'Rechazar'))
+        : this.pill(a.status);
+      return [a.user, a.title, a.loan, a.due, acts];
+    });
+    return this.el('div',{},
+      this.h1('Préstamos','Gestiona solicitudes y préstamos activos'),
+      this.el('div',{ style:{ display:'flex', gap:'6px', marginBottom:'18px', borderBottom:'1px solid '+C.line } },
+        tabs.map(t => this.el('button',{ key:t, onClick:()=>this.setState({adminTab:t}), style:{ padding:'10px 18px', background:'none', border:'none', borderBottom:'2px solid '+(S.adminTab===t?C.primary:'transparent'), color:S.adminTab===t?C.primary:C.sec, fontSize:'14px', fontWeight:600, cursor:'pointer', marginBottom:'-1px' } }, t))),
+      list.length?this.table(['Usuario','Libro','Fecha préstamo','Fecha devolución', S.adminTab==='Pendientes'?'Acciones':'Estado'], rows):this.emptyState('loans','Sin registros','No hay préstamos en esta categoría.'));
+  }
+
+  scDevoluciones() {
+    const S = this.state, C = this.C;
+    return this.el('div',{},
+      this.h1('Devoluciones','Registra la devolución de un préstamo'),
+      this.el('div',{ style:{ maxWidth:'640px' } },
+        this.el('div',{ style:{ display:'flex', gap:'10px', marginBottom:'20px' } },
+          this.el('input',{ value:S.devSearch, onChange:(e)=>this.setState({devSearch:e.target.value}), placeholder:'Código de préstamo o usuario...', style:{ flex:1, height:'42px', padding:'0 14px', border:'1px solid '+C.line, borderRadius:'8px', fontSize:'14px', color:C.text } }),
+          this.el('button',{ onClick:this.registerDevolucion, style:this.btnStyle('primary') }, this.icon('search',16), 'Buscar')),
+        S.devFound?this.el('div',{ style:{ background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'22px' } },
+          this.el('div',{ style:{ fontSize:'16px', fontWeight:700, color:C.text, marginBottom:'14px' } }, 'Ficha del préstamo'),
+          this.el('div',{ style:{ display:'grid', gridTemplateColumns:'auto 1fr', gap:'8px 20px', fontSize:'14px', marginBottom:'16px' } },
+            [['Usuario',S.devFound.user],['Libro',S.devFound.title],['Fecha devolución prevista',S.devFound.due],['Días de retraso',String(S.devFound.dias)]].map(([k,v],i)=>[this.el('div',{key:'k'+i,style:{color:C.sec}},k),this.el('div',{key:'v'+i,style:{color:C.text,fontWeight:500}},v)])),
+          this.el('div',{ style:{ background:'#FEF3C7', border:'1px solid #FDE68A', borderRadius:'8px', padding:'12px 14px', fontSize:'14px', color:'#B45309', marginBottom:'16px' } }, 'Multa por retraso: S/ '+S.devFound.monto.toFixed(2)+' ('+S.devFound.dias+' días × S/ '+S.config.multa.toFixed(2)+')'),
+          this.el('button',{ onClick:this.confirmDevolucion, style:this.btnStyle('primary') }, this.icon('returns',16), 'Registrar devolución'))
+          :this.el('div',{ style:{ background:'#fff', border:'1px dashed '+C.border, borderRadius:'10px', padding:'40px', textAlign:'center', color:C.sec, fontSize:'14px' } }, 'Busca un préstamo por código o usuario para registrar su devolución.')));
+  }
+
+  scMultas() {
+    const C = this.C;
+    const rows = this.state.fines.map(f => [this.el('span',{style:{fontWeight:600}},f.user), f.title, String(f.dias)+' días', 'S/ '+f.monto.toFixed(2), this.pill(f.estado),
+      f.estado==='Pendiente'?this.el('button',{ onClick:()=>this.payFine(f.id), style:{ ...this.btnStyle('primary'), height:'32px', padding:'0 12px', fontSize:'13px' } }, 'Marcar como pagada'):this.el('span',{style:{color:'#94A3B8',fontSize:'13px'}},'—')]);
+    return this.el('div',{}, this.h1('Multas','Control de multas por retraso'), this.table(['Usuario','Libro','Días de retraso','Monto','Estado','Acción'], rows));
+  }
+
+  scReportes() {
+    const C = this.C;
+    const meses = [['Ene',60],['Feb',85],['Mar',72],['Abr',95],['May',120],['Jun',88]];
+    const maxM = 128;
+    const top = [['Bases de Datos',92],['Algoritmos',78],['Inteligencia Artificial',64],['Redes de Computadoras',51],['Sistemas Operativos',43]];
+    const maxT = 92;
+    const dist = [['Ingeniería',45,'#1D4ED8'],['Medicina',20,'#0D9488'],['Derecho',15,'#D97706'],['Administración',12,'#7C3AED'],['Otras',8,'#64748B']];
+    let acc = 0; const stops = dist.map(([l,p,c])=>{ const s = acc; acc += p; return c+' '+s+'% '+acc+'%'; }).join(', ');
+    const cardBox = (title, node) => this.el('div',{ style:{ background:'#fff', border:'1px solid '+C.line, borderRadius:'10px', padding:'22px', flex:1, minWidth:'300px' } }, this.el('div',{ style:{ fontSize:'15px', fontWeight:700, color:C.text, marginBottom:'20px' } }, title), node);
+    return this.el('div',{},
+      this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'22px' } }, this.h1('Reportes','Estadísticas de uso de la biblioteca'), this.el('button',{ onClick:()=>this.showToast('Reporte exportado (PDF simulado).'), style:this.btnStyle('secondary') }, this.icon('export',16), 'Exportar PDF')),
+      this.el('div',{ style:{ display:'flex', gap:'18px', flexWrap:'wrap', marginBottom:'18px' } },
+        cardBox('Préstamos por mes', this.el('div',{ style:{ display:'flex', alignItems:'flex-end', gap:'14px', height:'180px' } },
+          meses.map(([m,v],i)=>this.el('div',{ key:i, style:{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:'8px', height:'100%', justifyContent:'flex-end' } },
+            this.el('div',{ style:{ fontSize:'12px', fontWeight:600, color:C.text } }, v),
+            this.el('div',{ style:{ width:'100%', maxWidth:'36px', height:(v/maxM*140)+'px', background:'linear-gradient(180deg,'+C.primary+',#60A5FA)', borderRadius:'6px 6px 0 0' } }),
+            this.el('div',{ style:{ fontSize:'12px', color:C.sec } }, m))))),
+        cardBox('Distribución por categoría', this.el('div',{ style:{ display:'flex', alignItems:'center', gap:'24px' } },
+          this.el('div',{ style:{ width:'150px', height:'150px', borderRadius:'50%', background:'conic-gradient('+stops+')', flexShrink:0, position:'relative' } }, this.el('div',{ style:{ position:'absolute', inset:'34px', background:'#fff', borderRadius:'50%' } })),
+          this.el('div',{ style:{ display:'flex', flexDirection:'column', gap:'8px' } }, dist.map(([l,p,c],i)=>this.el('div',{ key:i, style:{ display:'flex', alignItems:'center', gap:'8px', fontSize:'13px', color:C.text } }, this.el('span',{ style:{ width:'12px', height:'12px', borderRadius:'3px', background:c } }), l, this.el('span',{ style:{ color:C.sec } }, p+'%'))))))),
+      cardBox('Libros más prestados', this.el('div',{ style:{ display:'flex', flexDirection:'column', gap:'12px' } },
+        top.map(([l,v],i)=>this.el('div',{ key:i, style:{ display:'flex', alignItems:'center', gap:'14px' } },
+          this.el('div',{ style:{ width:'170px', fontSize:'13px', color:C.text, flexShrink:0 } }, l),
+          this.el('div',{ style:{ flex:1, height:'22px', background:'#F1F5F9', borderRadius:'6px', overflow:'hidden' } }, this.el('div',{ style:{ width:(v/maxT*100)+'%', height:'100%', background:'linear-gradient(90deg,'+C.primary+',#60A5FA)', borderRadius:'6px' } })),
+          this.el('div',{ style:{ width:'34px', fontSize:'13px', fontWeight:600, color:C.text, textAlign:'right' } }, v))))));
+  }
+
+  scConfig() {
+    const S = this.state, C = this.C;
+    const row = (label, control) => this.el('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'16px 0', borderBottom:'1px solid #F1F5F9' } }, this.el('div',{ style:{ fontSize:'14px', color:C.text, fontWeight:500 } }, label), control);
+    const num = (key, step=1) => this.el('input',{ type:'number', step, value:S.config[key], onChange:(e)=>this.setState(s=>({config:{...s.config,[key]:Number(e.target.value)}})), style:{ width:'110px', height:'38px', padding:'0 10px', border:'1px solid #CBD5E1', borderRadius:'8px', fontSize:'14px', color:C.text, textAlign:'right' } });
+    return this.el('div',{},
+      this.h1('Configuración','Parámetros del sistema de préstamos'),
+      this.el('div',{ style:{ maxWidth:'560px', background:'#fff', border:'1px solid '+C.line, borderRadius:'12px', padding:'8px 24px 24px' } },
+        row('Días de préstamo', num('dias')),
+        row('Monto de multa diaria (S/)', num('multa',0.5)),
+        row('Máximo de renovaciones', num('maxRen')),
+        row('Notificaciones activadas', this.el('button',{ onClick:()=>this.setState(s=>({config:{...s.config,notif:!s.config.notif}})), style:{ width:'48px', height:'26px', borderRadius:'999px', border:'none', background:S.config.notif?C.primary:'#CBD5E1', position:'relative', cursor:'pointer', transition:'background .15s' } }, this.el('span',{ style:{ position:'absolute', top:'3px', left:S.config.notif?'25px':'3px', width:'20px', height:'20px', borderRadius:'50%', background:'#fff', transition:'left .15s' } }))),
+        this.el('div',{ style:{ marginTop:'20px' } }, this.el('button',{ onClick:this.saveConfig, style:this.btnStyle('primary') }, 'Guardar cambios'))));
+  }
+}
+</script>
+</body>
+</html>
