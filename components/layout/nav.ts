@@ -37,7 +37,7 @@ const STUDENT_NAV: NavItem[] = [
     enabled: false,
   },
   { label: "Historial", href: "/historial", icon: Clock, enabled: false },
-  { label: "Favoritos", href: "/favoritos", icon: Heart, enabled: false },
+  { label: "Favoritos", href: "/favoritos", icon: Heart, enabled: true },
   {
     label: "Notificaciones",
     href: "/notificaciones",

@@ -52,6 +52,15 @@ export function parseCatalogFilters(
   });
 }
 
+/**
+ * Valida que un id de libro sea un UUID (A03/A01: nunca confiar en el segmento
+ * crudo de la URL antes de consultar la BD). No lanza: devuelve `null` si no lo es.
+ */
+export function parseBookId(value: string | undefined): string | null {
+  const result = z.string().uuid().safeParse(value);
+  return result.success ? result.data : null;
+}
+
 /** True si hay algún filtro activo (para ofrecer "limpiar filtros"). */
 export function hasActiveFilters(filters: CatalogFilters): boolean {
   return (

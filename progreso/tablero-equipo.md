@@ -4,13 +4,13 @@
 
 ## Módulos
 
-| Módulo                      | Estado                               | Dev        | Desde      |
-| --------------------------- | ------------------------------------ | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)               | integrador | 2026-07-10 |
-| B — Catálogo                | 🔄 En progreso (F2.1 ✅, falta F2.2) | integrador | 2026-07-10 |
-| C — Circulación             | Bloqueado por B                      | —          | —          |
-| D — Multas & Notificaciones | Bloqueado por C                      | —          | —          |
-| E — Administración          | Bloqueado por B, C, D                | —          | —          |
+| Módulo                      | Estado                          | Dev        | Desde      |
+| --------------------------- | ------------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)          | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)          | integrador | 2026-07-10 |
+| C — Circulación             | Disponible (desbloqueado por B) | —          | —          |
+| D — Multas & Notificaciones | Bloqueado por C                 | —          | —          |
+| E — Administración          | Bloqueado por B, C, D           | —          | —          |
 
 ## Tareas en curso (dentro de módulos)
 
@@ -21,9 +21,10 @@
 | T-003 Sistema de diseño (F1.3)             | A      | integrador | ✅ Terminada           |
 | T-004 Acceso + shell + perfil (F1.4)       | A      | integrador | ✅ Terminada           |
 | T-005 Catálogo: listado/búsqueda (F2.1)    | B      | integrador | ✅ Terminada           |
-| T-006 Catálogo: detalle + favoritos (F2.2) | B      | —          | Disponible (siguiente) |
+| T-006 Catálogo: detalle + favoritos (F2.2) | B      | integrador | ✅ Terminada           |
+| T-007 Reservas y préstamos (F3.1)          | C      | —          | Disponible (siguiente) |
 
-> El resto de tareas (T-007…T-017) están Bloqueadas por sus dependencias. Ver `docs/backlog.md`.
+> El resto de tareas (T-008…T-017) están Bloqueadas por sus dependencias. Ver `docs/backlog.md`.
 
 ## Log de reclamos (append-only, evita disputas)
 
@@ -33,6 +34,7 @@
 - 2026-07-10 — F1.3 (Sistema de diseño / kitchen-sink) **cerrada**: componentes reutilizables (StatusBadge, BookCover, Skeleton, EmptyState, ErrorState, Modal, 10 diálogos globales, Toast) + utils dates/currency con tests, mostrados en `/kitchen-sink`. 17/17 tests, build y audit high verdes. Siguiente: F1.4 (acceso + shell + perfil), última de la fundación. Módulos B–E siguen bloqueados hasta cerrar toda la F1.
 - 2026-07-10 — F1.4 (Acceso + shell + perfil) **cerrada** → **Fase 1 COMPLETADA**. Auth contra Supabase (login por código, registro, recuperación), middleware protege rutas, shell responsive, perfil ver/editar, `users.ts` como única puerta a profiles. e2e de login 3/3 contra el remoto; typecheck/lint/build/audit/unit verdes. **Hito M1 (`v0.1.0`)**: módulos **B–E abiertos para reclamar**. Siguiente sugerido: F2.1 (módulo B).
 - 2026-07-10 — **Módulo B reclamado** por el dev integrador. F2.1 (Catálogo: listado, búsqueda y filtros) **cerrada**: `/catalogo` con búsqueda parametrizada (título/autor/ISBN), filtros (categoría/ubicación/disponibilidad) y paginación por query params, con los 4 estados; `lib/services/books.ts` única puerta a `books`. 32/32 unit y e2e de catálogo 3/3 contra el remoto; typecheck/lint/build/audit-high verdes. Siguiente: F2.2 (detalle + favoritos).
+- 2026-07-10 — F2.2 (Catálogo: detalle + favoritos) **cerrada** → **Fase 2 (Catálogo) COMPLETADA**. `/catalogo/[id]` (detalle + ErrorState "libro no encontrado" + botón préstamo deshabilitado para C) y `/favoritos` (toggle + lista, RLS, 4 estados); `books.ts` extendido (isFavorite/add/remove/listFavorites + `orderBooksByIds` pura); Server Action `toggleFavoriteAction` valida UUID en servidor. 37/37 unit y e2e de catálogo 6/6 contra el remoto (favoritos persisten, verificado por SQL); typecheck/lint/build/audit-high verdes. **Módulo C (Circulación) queda Disponible.** Siguiente sugerido: F3.1 (reservas y préstamos).
 
 ## Reglas rápidas
 

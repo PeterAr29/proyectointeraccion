@@ -5,8 +5,30 @@ import {
   buildSearchFilter,
   computePagination,
   isAvailable,
+  orderBooksByIds,
+  type Book,
 } from "@/lib/services/books";
-import { parseCatalogFilters } from "@/lib/validations/catalog";
+import { parseBookId, parseCatalogFilters } from "@/lib/validations/catalog";
+
+/** Crea un `Book` mínimo para las pruebas puras (solo importa el `id`). */
+function makeBook(id: string): Book {
+  return {
+    id,
+    titulo: `Libro ${id}`,
+    autor: "Autor",
+    editorial: null,
+    anio: null,
+    isbn: null,
+    categoria: null,
+    ubicacion: null,
+    descripcion: null,
+    portada_url: null,
+    cantidad_total: 1,
+    cantidad_disponible: 1,
+    created_at: "2026-07-10T00:00:00Z",
+    updated_at: "2026-07-10T00:00:00Z",
+  };
+}
 
 describe("buildSearchFilter", () => {
   it("genera un filtro OR ilike sobre título, autor e ISBN", () => {
@@ -78,6 +100,38 @@ describe("isAvailable", () => {
     expect(isAvailable({ cantidad_disponible: 3 })).toBe(true);
     expect(isAvailable({ cantidad_disponible: 1 })).toBe(true);
     expect(isAvailable({ cantidad_disponible: 0 })).toBe(false);
+  });
+});
+
+describe("orderBooksByIds", () => {
+  it("reordena los libros según el orden de los ids dado (favoritos recientes primero)", () => {
+    const books = [makeBook("a"), makeBook("b"), makeBook("c")];
+    const ordered = orderBooksByIds(books, ["c", "a", "b"]);
+    expect(ordered.map((b) => b.id)).toEqual(["c", "a", "b"]);
+  });
+
+  it("descarta ids sin libro asociado (favorito de un libro ya borrado)", () => {
+    const books = [makeBook("a"), makeBook("b")];
+    const ordered = orderBooksByIds(books, ["b", "zzz", "a"]);
+    expect(ordered.map((b) => b.id)).toEqual(["b", "a"]);
+  });
+
+  it("con ids vacíos devuelve lista vacía", () => {
+    expect(orderBooksByIds([makeBook("a")], [])).toEqual([]);
+  });
+});
+
+describe("parseBookId", () => {
+  it("acepta un UUID válido", () => {
+    const uuid = "3f2504e0-4f89-41d3-9a0c-0305e82c3301";
+    expect(parseBookId(uuid)).toBe(uuid);
+  });
+
+  it("rechaza valores que no son UUID (segmento crudo de la URL)", () => {
+    expect(parseBookId("123")).toBeNull();
+    expect(parseBookId("../../etc")).toBeNull();
+    expect(parseBookId(undefined)).toBeNull();
+    expect(parseBookId("")).toBeNull();
   });
 });
 

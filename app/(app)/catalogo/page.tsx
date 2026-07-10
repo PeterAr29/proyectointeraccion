@@ -111,7 +111,7 @@ function CatalogResults({
       <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {books.map((book) => (
           <li key={book.id}>
-            <BookCard book={book} />
+            <BookCard book={book} href={`/catalogo/${book.id}`} />
           </li>
         ))}
       </ul>

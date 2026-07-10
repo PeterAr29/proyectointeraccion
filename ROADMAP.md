@@ -15,8 +15,8 @@
 | ---------------- | ------ |
 | Fases totales    | 6      |
 | Subfases totales | 17     |
-| Completadas      | 5 / 17 |
-| % avance         | ~29%   |
+| Completadas      | 6 / 17 |
+| % avance         | ~35%   |
 
 ## Detalle por fase
 
@@ -31,14 +31,14 @@
 
 ### F2: Catálogo — Módulo [B]
 
-**Estado:** 🔄 En curso · **A cargo de:** dev integrador
+**Estado:** ✅ Completada · **A cargo de:** dev integrador
 
 - ✅ F2.1 [B] — Listado, búsqueda y filtros
-- ⏳ F2.2 [B] — Detalle de libro + favoritos
+- ✅ F2.2 [B] — Detalle de libro + favoritos
 
 ### F3: Circulación — Módulo [C]
 
-**Estado:** ⚠️ Bloqueada por B
+**Estado:** 🔄 Disponible (desbloqueada por A y B)
 
 - ⏳ F3.1 [C] — Reservas y préstamos
 - ⏳ F3.2 [C] — Mis préstamos (renovar/devolver/vencidos)
@@ -78,10 +78,11 @@
 
 > Anotar fecha y commit cada vez que se cierra una subfase.
 
-| Fecha      | Subfase                        | Módulo | Commit  | Notas                                                                                                                                              |
-| ---------- | ------------------------------ | ------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-07-10 | F1.1 Setup & tooling           | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                                                      |
-| 2026-07-10 | F1.2 BD, RLS y seed            | A      | 62a6b7d | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos                              |
-| 2026-07-10 | F1.3 Sistema de diseño         | A      | 3da6f81 | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes  |
-| 2026-07-10 | F1.4 Acceso+shell+perfil       | A      | 8d8b3f7 | **Cierra Fase 1** (`v0.1.0`). Auth Supabase (login por código/registro/recuperar), middleware, shell responsive, perfil, `users.ts`; e2e login 3/3 |
-| 2026-07-10 | F2.1 Catálogo listado/búsqueda | B      | 46fcb4e | `/catalogo` con búsqueda/filtros/paginación + 4 estados; `books.ts` única puerta a books; 32/32 unit, e2e catálogo 3/3 contra el remoto            |
+| Fecha      | Subfase                         | Módulo | Commit  | Notas                                                                                                                                                                                                                |
+| ---------- | ------------------------------- | ------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-10 | F1.1 Setup & tooling            | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                                                                                                                        |
+| 2026-07-10 | F1.2 BD, RLS y seed             | A      | 62a6b7d | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos                                                                                                |
+| 2026-07-10 | F1.3 Sistema de diseño          | A      | 3da6f81 | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes                                                                    |
+| 2026-07-10 | F1.4 Acceso+shell+perfil        | A      | 8d8b3f7 | **Cierra Fase 1** (`v0.1.0`). Auth Supabase (login por código/registro/recuperar), middleware, shell responsive, perfil, `users.ts`; e2e login 3/3                                                                   |
+| 2026-07-10 | F2.1 Catálogo listado/búsqueda  | B      | 46fcb4e | `/catalogo` con búsqueda/filtros/paginación + 4 estados; `books.ts` única puerta a books; 32/32 unit, e2e catálogo 3/3 contra el remoto                                                                              |
+| 2026-07-10 | F2.2 Catálogo detalle+favoritos | B      | _pend._ | **Cierra Fase 2.** `/catalogo/[id]` (detalle + "libro no encontrado") y `/favoritos` (toggle+lista, RLS, 4 estados); `books.ts` +favoritos; 37/37 unit, e2e catálogo 6/6 contra el remoto. Módulo C queda Disponible |

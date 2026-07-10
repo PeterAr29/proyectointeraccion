@@ -54,3 +54,58 @@ test("una búsqueda sin coincidencias muestra el estado vacío", async ({
     page.getByRole("link", { name: "Ver todo el catálogo" }),
   ).toBeVisible();
 });
+
+test("abrir un libro muestra su detalle", async ({ page }) => {
+  await login(page);
+  await page.goto("/catalogo?q=Sistemas Operativos Modernos");
+
+  await page
+    .getByRole("link", { name: /Sistemas Operativos Modernos/ })
+    .click();
+
+  await expect(
+    page.getByRole("heading", { name: "Sistemas Operativos Modernos" }),
+  ).toBeVisible();
+  await expect(page.getByText(/ejemplar(es)? disponible/)).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Volver al catálogo" }),
+  ).toBeVisible();
+});
+
+test("un id inexistente muestra 'Libro no encontrado'", async ({ page }) => {
+  await login(page);
+  await page.goto("/catalogo/00000000-0000-0000-0000-000000000000");
+
+  await expect(page.getByText("Libro no encontrado")).toBeVisible();
+});
+
+test("marcar y quitar un favorito lo refleja en /favoritos", async ({
+  page,
+}) => {
+  await login(page);
+  await page.goto("/catalogo?q=Redes de Computadoras");
+  await page.getByRole("link", { name: /Redes de Computadoras/ }).click();
+
+  // Marcar como favorito desde el detalle. Esperar la confirmación (toast) para
+  // asegurar que el Server Action persistió antes de navegar (evita la carrera).
+  await page.getByRole("button", { name: "Añadir a favoritos" }).click();
+  await expect(page.getByText("Añadido a favoritos.")).toBeVisible();
+
+  // Aparece en /favoritos.
+  await page.goto("/favoritos");
+  await expect(
+    page.getByRole("heading", { name: "Redes de Computadoras" }),
+  ).toBeVisible();
+
+  // Quitarlo lo saca de la lista (restaura el estado original de María). Se
+  // acota a la tarjeta de Redes: María tiene otros favoritos con el mismo botón.
+  await page
+    .getByRole("listitem")
+    .filter({ hasText: "Redes de Computadoras" })
+    .getByRole("button", { name: "Quitar de favoritos" })
+    .click();
+  await expect(page.getByText("Quitado de favoritos.")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Redes de Computadoras" }),
+  ).toHaveCount(0);
+});

@@ -1,18 +1,34 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F2.1 — Catálogo: listado/búsqueda)
-**Última subfase completada:** F2.1 — Catálogo: listado, búsqueda y filtros (módulo B)
-**Próxima subfase:** F2.2 — Catálogo: detalle de libro + favoritos (módulo B)
+**Última actualización:** 2026-07-10 (cierre F2.2 — Catálogo: detalle + favoritos → **Fase 2 COMPLETADA**)
+**Última subfase completada:** F2.2 — Catálogo: detalle de libro + favoritos (módulo B)
+**Próxima subfase:** F3.1 — Reservas y préstamos (módulo C, Circulación)
 
 ## Progreso global
 
-- Fases completadas: **1/6** (Fase 1 · Fundación & Acceso)
-- Subfases completadas: 5/17
-- Porcentaje estimado: ~29%
+- Fases completadas: **2/6** (Fase 1 · Fundación & Acceso; Fase 2 · Catálogo)
+- Subfases completadas: 6/17
+- Porcentaje estimado: ~35%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
-- **Módulo B (Catálogo) EN PROGRESO**: F2.1 cerrada, falta F2.2.
+- **Módulo B (Catálogo) COMPLETADO**: F2.1 y F2.2 cerradas.
+- **Módulo C (Circulación) DISPONIBLE para reclamar** (depende de A y B, ya listos).
 
 ## Resumen de lo construido hasta ahora
+
+**F2.2 completada — cierra la Fase 2.** El catálogo tiene detalle y favoritos:
+
+- **`/catalogo/[id]`**: detalle del libro (portada, disponibilidad, metadatos,
+  descripción) vía `getBookById`. Id no-UUID o inexistente → ErrorState "Libro no
+  encontrado". Botón Prestar/Reservar **deshabilitado con tooltip** (el flujo
+  transaccional es del módulo C).
+- **Favoritos**: toggle (corazón) en el detalle y **`/favoritos`** con la lista
+  del usuario (RLS), los 4 estados. `books.ts` extendido con
+  `isFavorite`/`addFavorite`/`removeFavorite`/`listFavorites` + `orderBooksByIds`
+  (pura, testeable). Server Action `toggleFavoriteAction` revalida el id (UUID)
+  en servidor y respeta RLS. `FavoriteButton` optimista reutilizable.
+- **Verificado:** typecheck/lint/build/audit-high verdes; **37/37 unit**; **e2e de
+  catálogo 6/6** contra el remoto (María), incluido el flujo real de favoritos
+  (persistencia comprobada por SQL). Detalle en `progreso/fase-2.2-B.md`.
 
 **F2.1 completada** (módulo B). `/catalogo` lista los libros del seed con
 búsqueda (título/autor/ISBN), filtros (categoría/ubicación/disponibilidad) y
@@ -65,13 +81,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                               | Dev        | Desde      |
-| --------------------------- | ------------------------------------ | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)               | integrador | 2026-07-10 |
-| B — Catálogo                | 🔄 En progreso (F2.1 ✅, falta F2.2) | integrador | 2026-07-10 |
-| C — Circulación             | Bloqueado por B                      | —          | —          |
-| D — Multas & Notificaciones | Bloqueado por C                      | —          | —          |
-| E — Administración          | Bloqueado por B, C, D                | —          | —          |
+| Módulo                      | Estado                          | Dev        | Desde      |
+| --------------------------- | ------------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)          | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)          | integrador | 2026-07-10 |
+| C — Circulación             | Disponible (desbloqueado por B) | —          | —          |
+| D — Multas & Notificaciones | Bloqueado por C                 | —          | —          |
+| E — Administración          | Bloqueado por B, C, D           | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 

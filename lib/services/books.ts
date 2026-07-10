@@ -64,6 +64,18 @@ export function isAvailable(book: Pick<Book, "cantidad_disponible">): boolean {
   return book.cantidad_disponible > 0;
 }
 
+/**
+ * Reordena los libros para que sigan el orden de `orderedIds` (p. ej. el de
+ * favoritos, "más reciente primero"), descartando los ids sin libro asociado.
+ * Pura y testeable: separa el orden de la consulta a la BD.
+ */
+export function orderBooksByIds(books: Book[], orderedIds: string[]): Book[] {
+  const byId = new Map(books.map((book) => [book.id, book]));
+  return orderedIds
+    .map((id) => byId.get(id))
+    .filter((book): book is Book => book !== undefined);
+}
+
 // ---------------------------------------------------------------------------
 // Acceso a datos
 // ---------------------------------------------------------------------------
@@ -181,4 +193,91 @@ export async function getCatalogFacets(): Promise<{
     categorias: uniqueSorted(data.map((r) => r.categoria)),
     ubicaciones: uniqueSorted(data.map((r) => r.ubicacion)),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Favoritos (Módulo B, F2.2)
+// ---------------------------------------------------------------------------
+// La tabla `favorites` tiene RLS "solo los propios" (user_id = auth.uid()), así
+// que cada operación se acota además por `user_id` para no depender solo de la
+// política. Sin sesión, las escrituras se rechazan sin error visible.
+
+/** `true` si el usuario actual tiene el libro en favoritos. */
+export async function isFavorite(bookId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data } = await supabase
+    .from("favorites")
+    .select("book_id")
+    .eq("user_id", user.id)
+    .eq("book_id", bookId)
+    .maybeSingle();
+  return Boolean(data);
+}
+
+/**
+ * Añade un libro a los favoritos del usuario. Idempotente: repetir la acción no
+ * falla (upsert sobre la PK compuesta). Devuelve `{ ok: false }` sin sesión o
+ * ante error de BD.
+ */
+export async function addFavorite(bookId: string): Promise<{ ok: boolean }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false };
+
+  const { error } = await supabase
+    .from("favorites")
+    .upsert(
+      { user_id: user.id, book_id: bookId },
+      { onConflict: "user_id,book_id", ignoreDuplicates: true },
+    );
+  return { ok: !error };
+}
+
+/** Quita un libro de los favoritos del usuario. Idempotente. */
+export async function removeFavorite(bookId: string): Promise<{ ok: boolean }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false };
+
+  const { error } = await supabase
+    .from("favorites")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("book_id", bookId);
+  return { ok: !error };
+}
+
+/**
+ * Lista los libros favoritos del usuario, del más reciente al más antiguo.
+ * Dos pasos (ids de `favorites` → filas de `books`) para no depender de la
+ * inferencia de relaciones embebidas de PostgREST. Devuelve `null` ante error
+ * (la UI lo traduce a ErrorState); `[]` cuando no hay favoritos.
+ */
+export async function listFavorites(): Promise<Book[] | null> {
+  const supabase = await createClient();
+  const { data: favRows, error } = await supabase
+    .from("favorites")
+    .select("book_id, created_at")
+    .order("created_at", { ascending: false });
+  if (error) return null;
+
+  const orderedIds = (favRows ?? []).map((row) => row.book_id);
+  if (orderedIds.length === 0) return [];
+
+  const { data: books, error: booksError } = await supabase
+    .from("books")
+    .select("*")
+    .in("id", orderedIds);
+  if (booksError) return null;
+
+  return orderBooksByIds(books ?? [], orderedIds);
 }
