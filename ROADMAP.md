@@ -78,10 +78,10 @@
 
 > Anotar fecha y commit cada vez que se cierra una subfase.
 
-| Fecha      | Subfase                        | Módulo | Commit    | Notas                                                                                                                                              |
-| ---------- | ------------------------------ | ------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-07-10 | F1.1 Setup & tooling           | A      | 7566ec9   | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                                                      |
-| 2026-07-10 | F1.2 BD, RLS y seed            | A      | 62a6b7d   | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos                              |
-| 2026-07-10 | F1.3 Sistema de diseño         | A      | 3da6f81   | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes  |
-| 2026-07-10 | F1.4 Acceso+shell+perfil       | A      | 8d8b3f7   | **Cierra Fase 1** (`v0.1.0`). Auth Supabase (login por código/registro/recuperar), middleware, shell responsive, perfil, `users.ts`; e2e login 3/3 |
-| 2026-07-10 | F2.1 Catálogo listado/búsqueda | B      | _(pend.)_ | `/catalogo` con búsqueda/filtros/paginación + 4 estados; `books.ts` única puerta a books; 32/32 unit, e2e catálogo 3/3 contra el remoto            |
+| Fecha      | Subfase                        | Módulo | Commit  | Notas                                                                                                                                              |
+| ---------- | ------------------------------ | ------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-10 | F1.1 Setup & tooling           | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                                                      |
+| 2026-07-10 | F1.2 BD, RLS y seed            | A      | 62a6b7d | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos                              |
+| 2026-07-10 | F1.3 Sistema de diseño         | A      | 3da6f81 | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes  |
+| 2026-07-10 | F1.4 Acceso+shell+perfil       | A      | 8d8b3f7 | **Cierra Fase 1** (`v0.1.0`). Auth Supabase (login por código/registro/recuperar), middleware, shell responsive, perfil, `users.ts`; e2e login 3/3 |
+| 2026-07-10 | F2.1 Catálogo listado/búsqueda | B      | 46fcb4e | `/catalogo` con búsqueda/filtros/paginación + 4 estados; `books.ts` única puerta a books; 32/32 unit, e2e catálogo 3/3 contra el remoto            |
