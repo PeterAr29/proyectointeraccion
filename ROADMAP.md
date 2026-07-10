@@ -82,4 +82,4 @@
 | ---------- | ---------------------- | ------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-07-10 | F1.1 Setup & tooling   | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                                                     |
 | 2026-07-10 | F1.2 BD, RLS y seed    | A      | 62a6b7d | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos                             |
-| 2026-07-10 | F1.3 Sistema de diseño | A      | _pend._ | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes |
+| 2026-07-10 | F1.3 Sistema de diseño | A      | 3da6f81 | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes |
