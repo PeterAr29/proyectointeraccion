@@ -1,0 +1,63 @@
+{
+  "name": "bibliotec",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "format": "prettier --write .",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "next": "15.5.20",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "tailwind-merge": "2.6.0",
+    "tailwindcss-animate": "1.0.7",
+    "lucide-react": "0.469.0",
+    "zod": "3.24.1",
+    "react-hook-form": "7.54.2",
+    "@hookform/resolvers": "3.10.0"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3",
+    "@types/node": "22.10.7",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
+    "tailwindcss": "3.4.17",
+    "postcss": "8.5.16",
+    "autoprefixer": "10.4.20",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.5.20",
+    "eslint-config-prettier": "9.1.0",
+    "prettier": "3.4.2",
+    "prettier-plugin-tailwindcss": "0.6.9",
+    "husky": "9.1.7",
+    "lint-staged": "15.5.2",
+    "vitest": "4.1.10",
+    "@vitest/coverage-v8": "4.1.10",
+    "jsdom": "25.0.1",
+    "@testing-library/react": "16.1.0",
+    "@testing-library/jest-dom": "6.6.3",
+    "@playwright/test": "1.55.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  }
+}

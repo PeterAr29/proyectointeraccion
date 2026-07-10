@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+# 1) Lint + formato solo sobre los archivos en stage
+npx lint-staged || exit 1
+
+# 2) Escaneo de secretos con gitleaks (RNF-SEC-SEC-3).
+#    Si gitleaks no está instalado localmente, se avisa pero no se bloquea el commit.
+#    Instálalo: https://github.com/gitleaks/gitleaks  (Windows: winget install gitleaks)
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact --no-banner || {
+    echo "🔴 gitleaks detectó posibles secretos en los cambios en stage. Commit abortado."
+    exit 1
+  }
+else
+  echo "🟡 gitleaks no está instalado: se omite el escaneo de secretos en este commit."
+  echo "   Instálalo para cumplir RNF-SEC-SEC-3 (escaneo de secretos en pre-commit)."
+fi
