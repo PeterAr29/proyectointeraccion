@@ -29,7 +29,7 @@ export interface NavItem {
 
 const STUDENT_NAV: NavItem[] = [
   { label: "Inicio", href: "/inicio", icon: Home, enabled: true },
-  { label: "Catálogo", href: "/catalogo", icon: BookOpen, enabled: false },
+  { label: "Catálogo", href: "/catalogo", icon: BookOpen, enabled: true },
   {
     label: "Mis préstamos",
     href: "/mis-prestamos",

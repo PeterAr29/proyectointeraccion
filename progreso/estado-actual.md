@@ -1,17 +1,35 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F1.4 — **Fase 1 completada**)
-**Última subfase completada:** F1.4 — Acceso + shell + perfil (módulo A)
-**Próxima subfase:** F2.1 — Catálogo: listado, búsqueda y filtros (módulo B, **reclamable**)
+**Última actualización:** 2026-07-10 (cierre F2.1 — Catálogo: listado/búsqueda)
+**Última subfase completada:** F2.1 — Catálogo: listado, búsqueda y filtros (módulo B)
+**Próxima subfase:** F2.2 — Catálogo: detalle de libro + favoritos (módulo B)
 
 ## Progreso global
 
 - Fases completadas: **1/6** (Fase 1 · Fundación & Acceso)
-- Subfases completadas: 4/17
-- Porcentaje estimado: ~24%
+- Subfases completadas: 5/17
+- Porcentaje estimado: ~29%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
+- **Módulo B (Catálogo) EN PROGRESO**: F2.1 cerrada, falta F2.2.
 
 ## Resumen de lo construido hasta ahora
+
+**F2.1 completada** (módulo B). `/catalogo` lista los libros del seed con
+búsqueda (título/autor/ISBN), filtros (categoría/ubicación/disponibilidad) y
+paginación, todo por query params, con los 4 estados (skeleton/vacío/error/datos):
+
+- **`lib/services/books.ts`** es la única puerta a `books`: `listBooks` (paginado
+  - filtrado con conteo previo), `getBookById` (lista para C/F2.2), `getCatalogFacets`,
+    y lógica pura testeable (`buildSearchFilter`, `computePagination`, `isAvailable`).
+- **Búsqueda parametrizada** (A03): el término se sanea antes del `.or(...)` de
+  PostgREST (sin inyección de operadores ni comodines).
+- **Filtros por URL** con `<form method="get">` (Server Component, sin JS cliente);
+  `parseCatalogFilters` (Zod) nunca lanza ante query params basura.
+- **`BookCard`** presentacional (con `href` opcional; F2.2 lo hace navegable).
+- **Verificado:** typecheck/lint/build/audit-high verdes; **32/32 unit**; **e2e de
+  catálogo 3/3** contra el remoto (María). Detalle en `progreso/fase-2.1-B.md`.
+
+### Construido en subfases previas
 
 **F1.4 completada — cierra la Fase 1.** El acceso funciona end-to-end contra
 Supabase Auth y las rutas están protegidas:
@@ -32,8 +50,6 @@ Supabase Auth y las rutas están protegidas:
 **F1.3 (previa):** sistema de diseño en `/kitchen-sink` (StatusBadge, BookCover,
 Skeleton/Empty/Error, Modal, 10 diálogos globales, Toast) + utils dates/currency.
 
-### Construido en subfases previas
-
 **F1.2 completada.** La capa de datos existe y está aplicada en el proyecto Supabase remoto `bibliotec` (ref `umjelnabjdvrsfnqoszt`):
 
 - **Esquema** (`supabase/migrations/20260710120000_init_schema.sql`): 8 tablas (profiles, books, loans, reservations, fines, notifications, favorites, settings), 5 enums, índices, triggers de `updated_at`, IDs UUID, checks de integridad (p. ej. `cantidad_disponible <= cantidad_total`). RLS habilitado en todas.
@@ -48,13 +64,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                      | Dev        | Desde      |
-| --------------------------- | --------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
-| B — Catálogo                | **Disponible** (reclamable) | —          | —          |
-| C — Circulación             | Bloqueado por B             | —          | —          |
-| D — Multas & Notificaciones | Bloqueado por C             | —          | —          |
-| E — Administración          | Bloqueado por B, C, D       | —          | —          |
+| Módulo                      | Estado                               | Dev        | Desde      |
+| --------------------------- | ------------------------------------ | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)               | integrador | 2026-07-10 |
+| B — Catálogo                | 🔄 En progreso (F2.1 ✅, falta F2.2) | integrador | 2026-07-10 |
+| C — Circulación             | Bloqueado por B                      | —          | —          |
+| D — Multas & Notificaciones | Bloqueado por C                      | —          | —          |
+| E — Administración          | Bloqueado por B, C, D                | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 
@@ -81,3 +97,4 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - Notificaciones por email/push (F4 solo genera notificaciones in-app).
 - `next lint` deprecado (se elimina en Next 16): migrar a ESLint CLI antes de subir de major.
 - 2 vulnerabilidades **moderate** en el `postcss` interno de next 15.5.20 (bajo el gate `high`); se resolverán al actualizar next.
+- **Nueva (F2.1):** vuln **low** en `@supabase/auth-js` (Insecure Path Routing, GHSA-8r88-6cj9-9fh5); se resuelve subiendo `@supabase/supabase-js` a ≥2.110. Bajo el gate `high`, no bloquea CI.
