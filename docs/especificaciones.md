@@ -12,10 +12,10 @@ La **calidad de la experiencia de usuario** (heurísticas de Nielsen, metáforas
 
 ### 2.1 Definición de Roles
 
-| Rol | Puede | NO puede |
-|-----|-------|----------|
-| **estudiante** | Buscar catálogo, ver detalle, reservar, pedir préstamo, renovar, devolver, marcar favoritos, ver su historial, notificaciones y perfil | Leer o escribir datos de otro usuario; acceder al panel admin; modificar el catálogo |
-| **bibliotecario** (admin) | Todo lo anterior + dashboard con KPIs, CRUD de libros y usuarios, gestión de préstamos/devoluciones con cálculo de multa, reportes y configuración | — |
+| Rol                       | Puede                                                                                                                                              | NO puede                                                                             |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **estudiante**            | Buscar catálogo, ver detalle, reservar, pedir préstamo, renovar, devolver, marcar favoritos, ver su historial, notificaciones y perfil             | Leer o escribir datos de otro usuario; acceder al panel admin; modificar el catálogo |
+| **bibliotecario** (admin) | Todo lo anterior + dashboard con KPIs, CRUD de libros y usuarios, gestión de préstamos/devoluciones con cálculo de multa, reportes y configuración | —                                                                                    |
 
 La separación de permisos se garantiza con **Row Level Security en Postgres**, no con condicionales en la UI. Ocultar un botón es UX, no autorización.
 
@@ -32,6 +32,7 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 ## 3. REQUISITOS FUNCIONALES
 
 ### 3.1 Módulo A — Plataforma & Acceso
+
 - **RF-A01.** El usuario inicia sesión con código universitario y contraseña.
 - **RF-A02.** El usuario se registra proporcionando código, nombre, carrera, correo y teléfono.
 - **RF-A03.** El usuario recupera su contraseña mediante enlace enviado a su correo.
@@ -39,6 +40,7 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 - **RF-A05.** El estudiante ve y edita su perfil (datos de contacto).
 
 ### 3.2 Módulo B — Catálogo
+
 - **RF-B01.** El usuario lista los libros del catálogo con paginación.
 - **RF-B02.** El usuario busca por título, autor o ISBN.
 - **RF-B03.** El usuario filtra por categoría, disponibilidad y ubicación.
@@ -46,6 +48,7 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 - **RF-B05.** El usuario marca/desmarca libros como favoritos.
 
 ### 3.3 Módulo C — Circulación
+
 - **RF-C01.** El usuario solicita un préstamo si `cantidad_disponible > 0`; si no, se le ofrece reservar.
 - **RF-C02.** El sistema calcula la fecha de devolución estimada (`dias_prestamo`, por defecto 14).
 - **RF-C03.** El usuario reserva un libro no disponible y queda en cola.
@@ -54,6 +57,7 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 - **RF-C06.** El usuario ve sus préstamos activos y su historial completo.
 
 ### 3.4 Módulo D — Multas & Notificaciones
+
 - **RF-D01.** El sistema marca un préstamo como `vencido` cuando `fecha_devolucion_estimada < hoy` y no hay devolución real.
 - **RF-D02.** El sistema calcula la multa como `dias_retraso × multa_diaria` (soles, `S/`).
 - **RF-D03.** El sistema notifica al usuario cuando un libro reservado pasa a disponible.
@@ -61,6 +65,7 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 - **RF-D05.** El usuario ve y marca como leídas sus notificaciones.
 
 ### 3.5 Módulo E — Administración
+
 - **RF-E01.** El bibliotecario ve un dashboard con KPIs (total de libros, usuarios, préstamos activos, multas pendientes) y préstamos recientes.
 - **RF-E02.** El bibliotecario realiza CRUD de libros (incluye portada).
 - **RF-E03.** El bibliotecario realiza CRUD de usuarios y gestiona roles/activación.
@@ -70,17 +75,18 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 
 ## 4. REQUISITOS NO FUNCIONALES
 
-| ID | Categoría | Descripción |
-|----|-----------|-------------|
-| RNF-01 | Usabilidad | Cumple las heurísticas de Nielsen; SUS objetivo ≥ 75; curva de aprendizaje mínima |
-| RNF-02 | Usabilidad | Toda pantalla que carga datos tiene 4 estados: cargando, vacío, error, con datos |
-| RNF-03 | Accesibilidad | Contraste AA, foco visible, navegación por teclado, `<label>` por input |
-| RNF-04 | Rendimiento | Listados con paginación; skeletons durante la carga; transiciones ~150ms |
-| RNF-05 | Responsive | Bajo 768px la sidebar colapsa a menú hamburguesa; tablas con scroll horizontal |
-| RNF-06 | Mantenibilidad | Archivos de código < 300 líneas; naming consistente; capa de servicios obligatoria |
-| RNF-07 | Disponibilidad | Deploy en Vercel; datos en Supabase con backups automáticos |
-| RNF-08 | Internacionalización | UI en español; moneda soles (`S/`); fechas mostradas DD/MM/AAAA, almacenadas ISO 8601 |
-| RNF-09 | Testabilidad | Cobertura ≥60% en lógica de negocio; e2e de los flujos críticos |
+| ID     | Categoría            | Descripción                                                                                                                                                                                                                                                         |
+| ------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RNF-01 | Usabilidad           | Cumple las heurísticas de Nielsen; SUS objetivo ≥ 75; curva de aprendizaje mínima                                                                                                                                                                                   |
+| RNF-02 | Usabilidad           | Toda pantalla que carga datos tiene 4 estados: cargando, vacío, error, con datos                                                                                                                                                                                    |
+| RNF-03 | Accesibilidad        | Contraste AA, foco visible, navegación por teclado, `<label>` por input                                                                                                                                                                                             |
+| RNF-04 | Rendimiento          | Listados con paginación; skeletons durante la carga; transiciones ~150ms                                                                                                                                                                                            |
+| RNF-05 | Responsive           | Bajo 768px la sidebar colapsa a menú hamburguesa; tablas con scroll horizontal                                                                                                                                                                                      |
+| RNF-06 | Mantenibilidad       | Archivos de código < 300 líneas; naming consistente; capa de servicios obligatoria                                                                                                                                                                                  |
+| RNF-07 | Disponibilidad       | Deploy en Vercel; datos en Supabase con backups automáticos                                                                                                                                                                                                         |
+| RNF-08 | Internacionalización | UI en español; moneda soles (`S/`); fechas mostradas DD/MM/AAAA, almacenadas ISO 8601                                                                                                                                                                               |
+| RNF-09 | Testabilidad         | Cobertura ≥60% en lógica de negocio; e2e de los flujos críticos                                                                                                                                                                                                     |
+| RNF-10 | Distribución (PWA)   | La app se distribuye como **PWA instalable en móviles** sobre Vercel: `manifest.webmanifest`, íconos maskable 192/512, `display: standalone`, `theme-color`/viewport y service worker para instalabilidad y offline básico. Enfoque **mobile-first**. Setup en F6.2 |
 
 ## 5. SEGURIDAD
 
@@ -157,14 +163,16 @@ Ver `docs/threat-model.md` (activos, actores, top 5 amenazas y mitigaciones).
 ## 6. RESTRICCIONES Y EXCLUSIONES
 
 ### 6.1 Restricciones del proyecto
+
 - Proyecto académico con plazo de curso; equipo de 2-3 devs full-time.
 - Stack cerrado (§8.1): no se introducen librerías fuera de él sin acordarlo y registrar ADR.
 - Presupuesto de infraestructura: planes gratuitos/educativos de Vercel y Supabase.
 
 ### 6.2 Exclusiones (fuera del alcance del MVP)
+
 - Pagos en línea de multas (se registran; el pago es presencial).
 - Integración con sistemas académicos externos (SIS/ERP).
-- App móvil nativa (la web es responsive).
+- App móvil **nativa** en tiendas (iOS/Android): la web se distribuye como **PWA instalable** (RNF-10), no como app nativa empaquetada.
 - 2FA (anotado como deuda técnica).
 
 ## 7. ARQUITECTURA Y MODELO DE DATOS
@@ -174,6 +182,7 @@ Ver `docs/threat-model.md` (activos, actores, top 5 amenazas y mitigaciones).
 Next.js 15 App Router con Server Components por defecto. Backend Supabase (Auth + Postgres + Storage + Realtime). La capa `lib/services/*.ts` es la única puerta a los datos y la frontera entre módulos. La autorización real vive en las políticas RLS de Postgres. Ver diagrama en `CLAUDE.md`.
 
 Mapa de rutas previsto (se crea por fases, no de golpe):
+
 ```
 app/(auth)/login · registro · recuperar
 app/(app)/inicio · catalogo · catalogo/[id] · mis-prestamos · historial · favoritos · notificaciones · perfil
@@ -194,6 +203,7 @@ Tablas principales (todas con RLS activo):
 - **settings** — dias_prestamo (14), multa_diaria (1.00), max_renovaciones (2)
 
 **Reglas de negocio (en la capa de servicios, no en la UI):**
+
 1. Un libro solo se presta si `cantidad_disponible > 0`; si no, se ofrece reservar.
 2. La fecha de devolución no puede ser anterior a hoy.
 3. Un préstamo pasa a `vencido` cuando `fecha_devolucion_estimada < hoy` y no hay devolución real.
@@ -207,6 +217,7 @@ Moneda: soles (`S/`). Fechas UI: DD/MM/AAAA. BD: `timestamptz` ISO 8601.
 ### 7.3 Esquema de integración (frontera entre módulos)
 
 Cada módulo expone su lógica mediante funciones tipadas en `lib/services/`:
+
 - `users.ts` (Módulo A) · `books.ts`, favoritos (B) · `loans.ts`, `reservations.ts` (C) · `fines.ts`, `notifications.ts` (D).
 - El Módulo E (admin) **consume** estos services; no accede a tablas de otros módulos directamente.
 - Un cambio a la firma de un service es un cambio de frontera: avisar al equipo antes y registrar ADR si es de largo plazo.
@@ -215,16 +226,16 @@ Cada módulo expone su lógica mediante funciones tipadas en `lib/services/`:
 
 ### 8.1 Stack
 
-| Capa | Tecnología |
-|------|-----------|
-| Framework | Next.js 15 (App Router) |
-| Lenguaje | TypeScript strict |
-| BD / Backend | Supabase (Postgres, Auth, Storage, Realtime), RLS activo |
-| Estilos | Tailwind CSS + shadcn/ui |
-| Formularios/validación | react-hook-form + Zod (reusado en servidor) |
-| Iconos | lucide-react |
-| Deploy | Vercel |
-| Testing | Vitest (unit/integration) + Playwright (e2e) |
+| Capa                   | Tecnología                                               |
+| ---------------------- | -------------------------------------------------------- |
+| Framework              | Next.js 15 (App Router)                                  |
+| Lenguaje               | TypeScript strict                                        |
+| BD / Backend           | Supabase (Postgres, Auth, Storage, Realtime), RLS activo |
+| Estilos                | Tailwind CSS + shadcn/ui                                 |
+| Formularios/validación | react-hook-form + Zod (reusado en servidor)              |
+| Iconos                 | lucide-react                                             |
+| Deploy                 | Vercel                                                   |
+| Testing                | Vitest (unit/integration) + Playwright (e2e)             |
 
 ### 8.2 Testing Strategy
 
@@ -244,26 +255,42 @@ Cada módulo expone su lógica mediante funciones tipadas en `lib/services/`:
 ## 9. INFRAESTRUCTURA Y DESPLIEGUE
 
 ### 9.1 Hardware / Hosting
+
 - App: Vercel (serverless). BD/Auth/Storage: Supabase. Sin servidores propios que mantener.
 
 ### 9.2 Variables de entorno
+
 Ver `.env.example`. Claves: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (públicas, cliente), `SUPABASE_SERVICE_ROLE_KEY` (solo servidor).
 
 ### 9.3 Comandos de despliegue
+
 - Deploy automático a Vercel al mergear a `main` (preview deploys por PR).
 - Migraciones aplicadas con Supabase CLI (`supabase db push`) o desde el dashboard; nunca editar migraciones ya aplicadas.
+
+### 9.4 PWA (Progressive Web App) — RNF-10
+
+La app es **instalable en móviles** desde el navegador (no se publica en tiendas). Se configura en **F6.2** junto con el endurecimiento:
+
+- `manifest.webmanifest` (nombre, `short_name`, `theme_color`, `background_color`, `display: standalone`, `start_url`) — en Next 15 vía `app/manifest.ts`.
+- Íconos `192x192` y `512x512` (incluye variante **maskable**) e `apple-touch-icon`; `<meta name="theme-color">` y `viewport` correctos.
+- **Service worker** para instalabilidad y offline básico (cachear el shell y assets estáticos; los datos siguen viniendo de Supabase). Se enganchará el diálogo global `offline` (F1.3) al estado real de conexión.
+- Los **headers de seguridad §5.1 (CSP)** deben permitir el registro del service worker y la carga del manifest.
+- Si se añade una librería para el SW (p. ej. `@ducanh2912/next-pwa`), evaluarla según §5.3 y registrar ADR (§8.3).
+- Enfoque **mobile-first**: cada pantalla se valida en viewport de celular.
 
 ## 10. EVALUACIÓN Y VALIDACIÓN
 
 ### 10.1 Métricas de éxito
-| Métrica | Meta | Método de medición |
-|---------|------|---------------------|
-| SUS | ≥ 75 | Cuestionario SUS a usuarios de prueba (F6.1) |
-| Tareas críticas sin ayuda | ≥ 90% | Recorrido cognitivo / test de usuario |
-| Heurísticas Nielsen en PRs de UI | 100% | Checklist en cada PR de UI |
-| Cobertura lógica de negocio | ≥ 60% | Reporte de Vitest en CI |
+
+| Métrica                          | Meta  | Método de medición                           |
+| -------------------------------- | ----- | -------------------------------------------- |
+| SUS                              | ≥ 75  | Cuestionario SUS a usuarios de prueba (F6.1) |
+| Tareas críticas sin ayuda        | ≥ 90% | Recorrido cognitivo / test de usuario        |
+| Heurísticas Nielsen en PRs de UI | 100%  | Checklist en cada PR de UI                   |
+| Cobertura lógica de negocio      | ≥ 60% | Reporte de Vitest en CI                      |
 
 ### 10.2 Casos de prueba (flujos críticos)
+
 - Estudiante busca un libro disponible, lo presta y ve la fecha de devolución.
 - Estudiante intenta prestar un libro sin stock y el sistema le ofrece reservar.
 - Estudiante renueva un préstamo; falla al renovar con multa pendiente.
@@ -271,20 +298,25 @@ Ver `.env.example`. Claves: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_AN
 - Estudiante no puede acceder a datos de otro usuario (RLS) ni al panel admin.
 
 ### 10.3 Criterios mínimos de aprobación
+
 Todas las fases completas con su Definition of Done, flujos críticos e2e en verde, evaluación IHC documentada (`docs/evaluacion-usabilidad.md`, creado en F6.1) con SUS ≥ 75, y `npm audit` sin vulnerabilidades altas.
 
 ## 11. CUMPLIMIENTO REGULATORIO
 
 ### 11.1 Jurisdicción aplicable
+
 **Perú — Ley N.º 29733 (Ley de Protección de Datos Personales)** y su reglamento. Usuarios son estudiantes de una universidad peruana.
 
 ### 11.2 Datos personales que maneja el sistema
+
 Nombre, código universitario, correo institucional, teléfono, carrera, e historial de préstamos (comportamiento).
 
 ### 11.3 Bases legales de tratamiento
+
 Ejecución del servicio bibliotecario solicitado por el titular (relación estudiante–biblioteca) y, donde aplique, consentimiento informado en el registro.
 
 ### 11.4 Derechos del titular implementados
+
 - [ ] Acceso (ver mis datos en el perfil)
 - [ ] Rectificación (editar datos de contacto)
 - [ ] Supresión / cancelación (baja de cuenta, preservando obligaciones de préstamo)
@@ -294,9 +326,11 @@ Ejecución del servicio bibliotecario solicitado por el titular (relación estud
 Estos derechos se implementan progresivamente; el mínimo (acceso y rectificación) entra con el perfil en F1.4.
 
 ### 11.5 Plazos
+
 - Respuesta a solicitud de derechos: según Ley 29733 (referencia: hasta ~20 días hábiles).
 - Notificación de brecha: a la autoridad y titulares sin dilación indebida.
 - Retención de datos: mientras exista la relación con la biblioteca; luego anonimización del historial.
 
 ### 11.6 Cookies y política de privacidad
+
 Solo cookies estrictamente necesarias (sesión de Supabase Auth); no hay tracking de terceros. Publicar una política de privacidad accesible desde el pie de página antes del despliegue (F6.2).
