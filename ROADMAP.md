@@ -78,6 +78,6 @@
 
 > Anotar fecha y commit cada vez que se cierra una subfase.
 
-| Fecha      | Subfase              | Módulo | Commit      | Notas                                                                                         |
-| ---------- | -------------------- | ------ | ----------- | --------------------------------------------------------------------------------------------- |
-| 2026-07-10 | F1.1 Setup & tooling | A      | (pendiente) | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio |
+| Fecha      | Subfase              | Módulo | Commit  | Notas                                                                                         |
+| ---------- | -------------------- | ------ | ------- | --------------------------------------------------------------------------------------------- |
+| 2026-07-10 | F1.1 Setup & tooling | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio |
