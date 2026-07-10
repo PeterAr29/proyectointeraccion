@@ -1,0 +1,82 @@
+import { cn } from "@/lib/utils/cn";
+
+/**
+ * Insignia de estado (metáfora de "semáforo") del sistema de diseño.
+ * Traduce los estados del dominio a un color y una etiqueta legible.
+ * Los estados coinciden con los enums de la BD (loan/reservation/fine) más
+ * la disponibilidad derivada de un libro.
+ */
+export type BadgeTone = "success" | "warning" | "danger" | "info" | "neutral";
+
+/** Estados canónicos que entiende la insignia (en minúscula, como los enums). */
+export type BadgeStatus =
+  // disponibilidad de libro
+  | "disponible"
+  | "reservado"
+  | "prestado"
+  // préstamo (loan_status)
+  | "activo"
+  | "vencido"
+  | "devuelto"
+  // reserva (reservation_status)
+  | "activa"
+  | "cumplida"
+  | "cancelada"
+  // multa (fine_status)
+  | "pendiente"
+  | "pagada";
+
+const STATUS_MAP: Record<BadgeStatus, { label: string; tone: BadgeTone }> = {
+  disponible: { label: "Disponible", tone: "success" },
+  reservado: { label: "Reservado", tone: "warning" },
+  prestado: { label: "Prestado", tone: "danger" },
+  activo: { label: "Activo", tone: "info" },
+  vencido: { label: "Vencido", tone: "danger" },
+  devuelto: { label: "Devuelto", tone: "success" },
+  activa: { label: "Activa", tone: "warning" },
+  cumplida: { label: "Cumplida", tone: "success" },
+  cancelada: { label: "Cancelada", tone: "neutral" },
+  pendiente: { label: "Pendiente", tone: "warning" },
+  pagada: { label: "Pagada", tone: "success" },
+};
+
+// Colores suaves con texto oscuro: contraste AA sobre el fondo del pill.
+const TONE_CLASSES: Record<BadgeTone, string> = {
+  success: "bg-green-100 text-green-800",
+  warning: "bg-amber-100 text-amber-800",
+  danger: "bg-red-100 text-red-800",
+  info: "bg-blue-100 text-blue-800",
+  neutral: "bg-slate-100 text-slate-700",
+};
+
+export interface StatusBadgeProps {
+  /** Estado del dominio; si no está en el mapa se muestra tal cual en tono neutral. */
+  status: BadgeStatus | string;
+  /** Sobrescribe la etiqueta mostrada. */
+  label?: string;
+  /** Sobrescribe el tono de color. */
+  tone?: BadgeTone;
+  className?: string;
+}
+
+export function StatusBadge({
+  status,
+  label,
+  tone,
+  className,
+}: StatusBadgeProps) {
+  const known = STATUS_MAP[status as BadgeStatus];
+  const resolvedTone = tone ?? known?.tone ?? "neutral";
+  const resolvedLabel = label ?? known?.label ?? status;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
+        TONE_CLASSES[resolvedTone],
+        className,
+      )}
+    >
+      {resolvedLabel}
+    </span>
+  );
+}

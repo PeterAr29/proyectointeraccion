@@ -1,16 +1,34 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F1.2)
-**Última subfase completada:** F1.2 — Base de datos, RLS y seed (módulo A)
-**Próxima subfase:** F1.3 — Sistema de diseño (kitchen-sink) (módulo A, dev integrador)
+**Última actualización:** 2026-07-10 (cierre F1.3)
+**Última subfase completada:** F1.3 — Sistema de diseño (kitchen-sink) (módulo A)
+**Próxima subfase:** F1.4 — Acceso + shell + perfil (módulo A, dev integrador) — última de la fundación
 
 ## Progreso global
 
 - Fases completadas: 0/6
-- Subfases completadas: 2/17
-- Porcentaje estimado: ~12%
+- Subfases completadas: 3/17
+- Porcentaje estimado: ~18%
 
 ## Resumen de lo construido hasta ahora
+
+**F1.3 completada.** El sistema de diseño reutilizable existe y está mostrado en
+`/kitchen-sink` (build prerenderizado estático). Es el catálogo de UI que
+consumirán B–E; todo recibe props (sin datos reales):
+
+- **Componentes de dominio:** `StatusBadge` (semáforo de estados con los enums de
+  la BD) y `BookCover` (portada con imagen o gradiente estable por título).
+- **Feedback:** `Skeleton` (+ variantes), `EmptyState`, `ErrorState`, `Modal`
+  (primitivo accesible: role dialog, Escape, foco, scroll-lock), `Dialog` (10
+  diálogos globales por variante) y `Toast` (`ToastProvider` + `useToast`).
+- **Primitivo:** `components/ui/button.tsx` (`Button`, 6 variantes con cva).
+- **Utils:** `lib/utils/dates.ts` (DD/MM/AAAA, maneja date-only sin corrimiento
+  UTC) y `currency.ts` (`S/`), ambos con tests. **17/17 tests en verde.**
+- Accesibilidad AA (foco visible, contraste, roles ARIA en diálogos/toasts).
+- Pendiente para F1.4: montar `<ToastProvider>` en el shell. Detalle y firmas de
+  cada componente en `progreso/fase-1.3-A.md`.
+
+### Construido en subfases previas
 
 **F1.2 completada.** La capa de datos existe y está aplicada en el proyecto Supabase remoto `bibliotec` (ref `umjelnabjdvrsfnqoszt`):
 
@@ -28,7 +46,7 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 | Módulo                      | Estado                    | Dev        | Desde      |
 | --------------------------- | ------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | En curso (F1.3 siguiente) | integrador | 2026-07-10 |
+| A — Plataforma & Acceso     | En curso (F1.4 siguiente) | integrador | 2026-07-10 |
 | B — Catálogo                | Bloqueado por A           | —          | —          |
 | C — Circulación             | Bloqueado por B           | —          | —          |
 | D — Multas & Notificaciones | Bloqueado por C           | —          | —          |
