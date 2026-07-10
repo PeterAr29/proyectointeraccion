@@ -19,8 +19,9 @@ búsqueda (título/autor/ISBN), filtros (categoría/ubicación/disponibilidad) y
 paginación, todo por query params, con los 4 estados (skeleton/vacío/error/datos):
 
 - **`lib/services/books.ts`** es la única puerta a `books`: `listBooks` (paginado
-  - filtrado con conteo previo), `getBookById` (lista para C/F2.2), `getCatalogFacets`,
-    y lógica pura testeable (`buildSearchFilter`, `computePagination`, `isAvailable`).
+  y filtrado con conteo previo), `getBookById` (lista para C/F2.2),
+  `getCatalogFacets`, y lógica pura testeable (`buildSearchFilter`,
+  `computePagination`, `isAvailable`).
 - **Búsqueda parametrizada** (A03): el término se sanea antes del `.or(...)` de
   PostgREST (sin inyección de operadores ni comodines).
 - **Filtros por URL** con `<form method="get">` (Server Component, sin JS cliente);
