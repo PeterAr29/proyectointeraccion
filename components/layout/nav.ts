@@ -50,8 +50,8 @@ const STUDENT_NAV: NavItem[] = [
 const LIBRARIAN_NAV: NavItem[] = [
   { label: "Inicio", href: "/inicio", icon: Home, enabled: true },
   { label: "Dashboard", href: "/dashboard", icon: LayoutGrid, enabled: true },
-  { label: "Libros", href: "/libros", icon: LibraryBig, enabled: false },
-  { label: "Usuarios", href: "/usuarios", icon: Users, enabled: false },
+  { label: "Libros", href: "/libros", icon: LibraryBig, enabled: true },
+  { label: "Usuarios", href: "/usuarios", icon: Users, enabled: true },
   { label: "Préstamos", href: "/prestamos", icon: BookMarked, enabled: false },
   {
     label: "Configuración",

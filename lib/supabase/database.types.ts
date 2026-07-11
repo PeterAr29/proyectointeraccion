@@ -76,6 +76,8 @@ export type Database = {
           portada_url: string | null;
           cantidad_total: number;
           cantidad_disponible: number;
+          /** F5.2: baja lógica del catálogo (false = retirado, oculto al estudiante). */
+          activo: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -92,6 +94,7 @@ export type Database = {
           portada_url?: string | null;
           cantidad_total?: number;
           cantidad_disponible?: number;
+          activo?: boolean;
           created_at?: string;
           updated_at?: string;
         };

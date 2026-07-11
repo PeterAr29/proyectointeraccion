@@ -32,6 +32,17 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   return data;
 }
 
+/**
+ * ¿El usuario autenticado es bibliotecario activo? Guard para revalidar el rol
+ * en cada Server Action de administración (CLAUDE.md: ocultar un botón no es
+ * autorización). La RLS de la BD sigue siendo la barrera real; esto la
+ * complementa en el servidor de la app (deny-by-default, A01).
+ */
+export async function isCurrentUserLibrarian(): Promise<boolean> {
+  const profile = await getCurrentProfile();
+  return profile?.rol === "bibliotecario" && profile.activo === true;
+}
+
 // ---------------------------------------------------------------------------
 // Métricas y lectura por lote (Módulo E, F5.1)
 // ---------------------------------------------------------------------------

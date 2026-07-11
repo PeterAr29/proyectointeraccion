@@ -128,8 +128,12 @@ export async function listBooks(
 ): Promise<ListBooksResult> {
   const supabase = await createClient();
 
+  // El catálogo del estudiante solo muestra libros activos (baja lógica, F5.2).
   const { count, error: countError } = await applyFilters(
-    supabase.from("books").select("id", { count: "exact", head: true }),
+    supabase
+      .from("books")
+      .select("id", { count: "exact", head: true })
+      .eq("activo", true),
     filters,
   );
   if (countError) return { ok: false };
@@ -138,7 +142,7 @@ export async function listBooks(
   const { page, totalPages, from, to } = computePagination(total, filters.page);
 
   const { data, error } = await applyFilters(
-    supabase.from("books").select("*"),
+    supabase.from("books").select("*").eq("activo", true),
     filters,
   )
     .order("titulo", { ascending: true })
@@ -165,6 +169,7 @@ export async function getBookById(id: string): Promise<Book | null> {
     .from("books")
     .select("*")
     .eq("id", id)
+    .eq("activo", true) // el estudiante no ve libros retirados (F5.2)
     .maybeSingle();
   if (error) return null;
   return data;
@@ -181,7 +186,8 @@ export async function getCatalogFacets(): Promise<{
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("books")
-    .select("categoria, ubicacion");
+    .select("categoria, ubicacion")
+    .eq("activo", true); // facetas solo de libros vigentes (F5.2)
   if (error || !data) return { categorias: [], ubicaciones: [] };
 
   const uniqueSorted = (values: (string | null)[]): string[] =>
@@ -206,7 +212,8 @@ export async function countBooks(): Promise<number | null> {
   const supabase = await createClient();
   const { count, error } = await supabase
     .from("books")
-    .select("id", { count: "exact", head: true });
+    .select("id", { count: "exact", head: true })
+    .eq("activo", true); // KPI "libros en el catálogo" = vigentes (F5.2)
   if (error) return null;
   return count ?? 0;
 }
@@ -292,7 +299,8 @@ export async function listFavorites(): Promise<Book[] | null> {
   const { data: books, error: booksError } = await supabase
     .from("books")
     .select("*")
-    .in("id", orderedIds);
+    .in("id", orderedIds)
+    .eq("activo", true); // un favorito retirado del catálogo deja de listarse (F5.2)
   if (booksError) return null;
 
   return orderBooksByIds(books ?? [], orderedIds);

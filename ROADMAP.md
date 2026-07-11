@@ -15,8 +15,8 @@
 | ---------------- | ------- |
 | Fases totales    | 6       |
 | Subfases totales | 17      |
-| Completadas      | 12 / 17 |
-| % avance         | ~70%    |
+| Completadas      | 13 / 17 |
+| % avance         | ~75%    |
 
 ## Detalle por fase
 
@@ -53,10 +53,10 @@
 
 ### F5: Administración — Módulo [E]
 
-**Estado:** 🔄 En curso (1/4) · **A cargo de:** dev integrador
+**Estado:** 🔄 En curso (2/4) · **A cargo de:** dev integrador
 
 - ✅ F5.1 [E] — Dashboard con KPIs
-- ⏳ F5.2 [E] — CRUD de libros y usuarios
+- ✅ F5.2 [E] — CRUD de libros y usuarios
 - ⏳ F5.3 [E] — Préstamos, devoluciones y multas
 - ⏳ F5.4 [E] — Reportes y configuración
 
