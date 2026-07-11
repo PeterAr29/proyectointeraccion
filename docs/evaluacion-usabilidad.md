@@ -251,11 +251,24 @@ Ejemplo con 6 participantes (P1–P6), respuestas por ítem I1–I10:
 **supera la meta de 75** (grado A, "excelente"). Con datos reales, si el promedio
 quedara por debajo de 75 se priorizarían los hallazgos de severidad ≥ 3.
 
-### 4.4 Plantilla de recolección
+### 4.4 Plantilla de recolección — Kit SUS listo para aplicar
 
-Para el piloto real, registrar en una hoja: id de participante (anónimo), rol
-(estudiante/bibliotecario), las 10 respuestas (1–5) y notas cualitativas. Calcular
-el SUS por participante con la fórmula de §4.2 y promediar.
+El **kit completo** para el piloto real está en **`docs/sus-kit/`**:
+
+- `cuestionario-sus.md` — cuestionario distribuible (10 ítems + hoja del observador
+  para las 4 tareas críticas), imprimible o para copiar a un Google Form.
+- `respuestas-plantilla.csv` — plantilla donde se vacían las respuestas (id anónimo,
+  rol, I1–I10, T1–T4, notas).
+- `calcular-sus.mjs` — calculadora sin dependencias:
+  `node docs/sus-kit/calcular-sus.mjs docs/sus-kit/respuestas.csv` imprime el SUS por
+  participante, el **promedio + grado**, el **% de tareas completadas** y una **tabla
+  Markdown lista para pegar en §4.3**.
+- `README.md` — guía paso a paso del estudio (reclutar 5–8 usuarios, sesión,
+  privacidad Ley 29733, cálculo).
+
+Registrar id de participante **anónimo** (P1, P2, …), rol, las 10 respuestas (1–5) y
+notas cualitativas. El SUS se calcula con la fórmula de §4.2. **Los CSV con
+respuestas reales no se versionan** (ver `.gitignore`).
 
 ---
 

@@ -45,3 +45,7 @@ Thumbs.db
 
 # Project specifics
 progreso/.tmp/
+
+# Respuestas SUS reales (opinión de personas — no versionar). La plantilla sí.
+docs/sus-kit/respuestas*.csv
+!docs/sus-kit/respuestas-plantilla.csv

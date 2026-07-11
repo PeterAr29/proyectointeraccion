@@ -1,0 +1,8 @@
+participante,rol,I1,I2,I3,I4,I5,I6,I7,I8,I9,I10,T1,T2,T3,T4,notas
+# Las filas que empiezan con # son ejemplos y la calculadora las IGNORA. Bórralas o déjalas.
+# Columnas: id anónimo, rol (estudiante/bibliotecario), I1..I10 = respuestas SUS (1-5),
+#           T1..T4 = tareas críticas (1 = completó sin ayuda, 0 = no), notas (opcional).
+# Reemplaza estas filas de ejemplo con tus participantes reales (una fila por persona):
+# P1,estudiante,5,2,5,2,4,1,5,2,4,2,1,1,1,1,"encontró todo rápido"
+# P2,estudiante,4,2,4,2,4,2,4,2,4,3,1,1,1,0,"dudó al reservar"
+# P3,bibliotecario,5,1,5,1,5,1,5,1,5,1,1,1,1,1,"sin problemas"
