@@ -36,6 +36,12 @@ export function AppShell({
 
   return (
     <ToastProvider>
+      <a
+        href="#contenido-principal"
+        className="sr-only left-4 top-4 z-[100] rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground focus:not-sr-only focus:absolute"
+      >
+        Saltar al contenido
+      </a>
       <div className="flex min-h-screen bg-background">
         <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-card md:flex">
           <Link
@@ -63,7 +69,13 @@ export function AppShell({
             unreadCount={unreadCount}
             onOpenMenu={() => setMobileOpen(true)}
           />
-          <main className="flex-1 p-4 sm:p-6">{children}</main>
+          <main
+            id="contenido-principal"
+            tabIndex={-1}
+            className="flex-1 p-4 outline-none sm:p-6"
+          >
+            {children}
+          </main>
         </div>
       </div>
     </ToastProvider>

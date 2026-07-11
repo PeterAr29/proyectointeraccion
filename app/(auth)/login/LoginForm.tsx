@@ -39,7 +39,8 @@ export function LoginForm() {
       <div>
         <h2 className="text-lg font-bold">Iniciar sesión</h2>
         <p className="text-sm text-muted-foreground">
-          Accede con tu código universitario.
+          Ingresa con tu código de acceso. Es el mismo para estudiantes y
+          personal de biblioteca.
         </p>
       </div>
 

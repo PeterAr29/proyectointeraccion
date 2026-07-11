@@ -1,14 +1,14 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-11 (cierre F5.4 — Reportes y configuración, módulo E; **cierra Fase 5**, hito M3)
-**Última subfase completada:** F5.4 — Reportes y configuración (módulo E, Administración)
-**Próxima subfase:** F6.1 — Evaluación de usabilidad (Nielsen + recorrido cognitivo + SUS)
+**Última actualización:** 2026-07-11 (cierre F6.1 — Evaluación de usabilidad IHC)
+**Última subfase completada:** F6.1 — Evaluación de usabilidad (Nielsen + recorrido cognitivo + SUS)
+**Próxima subfase:** F6.2 — Endurecimiento, PWA y despliegue (última; hito M4 / `v1.0.0`)
 
 ## Progreso global
 
-- Fases completadas: **5/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación; Fase 4 · Multas & Notificaciones; **Fase 5 · Administración**). Solo queda **Fase 6 (Evaluación IHC & Producción)**.
-- Subfases completadas: 15/17
-- Porcentaje estimado: ~88%
+- Fases completadas: **5/6** (Fase 1–5). **Fase 6 (Evaluación IHC & Producción) EN CURSO** (1/2 subfases); solo queda F6.2.
+- Subfases completadas: 16/17
+- Porcentaje estimado: ~94%
 - **Hito M3 alcanzado**: sistema completo (panel de administración operativo).
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
 - **Hito M2 alcanzado**: estudiante funcional (catálogo + circulación + multas/notificaciones).
@@ -16,6 +16,19 @@
 - **Preview desplegada en Vercel**: https://proyectointeraccion.vercel.app (contra el Supabase remoto; auto-deploy en cada push a `main`).
 
 ## Resumen de lo construido hasta ahora
+
+**F6.1 completada — evaluación de usabilidad (entregable IHC).**
+`docs/evaluacion-usabilidad.md`: (1) evaluación heurística de Nielsen pantalla por
+pantalla con severidad 0–4, (2) recorrido cognitivo de los 4 flujos críticos
+(buscar+prestar, renovar, devolver, reservar), (3) cuestionario SUS (instrumento +
+cálculo + piloto simulado 81.7 ≥ 75, **a reemplazar con datos reales**).
+
+- **Hallazgos críticos corregidos (solo UX/a11y, sin lógica):** diálogos con
+  **nombre accesible** (`Modal` aria-label + `Dialog` pasa título); **trampa de
+  foco** + retorno de foco en el Modal; **copy del login neutral al rol** (corrige
+  la confusión observada del bibliotecario); **skip-link** "saltar al contenido".
+- **Verificado:** typecheck/lint/build/audit-high verdes; 137/137 unit. Detalle en
+  `progreso/fase-6.1.md`.
 
 **F5.4 completada — cierra la Fase 5 (Administración) y alcanza el hito M3.**
 Últimas vistas del panel: reportes y configuración.

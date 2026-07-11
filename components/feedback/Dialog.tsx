@@ -185,6 +185,7 @@ export function Dialog({
       onClose={onClose}
       dismissable={preset.dismissable}
       showClose={preset.dismissable}
+      label={title ?? preset.title}
       className="max-w-sm"
     >
       <div className="flex flex-col items-center text-center">

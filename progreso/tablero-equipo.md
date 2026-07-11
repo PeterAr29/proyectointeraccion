@@ -14,26 +14,27 @@
 
 ## Tareas en curso (dentro de módulos)
 
-| Tarea                                      | Módulo | Dev        | Estado                 |
-| ------------------------------------------ | ------ | ---------- | ---------------------- |
-| T-001 Setup & tooling (F1.1)               | A      | integrador | ✅ Terminada           |
-| T-002 Base de datos, RLS y seed (F1.2)     | A      | integrador | ✅ Terminada           |
-| T-003 Sistema de diseño (F1.3)             | A      | integrador | ✅ Terminada           |
-| T-004 Acceso + shell + perfil (F1.4)       | A      | integrador | ✅ Terminada           |
-| T-005 Catálogo: listado/búsqueda (F2.1)    | B      | integrador | ✅ Terminada           |
-| T-006 Catálogo: detalle + favoritos (F2.2) | B      | integrador | ✅ Terminada           |
-| T-007 Reservas y préstamos (F3.1)          | C      | integrador | ✅ Terminada           |
-| T-008 Mis préstamos (F3.2)                 | C      | integrador | ✅ Terminada           |
-| T-009 Historial (F3.3)                     | C      | integrador | ✅ Terminada           |
-| T-010 Cálculo de multas (F4.1)             | D      | integrador | ✅ Terminada           |
-| T-011 Notificaciones + vista (F4.2)        | D      | integrador | ✅ Terminada           |
-| T-012 Dashboard con KPIs (F5.1)            | E      | integrador | ✅ Terminada           |
-| T-013 CRUD libros y usuarios (F5.2)        | E      | integrador | ✅ Terminada           |
-| T-014 Préstamos/devoluciones/multas (F5.3) | E      | integrador | ✅ Terminada           |
-| T-015 Reportes y configuración (F5.4)      | E      | integrador | ✅ Terminada           |
-| T-016 Evaluación de usabilidad (F6.1)      | —      | —          | Disponible (siguiente) |
+| Tarea                                         | Módulo | Dev        | Estado                 |
+| --------------------------------------------- | ------ | ---------- | ---------------------- |
+| T-001 Setup & tooling (F1.1)                  | A      | integrador | ✅ Terminada           |
+| T-002 Base de datos, RLS y seed (F1.2)        | A      | integrador | ✅ Terminada           |
+| T-003 Sistema de diseño (F1.3)                | A      | integrador | ✅ Terminada           |
+| T-004 Acceso + shell + perfil (F1.4)          | A      | integrador | ✅ Terminada           |
+| T-005 Catálogo: listado/búsqueda (F2.1)       | B      | integrador | ✅ Terminada           |
+| T-006 Catálogo: detalle + favoritos (F2.2)    | B      | integrador | ✅ Terminada           |
+| T-007 Reservas y préstamos (F3.1)             | C      | integrador | ✅ Terminada           |
+| T-008 Mis préstamos (F3.2)                    | C      | integrador | ✅ Terminada           |
+| T-009 Historial (F3.3)                        | C      | integrador | ✅ Terminada           |
+| T-010 Cálculo de multas (F4.1)                | D      | integrador | ✅ Terminada           |
+| T-011 Notificaciones + vista (F4.2)           | D      | integrador | ✅ Terminada           |
+| T-012 Dashboard con KPIs (F5.1)               | E      | integrador | ✅ Terminada           |
+| T-013 CRUD libros y usuarios (F5.2)           | E      | integrador | ✅ Terminada           |
+| T-014 Préstamos/devoluciones/multas (F5.3)    | E      | integrador | ✅ Terminada           |
+| T-015 Reportes y configuración (F5.4)         | E      | integrador | ✅ Terminada           |
+| T-016 Evaluación de usabilidad (F6.1)         | —      | integrador | ✅ Terminada           |
+| T-017 Endurecimiento, PWA y despliegue (F6.2) | —      | —          | Disponible (siguiente) |
 
-> T-017 (F6.2 endurecimiento y despliegue) queda Bloqueada por F6.1. Ver `docs/backlog.md`.
+> Última tarea del proyecto (T-017). Ver `docs/backlog.md`.
 
 ## Log de reclamos (append-only, evita disputas)
 
@@ -48,6 +49,7 @@
 - 2026-07-10 — F3.2 (Mis préstamos) **cerrada**: `/mis-prestamos` con `LoanTable` responsive (4 estados) y renovar/devolver con confirmación. RPC atómicas `return_loan` (repone stock) y `renew_loan` (§7.2.5: máximo de renovaciones, bloqueo por multa pendiente; aceptan owner o bibliotecario para reuso en F5.3) aplicadas al remoto; `loans.ts` extendido (estado efectivo derivado, `canRenew`, `listOwnLoansWithBooks`, renew/return) + nuevo `settings.ts`; nav "Mis préstamos" activado. 68/68 unit; RPC verificadas end-to-end con rollback (renovaciones 0→1, stock Redes 2→3 al devolver, SQLSTATE BT100/BT101/BT200); typecheck/lint/build/audit-high verdes. Siguiente: F3.3 (Historial, cierra la Fase 3).
 - 2026-07-10 — F3.3 (Historial) **cerrada** → **Fase 3 (Circulación) COMPLETADA**. `/historial` (activos/vencidos/devueltos) con filtro por estado y rango de fechas + paginación; reusa `LoanTable` sin acciones; lógica pura `filterLoanHistory` (por estado efectivo + fechas) y `paginateList`; nav "Historial" activado. 79/79 unit; ruta de datos verificada bajo RLS contra el remoto; typecheck/lint/build/audit-high verdes. **Hito de integración F3 verificado** (prestar/reservar/renovar/devolver end-to-end + vistas Mis préstamos/Historial). **Módulo D (Multas & Notificaciones) queda Disponible.** Siguiente sugerido: F4.1 (cálculo de multas). Además: preview desplegada en Vercel (https://proyectointeraccion.vercel.app).
 - 2026-07-10 — **Módulo D reclamado** por el dev integrador. F4.1 (Cálculo de multas) **cerrada**: `lib/services/fines.ts` (única puerta a `fines`) con cálculo `dias_retraso × multa_diaria` (redondeo 2 dec.), generación por el sistema con cliente admin/service role (persiste `vencido` + crea/actualiza multa `pendiente`, índice único `loan_id`), checker `getPendingFineLoanIds` que "Mis préstamos" pasa a `canRenew` (Renovar deshabilitado con multa pendiente, §7.2.5), `markFinePaid` listo para F5.3. 86/86 unit; integración C↔D verificada end-to-end contra el remoto con rollback (multa visible por RLS, renovar bloqueado → BT102); typecheck/lint/build/audit-high verdes. Siguiente: F4.2 (motor de notificaciones + vista, cierra la Fase 4).
+- 2026-07-11 — F6.1 (Evaluación de usabilidad) **cerrada**. Entregable IHC `docs/evaluacion-usabilidad.md`: evaluación heurística de Nielsen pantalla por pantalla (severidad 0–4), recorrido cognitivo de los 4 flujos críticos (buscar+prestar/renovar/devolver/reservar) y cuestionario SUS (instrumento + cálculo + piloto simulado 81.7 ≥ 75, a reemplazar con datos reales). Hallazgos críticos corregidos (solo UX/a11y, sin lógica): diálogos con nombre accesible (`Modal` aria-label), trampa de foco + retorno de foco, copy del login neutral al rol (corrige confusión observada del bibliotecario), skip-link "saltar al contenido". 137/137 unit; typecheck/lint/build/audit-high verdes. Siguiente: F6.2 (endurecimiento, PWA y despliegue, última — hito M4/`v1.0.0`).
 - 2026-07-11 — F5.4 (Reportes y configuración) **cerrada** → **Fase 5 (Administración) COMPLETADA (hito M3 — sistema completo)**. `/reportes` (préstamos por mes, libros más prestados, resumen de multas, con **export CSV** generado en cliente vía `lib/utils/csv`) y `/configuracion` (editar `dias_prestamo`/`multa_diaria`/`max_renovaciones`, Zod, solo bibliotecario, no retroactivo). `reports.ts` compone loans-admin/fines-admin (puros `loansByMonth`/`topBorrowedBooks`/`summarizeFines`); `settings.updateCirculationSettings`. Nav Reportes/Configuración activados. 137/137 unit; end-to-end con rollback (bibliotecario edita config → préstamo nuevo toma plazo de 7 días; estudiante no edita settings → 0 filas; seed intacto); typecheck/lint/build/audit-high verdes. **Hito de integración F5 verificado.** **Módulo E completo.** Siguiente: F6.1 (evaluación de usabilidad).
 - 2026-07-11 — F5.3 (Préstamos, devoluciones y multas) **cerrada**. `/prestamos` (vista global de todos los préstamos, filtro por estado, solo lectura), `/devoluciones` (registrar devolución de cualquier usuario con **multa integrada**: `syncFineForLoan` congela días antes de `return_loan` que repone stock; confirmación advierte el monto) y `/multas` (marcar pagada, RLS `fines_update_librarian`). Services `loans-admin.ts`/`fines-admin.ts` (reads globales + `registerReturn` + puros `estimateReturnFine`/`buildReturnRows`/`buildAdminFineRows`); reusa `return_loan`/`markFinePaid`/`syncFineForLoan`/`getProfilesByIds`. Nav Préstamos/Devoluciones/Multas activados. 125/125 unit; devolución+multa y pago verificados end-to-end con rollback (bibliotecario devuelve préstamo ajeno y repone stock 2→3; marca multa pagada; estudiante no puede marcar multas → 0 filas; seed intacto); typecheck/lint/build/audit-high verdes. Siguiente: F5.4 (reportes y configuración, cierra la Fase 5).
 - 2026-07-11 — F5.2 (CRUD de libros y usuarios) **cerrada**. `/libros` y `/usuarios` (listar/crear/editar/baja lógica) bajo el layout `(admin)`. Libros: `books.activo` (el catálogo del estudiante oculta inactivos), portada a Storage (bucket `book-covers`, escritura solo bibliotecario), `books-admin.ts`. Usuarios: alta con cliente admin, edición de contacto+rol+activación, anti-autobloqueo del propio admin, `users-admin.ts` (correo/código de solo lectura). Guard `isCurrentUserLibrarian` revalida rol en cada action. **🔴 Fix de seguridad**: trigger `prevent_self_privilege_change` corrige una escalada de privilegios latente desde F1.2 (un estudiante podía auto-promocionarse a bibliotecario vía RLS directa). 117/117 unit; RLS/Storage/escalada verificados end-to-end con rollback (estudiante no escribe libros ni escala rol; bibliotecario sí; seed intacto); typecheck/lint/build/audit-high verdes. Siguiente: F5.3 (préstamos, devoluciones y multas).

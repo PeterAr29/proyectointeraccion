@@ -15,8 +15,8 @@
 | ---------------- | ------- |
 | Fases totales    | 6       |
 | Subfases totales | 17      |
-| Completadas      | 15 / 17 |
-| % avance         | ~88%    |
+| Completadas      | 16 / 17 |
+| % avance         | ~94%    |
 
 ## Detalle por fase
 
@@ -62,9 +62,9 @@
 
 ### F6: Evaluación IHC & Producción
 
-**Estado:** 🟢 Disponible (dependencias A–E listas)
+**Estado:** 🔄 En curso (1/2) · **A cargo de:** dev integrador
 
-- ⏳ F6.1 — Evaluación de usabilidad (Nielsen + recorrido cognitivo + SUS)
+- ✅ F6.1 — Evaluación de usabilidad (Nielsen + recorrido cognitivo + SUS)
 - ⏳ F6.2 — Endurecimiento y despliegue
 
 ## Hitos clave (milestones)
