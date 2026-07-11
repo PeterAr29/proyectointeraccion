@@ -1,20 +1,35 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F3.3 — Historial → **Fase 3 COMPLETADA**)
-**Última subfase completada:** F3.3 — Historial (módulo C, Circulación)
-**Próxima subfase:** F4.1 — Cálculo de multas (módulo D, Multas & Notificaciones)
+**Última actualización:** 2026-07-10 (cierre F4.1 — Cálculo de multas, módulo D)
+**Última subfase completada:** F4.1 — Cálculo de multas (módulo D, Multas & Notificaciones)
+**Próxima subfase:** F4.2 — Motor de notificaciones + vista (módulo D)
 
 ## Progreso global
 
 - Fases completadas: **3/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación)
-- Subfases completadas: 9/17
-- Porcentaje estimado: ~53%
+- Subfases completadas: 10/17
+- Porcentaje estimado: ~59%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
-- **Módulo B (Catálogo) COMPLETADO**; **Módulo C (Circulación) COMPLETADO** (F3.1–F3.3).
-- **Módulo D (Multas & Notificaciones) DISPONIBLE para reclamar** (dependía de C).
+- **Módulo B y C COMPLETADOS**; **Módulo D (Multas & Notificaciones) EN PROGRESO** (F4.1 cerrada; queda F4.2).
 - **Preview desplegada en Vercel**: https://proyectointeraccion.vercel.app (contra el Supabase remoto; auto-deploy en cada push a `main`).
 
 ## Resumen de lo construido hasta ahora
+
+**F4.1 completada.** `lib/services/fines.ts` (única puerta a `fines`) calcula la
+multa (§7.2.4: `dias_retraso × multa_diaria`, S/) y la integra con Circulación:
+
+- **Cálculo puro y probado:** `computeDaysOverdue` y `computeFineAmount` (redondeo
+  a 2 decimales, sin negativos).
+- **Generación por el sistema** (`syncFineForLoan`/`syncOwnOverdueFines`, cliente
+  admin/service role porque la RLS de `fines` solo deja escribir al bibliotecario):
+  ante un vencido, persiste `estado='vencido'` y crea/actualiza la multa
+  `pendiente`. Índice único `fines(loan_id)` (una multa por préstamo).
+- **Checker para C** (`getPendingFineLoanIds`): "Mis préstamos" lo sincroniza y lo
+  pasa a `canRenew` → **Renovar deshabilitado con multa pendiente** (§7.2.5); la
+  RPC `renew_loan` revalida en BD. `markFinePaid` listo para F5.3 (bibliotecario).
+- **Verificado:** typecheck/lint/build/audit-high verdes; **86/86 unit**;
+  integración C↔D end-to-end contra el remoto con rollback (multa visible para el
+  estudiante por RLS; renovar bloqueado → BT102). Detalle en `progreso/fase-4.1-D.md`.
 
 **F3.3 completada — cierra la Fase 3.** Nueva ruta `/historial`: historial
 completo (activos/vencidos/devueltos) con filtro por estado y rango de fechas y
@@ -127,13 +142,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                      | Dev        | Desde      |
-| --------------------------- | --------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)      | integrador | 2026-07-10 |
-| C — Circulación             | ✅ Completado (Fase 3)      | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | Disponible (desbloq. por C) | —          | —          |
-| E — Administración          | Bloqueado por B, C, D       | —          | —          |
+| Módulo                      | Estado                        | Dev        | Desde      |
+| --------------------------- | ----------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
+| C — Circulación             | ✅ Completado (Fase 3)        | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | 🔄 En progreso (F4.1 cerrada) | integrador | 2026-07-10 |
+| E — Administración          | Bloqueado por B, C, D         | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 

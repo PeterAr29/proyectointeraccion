@@ -21,13 +21,17 @@ export interface LoanTableProps {
   maxRenovaciones: number;
   /** Muestra la columna de acciones (renovar/devolver). Historial: false. */
   withActions?: boolean;
+  /** Ids de préstamos con multa pendiente (checker del Módulo D, §7.2.5). */
+  pendingFineLoanIds?: string[];
 }
 
 export function LoanTable({
   items,
   maxRenovaciones,
   withActions = true,
+  pendingFineLoanIds = [],
 }: LoanTableProps) {
+  const withPendingFine = new Set(pendingFineLoanIds);
   return (
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full min-w-[640px] text-sm">
@@ -46,9 +50,13 @@ export function LoanTable({
           {items.map(({ loan, book }) => {
             const status = effectiveLoanStatus(loan);
             const returned = status === "devuelto";
-            // Las multas aún no existen (Módulo D, F4.1): el checker real lo
-            // aportará D; aquí la RPC `renew_loan` es el guardián en BD.
-            const renew = canRenew(loan, maxRenovaciones, false);
+            // Checker de multa pendiente (Módulo D, §7.2.5). La RPC `renew_loan`
+            // revalida esta misma regla en la BD.
+            const renew = canRenew(
+              loan,
+              maxRenovaciones,
+              withPendingFine.has(loan.id),
+            );
             return (
               <tr key={loan.id} className="border-b last:border-b-0">
                 <td className="px-4 py-3">

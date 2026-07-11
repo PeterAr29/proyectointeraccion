@@ -8,6 +8,10 @@ import { LoanTable } from "@/components/biblioteca/LoanTable";
 import { buttonVariants } from "@/components/ui/button";
 import { listOwnLoansWithBooks } from "@/lib/services/loans";
 import { getCirculationSettings } from "@/lib/services/settings";
+import {
+  getPendingFineLoanIds,
+  syncOwnOverdueFines,
+} from "@/lib/services/fines";
 
 export const metadata: Metadata = { title: "Mis préstamos" };
 
@@ -18,9 +22,14 @@ export const metadata: Metadata = { title: "Mis préstamos" };
  * vacío y con datos.
  */
 export default async function MisPrestamosPage() {
-  const [items, settings] = await Promise.all([
+  const settings = await getCirculationSettings();
+  // Antes de listar, asegura las multas de los préstamos vencidos del usuario
+  // (idempotente) para que el checker de renovación (§7.2.5) refleje la realidad.
+  await syncOwnOverdueFines(settings.multaDiaria);
+
+  const [items, pendingFineLoanIds] = await Promise.all([
     listOwnLoansWithBooks(),
-    getCirculationSettings(),
+    getPendingFineLoanIds(),
   ]);
 
   return (
@@ -37,7 +46,11 @@ export default async function MisPrestamosPage() {
       ) : items.length === 0 ? (
         <EmptyLoans />
       ) : (
-        <LoanTable items={items} maxRenovaciones={settings.maxRenovaciones} />
+        <LoanTable
+          items={items}
+          maxRenovaciones={settings.maxRenovaciones}
+          pendingFineLoanIds={pendingFineLoanIds}
+        />
       )}
     </div>
   );

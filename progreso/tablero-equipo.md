@@ -4,13 +4,13 @@
 
 ## Módulos
 
-| Módulo                      | Estado                      | Dev        | Desde      |
-| --------------------------- | --------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)      | integrador | 2026-07-10 |
-| C — Circulación             | ✅ Completado (Fase 3)      | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | Disponible (desbloq. por C) | —          | —          |
-| E — Administración          | Bloqueado por B, C, D       | —          | —          |
+| Módulo                      | Estado                        | Dev        | Desde      |
+| --------------------------- | ----------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
+| C — Circulación             | ✅ Completado (Fase 3)        | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | 🔄 En progreso (F4.1 cerrada) | integrador | 2026-07-10 |
+| E — Administración          | Bloqueado por B, C, D         | —          | —          |
 
 ## Tareas en curso (dentro de módulos)
 
@@ -25,9 +25,10 @@
 | T-007 Reservas y préstamos (F3.1)          | C      | integrador | ✅ Terminada           |
 | T-008 Mis préstamos (F3.2)                 | C      | integrador | ✅ Terminada           |
 | T-009 Historial (F3.3)                     | C      | integrador | ✅ Terminada           |
-| T-010 Cálculo de multas (F4.1)             | D      | —          | Disponible (siguiente) |
+| T-010 Cálculo de multas (F4.1)             | D      | integrador | ✅ Terminada           |
+| T-011 Notificaciones + vista (F4.2)        | D      | —          | Disponible (siguiente) |
 
-> El resto de tareas (T-011…T-017) están Bloqueadas por sus dependencias. Ver `docs/backlog.md`.
+> El resto de tareas (T-012…T-017) están Bloqueadas por sus dependencias. Ver `docs/backlog.md`.
 
 ## Log de reclamos (append-only, evita disputas)
 
@@ -41,6 +42,7 @@
 - 2026-07-10 — **Módulo C reclamado** por el dev integrador. F3.1 (Reservas y préstamos) **cerrada**: flujo transaccional prestar/reservar. RPC atómicas `create_loan`/`create_reservation` (SECURITY DEFINER, `for update` sobre el stock, índices únicos parciales de "un activo por usuario/libro") aplicadas al remoto; `lib/services/loans.ts` y `reservations.ts` como únicas puertas; `lib/validations/circulation.ts` (fecha no anterior a hoy); Server Actions revalidan el UUID en servidor; el detalle presta/reserva con confirmación (diálogos globales) y ofrece reservar si se agota el stock. 56/56 unit; RPC verificadas end-to-end contra el remoto con rollback (stock 3→2, reserva 'activa', SQLSTATE BT001/BT002/BT003/BT404 correctos); typecheck/lint/build/audit-high verdes. Siguiente: F3.2 (Mis préstamos: renovar/devolver/vencidos).
 - 2026-07-10 — F3.2 (Mis préstamos) **cerrada**: `/mis-prestamos` con `LoanTable` responsive (4 estados) y renovar/devolver con confirmación. RPC atómicas `return_loan` (repone stock) y `renew_loan` (§7.2.5: máximo de renovaciones, bloqueo por multa pendiente; aceptan owner o bibliotecario para reuso en F5.3) aplicadas al remoto; `loans.ts` extendido (estado efectivo derivado, `canRenew`, `listOwnLoansWithBooks`, renew/return) + nuevo `settings.ts`; nav "Mis préstamos" activado. 68/68 unit; RPC verificadas end-to-end con rollback (renovaciones 0→1, stock Redes 2→3 al devolver, SQLSTATE BT100/BT101/BT200); typecheck/lint/build/audit-high verdes. Siguiente: F3.3 (Historial, cierra la Fase 3).
 - 2026-07-10 — F3.3 (Historial) **cerrada** → **Fase 3 (Circulación) COMPLETADA**. `/historial` (activos/vencidos/devueltos) con filtro por estado y rango de fechas + paginación; reusa `LoanTable` sin acciones; lógica pura `filterLoanHistory` (por estado efectivo + fechas) y `paginateList`; nav "Historial" activado. 79/79 unit; ruta de datos verificada bajo RLS contra el remoto; typecheck/lint/build/audit-high verdes. **Hito de integración F3 verificado** (prestar/reservar/renovar/devolver end-to-end + vistas Mis préstamos/Historial). **Módulo D (Multas & Notificaciones) queda Disponible.** Siguiente sugerido: F4.1 (cálculo de multas). Además: preview desplegada en Vercel (https://proyectointeraccion.vercel.app).
+- 2026-07-10 — **Módulo D reclamado** por el dev integrador. F4.1 (Cálculo de multas) **cerrada**: `lib/services/fines.ts` (única puerta a `fines`) con cálculo `dias_retraso × multa_diaria` (redondeo 2 dec.), generación por el sistema con cliente admin/service role (persiste `vencido` + crea/actualiza multa `pendiente`, índice único `loan_id`), checker `getPendingFineLoanIds` que "Mis préstamos" pasa a `canRenew` (Renovar deshabilitado con multa pendiente, §7.2.5), `markFinePaid` listo para F5.3. 86/86 unit; integración C↔D verificada end-to-end contra el remoto con rollback (multa visible por RLS, renovar bloqueado → BT102); typecheck/lint/build/audit-high verdes. Siguiente: F4.2 (motor de notificaciones + vista, cierra la Fase 4).
 
 ## Reglas rápidas
 
