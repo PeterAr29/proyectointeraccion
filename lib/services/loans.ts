@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Database, LoanStatus } from "@/lib/supabase/database.types";
-import { isPastDate } from "@/lib/utils/dates";
+import { daysBetween, isPastDate, toDate } from "@/lib/utils/dates";
+import type { HistoryEstado } from "@/lib/validations/circulation";
 
 /**
  * Servicio de préstamos (Módulo C): ÚNICA puerta a la tabla `loans`.
@@ -85,6 +86,60 @@ export function mergeLoansWithBooks(
     loan,
     book: byId.get(loan.book_id) ?? null,
   }));
+}
+
+/** Tamaño de página del historial de préstamos (F3.3). */
+export const HISTORY_PAGE_SIZE = 10;
+
+/**
+ * Filtra el historial por estado EFECTIVO y rango de fechas de préstamo.
+ * El estado se compara con `effectiveLoanStatus` (no con el `estado` crudo) para
+ * que el filtro coincida con lo que ve el usuario en la insignia. Fechas
+ * comparadas por día completo; una fecha inválida en el filtro se ignora.
+ */
+export function filterLoanHistory(
+  items: LoanWithBook[],
+  filters: { estado: HistoryEstado; desde: string; hasta: string },
+): LoanWithBook[] {
+  const desde = toDate(filters.desde);
+  const hasta = toDate(filters.hasta);
+  return items.filter(({ loan }) => {
+    if (
+      filters.estado !== "todos" &&
+      effectiveLoanStatus(loan) !== filters.estado
+    ) {
+      return false;
+    }
+    if (desde && daysBetween(desde, loan.fecha_prestamo) < 0) return false;
+    if (hasta && daysBetween(loan.fecha_prestamo, hasta) < 0) return false;
+    return true;
+  });
+}
+
+export interface Paged<T> {
+  items: T[];
+  /** Página acotada al rango válido [1, totalPages]. */
+  page: number;
+  totalPages: number;
+  total: number;
+}
+
+/** Pagina en memoria una lista ya filtrada, acotando la página al total real. */
+export function paginateList<T>(
+  items: T[],
+  page: number,
+  pageSize: number = HISTORY_PAGE_SIZE,
+): Paged<T> {
+  const total = items.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const clamped = Math.min(Math.max(1, Math.floor(page) || 1), totalPages);
+  const start = (clamped - 1) * pageSize;
+  return {
+    items: items.slice(start, start + pageSize),
+    page: clamped,
+    totalPages,
+    total,
+  };
 }
 
 /** Motivo por el que un préstamo no pudo registrarse (para mensajes en la UI). */

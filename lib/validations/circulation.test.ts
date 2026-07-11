@@ -2,8 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   dueDateSchema,
+  hasActiveHistoryFilters,
   isDueDateValid,
   parseBookId,
+  parseHistoryFilters,
   parseLoanId,
 } from "@/lib/validations/circulation";
 
@@ -27,6 +29,61 @@ describe("parseLoanId (circulation)", () => {
     expect(parseLoanId(uuid)).toBe(uuid);
     expect(parseLoanId("l1")).toBeNull();
     expect(parseLoanId(undefined)).toBeNull();
+  });
+});
+
+describe("parseHistoryFilters", () => {
+  it("aplica valores por defecto sin query params", () => {
+    expect(parseHistoryFilters({})).toEqual({
+      estado: "todos",
+      desde: "",
+      hasta: "",
+      page: 1,
+    });
+  });
+
+  it("acepta estado y fechas válidas (AAAA-MM-DD)", () => {
+    const f = parseHistoryFilters({
+      estado: "devuelto",
+      desde: "2026-07-01",
+      hasta: "2026-07-31",
+      page: "2",
+    });
+    expect(f).toEqual({
+      estado: "devuelto",
+      desde: "2026-07-01",
+      hasta: "2026-07-31",
+      page: 2,
+    });
+  });
+
+  it("tolera basura: estado y fechas inválidas caen a su valor por defecto", () => {
+    const f = parseHistoryFilters({
+      estado: "inventado",
+      desde: "ayer",
+      hasta: "2026/07/31",
+      page: "-3",
+    });
+    expect(f).toEqual({ estado: "todos", desde: "", hasta: "", page: 1 });
+  });
+
+  it("hasActiveHistoryFilters detecta filtros activos", () => {
+    expect(
+      hasActiveHistoryFilters({
+        estado: "todos",
+        desde: "",
+        hasta: "",
+        page: 1,
+      }),
+    ).toBe(false);
+    expect(
+      hasActiveHistoryFilters({
+        estado: "vencido",
+        desde: "",
+        hasta: "",
+        page: 1,
+      }),
+    ).toBe(true);
   });
 });
 

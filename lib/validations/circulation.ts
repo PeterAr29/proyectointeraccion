@@ -52,3 +52,57 @@ export const dueDateSchema = z
   .refine(isDueDateValid, {
     message: "La fecha de devolución no puede ser anterior a la fecha actual.",
   });
+
+// ---------------------------------------------------------------------------
+// Filtros del historial (F3.3). Viajan por query params (URL compartible).
+// `parseHistoryFilters` NUNCA lanza: valores basura caen a su valor por defecto.
+// ---------------------------------------------------------------------------
+
+/** Estados por los que se puede filtrar el historial (valores estables en la URL). */
+export const HISTORY_ESTADOS = [
+  "todos",
+  "activo",
+  "vencido",
+  "devuelto",
+] as const;
+export type HistoryEstado = (typeof HISTORY_ESTADOS)[number];
+
+/** Cadena de fecha `AAAA-MM-DD` o "" (la del `<input type="date">`). */
+const dateParam = z
+  .string()
+  .trim()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .catch("");
+
+export const historyFiltersSchema = z.object({
+  estado: z.enum(HISTORY_ESTADOS).catch("todos"),
+  desde: dateParam,
+  hasta: dateParam,
+  page: z.coerce.number().int().min(1).max(10000).catch(1),
+});
+
+export type HistoryFilters = z.infer<typeof historyFiltersSchema>;
+
+function firstValue(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/** Convierte los `searchParams` crudos en filtros de historial validados. */
+export function parseHistoryFilters(
+  searchParams: Record<string, string | string[] | undefined> | undefined,
+): HistoryFilters {
+  const sp = searchParams ?? {};
+  return historyFiltersSchema.parse({
+    estado: firstValue(sp.estado) ?? "todos",
+    desde: firstValue(sp.desde) ?? "",
+    hasta: firstValue(sp.hasta) ?? "",
+    page: firstValue(sp.page) ?? "1",
+  });
+}
+
+/** True si hay algún filtro de historial activo (para ofrecer "limpiar"). */
+export function hasActiveHistoryFilters(filters: HistoryFilters): boolean {
+  return (
+    filters.estado !== "todos" || filters.desde !== "" || filters.hasta !== ""
+  );
+}

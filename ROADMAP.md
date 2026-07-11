@@ -15,8 +15,8 @@
 | ---------------- | ------ |
 | Fases totales    | 6      |
 | Subfases totales | 17     |
-| Completadas      | 8 / 17 |
-| % avance         | ~47%   |
+| Completadas      | 9 / 17 |
+| % avance         | ~53%   |
 
 ## Detalle por fase
 
@@ -38,15 +38,15 @@
 
 ### F3: Circulación — Módulo [C]
 
-**Estado:** 🔄 En curso · **A cargo de:** dev integrador
+**Estado:** ✅ Completada · **A cargo de:** dev integrador
 
 - ✅ F3.1 [C] — Reservas y préstamos
 - ✅ F3.2 [C] — Mis préstamos (renovar/devolver/vencidos)
-- ⏳ F3.3 [C] — Historial
+- ✅ F3.3 [C] — Historial
 
 ### F4: Multas & Notificaciones — Módulo [D]
 
-**Estado:** ⚠️ Bloqueada por C
+**Estado:** 🔄 Disponible (desbloqueada por C)
 
 - ⏳ F4.1 [D] — Cálculo de multas
 - ⏳ F4.2 [D] — Motor de notificaciones + vista
@@ -88,3 +88,4 @@
 | 2026-07-10 | F2.2 Catálogo detalle+favoritos | B      | 4c05da6 | **Cierra Fase 2.** `/catalogo/[id]` (detalle + "libro no encontrado") y `/favoritos` (toggle+lista, RLS, 4 estados); `books.ts` +favoritos; 37/37 unit, e2e catálogo 6/6 contra el remoto. Módulo C queda Disponible                                                                                                                                                                        |
 | 2026-07-10 | F3.1 Reservas y préstamos       | C      | 25d60bf | Flujo transaccional prestar/reservar. RPC atómicas `create_loan`/`create_reservation` (SECURITY DEFINER, `for update`, índices únicos parciales) aplicadas al remoto; `loans.ts`/`reservations.ts` únicas puertas; `circulation.ts` (fecha≥hoy); confirmación con diálogos + oferta de reserva si se agota. 56/56 unit; RPC verificadas end-to-end con rollback (BT001/BT002/BT003/BT404)   |
 | 2026-07-10 | F3.2 Mis préstamos              | C      | 52bc1bb | `/mis-prestamos` con `LoanTable` responsive (4 estados) + renovar/devolver con confirmación. RPC atómicas `return_loan` (repone stock) / `renew_loan` (§7.2.5) aplicadas al remoto; `loans.ts` extendido (estado efectivo, canRenew, list/renew/return) + `settings.ts`; nav activado. 68/68 unit; RPC verificadas end-to-end con rollback (renovaciones 0→1, stock 2→3, BT100/BT101/BT200) |
+| 2026-07-10 | F3.3 Historial                  | C      | (pend.) | **Cierra Fase 3.** `/historial` (activos/vencidos/devueltos) con filtro por estado y rango de fechas + paginación; reusa `LoanTable` sin acciones; lógica pura `filterLoanHistory`/`paginateList`; nav activado. 79/79 unit; ruta de datos verificada bajo RLS contra el remoto. **Módulo D queda Disponible.**                                                                             |

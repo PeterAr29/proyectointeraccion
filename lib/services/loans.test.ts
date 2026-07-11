@@ -4,12 +4,15 @@ import {
   canRenew,
   computeDueDate,
   effectiveLoanStatus,
+  filterLoanHistory,
   mapCreateLoanError,
   mapRenewError,
   mapReturnError,
   mergeLoansWithBooks,
+  paginateList,
   type Loan,
   type LoanBook,
+  type LoanWithBook,
 } from "@/lib/services/loans";
 
 /** Crea un `Loan` mínimo para las pruebas puras. */
@@ -169,5 +172,104 @@ describe("mapRenewError / mapReturnError", () => {
     expect(mapReturnError("BT200")).toBe("not-returnable");
     expect(mapReturnError("BT000")).toBe("no-session");
     expect(mapReturnError(undefined)).toBe("error");
+  });
+});
+
+describe("filterLoanHistory", () => {
+  const book: LoanBook = { id: "b1", titulo: "Libro", autor: "Autor" };
+  const wrap = (loan: Loan): LoanWithBook => ({ loan, book });
+
+  const items: LoanWithBook[] = [
+    wrap(
+      makeLoan({
+        id: "a",
+        fecha_prestamo: "2026-06-01",
+        estado: "devuelto",
+        fecha_devolucion_real: "2026-06-10",
+      }),
+    ),
+    wrap(
+      makeLoan({
+        id: "b",
+        fecha_prestamo: "2026-07-01",
+        fecha_devolucion_estimada: "2099-01-01",
+      }),
+    ), // activo
+    wrap(
+      makeLoan({
+        id: "c",
+        fecha_prestamo: "2026-07-05",
+        fecha_devolucion_estimada: "2000-01-01",
+      }),
+    ), // vencido
+  ];
+
+  it("sin filtros devuelve todo", () => {
+    const out = filterLoanHistory(items, {
+      estado: "todos",
+      desde: "",
+      hasta: "",
+    });
+    expect(out.map((i) => i.loan.id)).toEqual(["a", "b", "c"]);
+  });
+
+  it("filtra por estado efectivo (devuelto/activo/vencido)", () => {
+    const dev = filterLoanHistory(items, {
+      estado: "devuelto",
+      desde: "",
+      hasta: "",
+    });
+    expect(dev.map((i) => i.loan.id)).toEqual(["a"]);
+
+    const venc = filterLoanHistory(items, {
+      estado: "vencido",
+      desde: "",
+      hasta: "",
+    });
+    expect(venc.map((i) => i.loan.id)).toEqual(["c"]);
+  });
+
+  it("filtra por rango de fechas de préstamo (inclusivo)", () => {
+    const out = filterLoanHistory(items, {
+      estado: "todos",
+      desde: "2026-07-01",
+      hasta: "2026-07-01",
+    });
+    expect(out.map((i) => i.loan.id)).toEqual(["b"]);
+  });
+
+  it("ignora fechas de filtro inválidas", () => {
+    const out = filterLoanHistory(items, {
+      estado: "todos",
+      desde: "no-fecha",
+      hasta: "",
+    });
+    expect(out).toHaveLength(3);
+  });
+});
+
+describe("paginateList", () => {
+  const items = Array.from({ length: 23 }, (_, i) => i);
+
+  it("devuelve la ventana de la primera página y el total", () => {
+    const p = paginateList(items, 1, 10);
+    expect(p.items).toHaveLength(10);
+    expect(p).toMatchObject({ page: 1, total: 23, totalPages: 3 });
+    expect(p.items[0]).toBe(0);
+  });
+
+  it("acota la página pedida al total real", () => {
+    const p = paginateList(items, 99, 10);
+    expect(p.page).toBe(3);
+    expect(p.items).toEqual([20, 21, 22]);
+  });
+
+  it("con lista vacía hay una sola página vacía", () => {
+    expect(paginateList([], 1, 10)).toEqual({
+      items: [],
+      page: 1,
+      total: 0,
+      totalPages: 1,
+    });
   });
 });

@@ -1,19 +1,27 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F3.2 — Circulación: Mis préstamos)
-**Última subfase completada:** F3.2 — Mis préstamos (renovar/devolver/vencidos) (módulo C)
-**Próxima subfase:** F3.3 — Historial (módulo C, última de Circulación)
+**Última actualización:** 2026-07-10 (cierre F3.3 — Historial → **Fase 3 COMPLETADA**)
+**Última subfase completada:** F3.3 — Historial (módulo C, Circulación)
+**Próxima subfase:** F4.1 — Cálculo de multas (módulo D, Multas & Notificaciones)
 
 ## Progreso global
 
-- Fases completadas: **2/6** (Fase 1 · Fundación & Acceso; Fase 2 · Catálogo)
-- Subfases completadas: 8/17
-- Porcentaje estimado: ~47%
+- Fases completadas: **3/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación)
+- Subfases completadas: 9/17
+- Porcentaje estimado: ~53%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
-- **Módulo B (Catálogo) COMPLETADO**: F2.1 y F2.2 cerradas.
-- **Módulo C (Circulación) EN PROGRESO**: F3.1 y F3.2 cerradas; queda F3.3 (historial).
+- **Módulo B (Catálogo) COMPLETADO**; **Módulo C (Circulación) COMPLETADO** (F3.1–F3.3).
+- **Módulo D (Multas & Notificaciones) DISPONIBLE para reclamar** (dependía de C).
+- **Preview desplegada en Vercel**: https://proyectointeraccion.vercel.app (contra el Supabase remoto; auto-deploy en cada push a `main`).
 
 ## Resumen de lo construido hasta ahora
+
+**F3.3 completada — cierra la Fase 3.** Nueva ruta `/historial`: historial
+completo (activos/vencidos/devueltos) con filtro por estado y rango de fechas y
+paginación; reusa `LoanTable` sin acciones. Solo lectura, vía `loans.ts` (RLS).
+Lógica pura nueva: `filterLoanHistory` (por estado efectivo + fechas) y
+`paginateList`. Nav "Historial" activado. **79/79 unit**; ruta de datos verificada
+bajo RLS contra el remoto. Detalle en `progreso/fase-3.3-C.md`.
 
 **F3.2 completada.** Nueva ruta `/mis-prestamos`: el estudiante ve sus préstamos
 activos/vencidos y puede **renovar** y **devolver**, con confirmación:
@@ -119,13 +127,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                     | Dev        | Desde      |
-| --------------------------- | -------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)     | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)     | integrador | 2026-07-10 |
-| C — Circulación             | 🔄 En progreso (F3.1–F3.2) | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | Bloqueado por C            | —          | —          |
-| E — Administración          | Bloqueado por B, C, D      | —          | —          |
+| Módulo                      | Estado                      | Dev        | Desde      |
+| --------------------------- | --------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)      | integrador | 2026-07-10 |
+| C — Circulación             | ✅ Completado (Fase 3)      | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | Disponible (desbloq. por C) | —          | —          |
+| E — Administración          | Bloqueado por B, C, D       | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 
