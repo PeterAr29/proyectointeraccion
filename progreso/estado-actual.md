@@ -1,19 +1,39 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F2.2 — Catálogo: detalle + favoritos → **Fase 2 COMPLETADA**)
-**Última subfase completada:** F2.2 — Catálogo: detalle de libro + favoritos (módulo B)
-**Próxima subfase:** F3.1 — Reservas y préstamos (módulo C, Circulación)
+**Última actualización:** 2026-07-10 (cierre F3.1 — Circulación: reservas y préstamos)
+**Última subfase completada:** F3.1 — Reservas y préstamos (módulo C, Circulación)
+**Próxima subfase:** F3.2 — Mis préstamos (renovar/devolver/vencidos) (módulo C)
 
 ## Progreso global
 
 - Fases completadas: **2/6** (Fase 1 · Fundación & Acceso; Fase 2 · Catálogo)
-- Subfases completadas: 6/17
-- Porcentaje estimado: ~35%
+- Subfases completadas: 7/17
+- Porcentaje estimado: ~41%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
 - **Módulo B (Catálogo) COMPLETADO**: F2.1 y F2.2 cerradas.
-- **Módulo C (Circulación) DISPONIBLE para reclamar** (depende de A y B, ya listos).
+- **Módulo C (Circulación) EN PROGRESO**: F3.1 cerrada; siguen F3.2 y F3.3.
 
 ## Resumen de lo construido hasta ahora
+
+**F3.1 completada.** El detalle del libro presta y reserva de verdad, con flujo
+transaccional y confirmación obligatoria:
+
+- **Prestar/Reservar reales:** `/catalogo/[id]` reemplaza el botón deshabilitado
+  de F2.2 por `LoanActions` (client). Prestar si hay stock (calcula
+  `fecha_devolucion = hoy + dias_prestamo`, decrementa stock **atómicamente**);
+  reservar si no hay (estima disponibilidad). Si se agota el último ejemplar en
+  plena acción, **ofrece reservar** (RF-C01). Confirmación vía diálogos globales.
+- **Lógica en servicios + RPC atómicas:** `lib/services/loans.ts` y
+  `reservations.ts` son las únicas puertas; delegan en las RPC Postgres
+  `create_loan`/`create_reservation` (`SECURITY DEFINER`, `for update` sobre el
+  stock, índices únicos parciales "un activo por usuario/libro"). Esto garantiza
+  atomicidad (§2.3) y sortea que la RLS impide al estudiante escribir en `books`.
+  Server Actions revalidan el UUID en servidor; `lib/validations/circulation.ts`
+  aporta `dueDateSchema` (fecha no anterior a hoy, §7.2.2).
+- **Verificado:** typecheck/lint/build/audit-high verdes; **56/56 unit**; RPC
+  probadas **end-to-end contra el remoto con rollback** (stock 3→2, reserva
+  'activa', SQLSTATE BT001/BT002/BT003/BT404 correctos, seed intacto). Migración
+  aplicada al remoto `bibliotec`. Detalle en `progreso/fase-3.1-C.md`.
 
 **F2.2 completada — cierra la Fase 2.** El catálogo tiene detalle y favoritos:
 
@@ -81,13 +101,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                          | Dev        | Desde      |
-| --------------------------- | ------------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)          | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)          | integrador | 2026-07-10 |
-| C — Circulación             | Disponible (desbloqueado por B) | —          | —          |
-| D — Multas & Notificaciones | Bloqueado por C                 | —          | —          |
-| E — Administración          | Bloqueado por B, C, D           | —          | —          |
+| Módulo                      | Estado                        | Dev        | Desde      |
+| --------------------------- | ----------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
+| C — Circulación             | 🔄 En progreso (F3.1 cerrada) | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | Bloqueado por C               | —          | —          |
+| E — Administración          | Bloqueado por B, C, D         | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 
@@ -110,6 +130,7 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - **Rate limiting en memoria (F1.4):** `lib/utils/rate-limit.ts` es por-instancia (se reinicia con el proceso, no se comparte entre lambdas). Suficiente para el piloto; en producción multi-instancia movería a Upstash/Redis.
 - **CI e2e:** añadir `npx playwright install --with-deps chromium` antes de `npm run test:e2e` en el pipeline (localmente ya se instaló el navegador).
 - **RLS/advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/is_librarian` (revela solo el rol del propio llamante, ningún dato ajeno). Endurecimiento opcional: mover la función a un esquema no expuesto por PostgREST. Ver `fase-1.2-A.md`.
+- **Nuevo (F3.1) advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/create_loan` y `rpc/create_reservation` (`SECURITY DEFINER`). Es intencional: el estudiante debe poder prestar/reservar y la función requiere DEFINER para decrementar `books` bajo RLS. Autorizan por `auth.uid()` internamente y solo tocan filas propias + el libro puntual. No exponen datos ajenos. Misma postura que `is_librarian`.
 - 2FA para el rol bibliotecario (fuera del MVP; anotado en especificaciones §5.8).
 - Notificaciones por email/push (F4 solo genera notificaciones in-app).
 - `next lint` deprecado (se elimina en Next 16): migrar a ESLint CLI antes de subir de major.

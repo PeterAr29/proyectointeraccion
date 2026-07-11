@@ -6,7 +6,7 @@ import { ErrorState } from "@/components/feedback/ErrorState";
 import { BookCover } from "@/components/biblioteca/BookCover";
 import { StatusBadge } from "@/components/biblioteca/StatusBadge";
 import { FavoriteButton } from "@/components/biblioteca/FavoriteButton";
-import { buttonVariants } from "@/components/ui/button";
+import { LoanActions } from "@/components/biblioteca/LoanActions";
 import {
   getBookById,
   isAvailable,
@@ -76,7 +76,11 @@ export default async function BookDetailPage({
           </dl>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <LoanAction available={isAvailable(book)} />
+            <LoanActions
+              bookId={book.id}
+              available={isAvailable(book)}
+              titulo={book.titulo}
+            />
             <FavoriteButton bookId={book.id} initialFavorite={favorite} />
           </div>
         </div>
@@ -131,29 +135,5 @@ function Meta({ label, value }: { label: string; value?: string | null }) {
       </dt>
       <dd className="mt-0.5 font-medium">{value?.trim() ? value : "—"}</dd>
     </div>
-  );
-}
-
-/**
- * Acción de préstamo/reserva. Deshabilitada en F2.2: el flujo transaccional
- * (validar stock, decrementar disponibilidad) es del módulo C. Se muestra
- * deshabilitada con una explicación para no prometer algo que aún no ocurre.
- */
-function LoanAction({ available }: { available: boolean }) {
-  const label = available ? "Prestar" : "Reservar";
-  return (
-    <span
-      title="Disponible próximamente, con el módulo de circulación."
-      className="cursor-not-allowed"
-    >
-      <button
-        type="button"
-        disabled
-        aria-disabled="true"
-        className={buttonVariants({ variant: "primary" })}
-      >
-        {label}
-      </button>
-    </span>
   );
 }

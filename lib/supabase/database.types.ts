@@ -235,6 +235,16 @@ export type Database = {
         Args: Record<never, never>;
         Returns: boolean;
       };
+      /** F3.1: presta un libro de forma atómica; devuelve la fila de `loans`. */
+      create_loan: {
+        Args: { p_book_id: string };
+        Returns: Database["public"]["Tables"]["loans"]["Row"];
+      };
+      /** F3.1: reserva un libro sin stock; devuelve la fila de `reservations`. */
+      create_reservation: {
+        Args: { p_book_id: string };
+        Returns: Database["public"]["Tables"]["reservations"]["Row"];
+      };
     };
     Enums: {
       user_role: UserRole;

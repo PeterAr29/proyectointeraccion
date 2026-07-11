@@ -15,8 +15,8 @@
 | ---------------- | ------ |
 | Fases totales    | 6      |
 | Subfases totales | 17     |
-| Completadas      | 6 / 17 |
-| % avance         | ~35%   |
+| Completadas      | 7 / 17 |
+| % avance         | ~41%   |
 
 ## Detalle por fase
 
@@ -38,9 +38,9 @@
 
 ### F3: Circulación — Módulo [C]
 
-**Estado:** 🔄 Disponible (desbloqueada por A y B)
+**Estado:** 🔄 En curso · **A cargo de:** dev integrador
 
-- ⏳ F3.1 [C] — Reservas y préstamos
+- ✅ F3.1 [C] — Reservas y préstamos
 - ⏳ F3.2 [C] — Mis préstamos (renovar/devolver/vencidos)
 - ⏳ F3.3 [C] — Historial
 
@@ -78,11 +78,12 @@
 
 > Anotar fecha y commit cada vez que se cierra una subfase.
 
-| Fecha      | Subfase                         | Módulo | Commit  | Notas                                                                                                                                                                                                                |
-| ---------- | ------------------------------- | ------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-07-10 | F1.1 Setup & tooling            | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                                                                                                                        |
-| 2026-07-10 | F1.2 BD, RLS y seed             | A      | 62a6b7d | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos                                                                                                |
-| 2026-07-10 | F1.3 Sistema de diseño          | A      | 3da6f81 | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes                                                                    |
-| 2026-07-10 | F1.4 Acceso+shell+perfil        | A      | 8d8b3f7 | **Cierra Fase 1** (`v0.1.0`). Auth Supabase (login por código/registro/recuperar), middleware, shell responsive, perfil, `users.ts`; e2e login 3/3                                                                   |
-| 2026-07-10 | F2.1 Catálogo listado/búsqueda  | B      | 46fcb4e | `/catalogo` con búsqueda/filtros/paginación + 4 estados; `books.ts` única puerta a books; 32/32 unit, e2e catálogo 3/3 contra el remoto                                                                              |
-| 2026-07-10 | F2.2 Catálogo detalle+favoritos | B      | 4c05da6 | **Cierra Fase 2.** `/catalogo/[id]` (detalle + "libro no encontrado") y `/favoritos` (toggle+lista, RLS, 4 estados); `books.ts` +favoritos; 37/37 unit, e2e catálogo 6/6 contra el remoto. Módulo C queda Disponible |
+| Fecha      | Subfase                         | Módulo | Commit  | Notas                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------- | ------------------------------- | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-10 | F1.1 Setup & tooling            | A      | 7566ec9 | Next 15.5.20 + TS strict + Tailwind + shadcn; hooks, CI, Vitest/Playwright; audit high limpio                                                                                                                                                                                                                                                                                             |
+| 2026-07-10 | F1.2 BD, RLS y seed             | A      | 62a6b7d | 8 tablas + 5 enums, RLS por rol probado end-to-end en Supabase remoto `bibliotec`, seed aplicado, helpers SSR + tipos                                                                                                                                                                                                                                                                     |
+| 2026-07-10 | F1.3 Sistema de diseño          | A      | 3da6f81 | Componentes reutilizables + 10 diálogos globales + Toast, utils dates/currency con tests, `/kitchen-sink`; 17/17 tests, build y audit high verdes                                                                                                                                                                                                                                         |
+| 2026-07-10 | F1.4 Acceso+shell+perfil        | A      | 8d8b3f7 | **Cierra Fase 1** (`v0.1.0`). Auth Supabase (login por código/registro/recuperar), middleware, shell responsive, perfil, `users.ts`; e2e login 3/3                                                                                                                                                                                                                                        |
+| 2026-07-10 | F2.1 Catálogo listado/búsqueda  | B      | 46fcb4e | `/catalogo` con búsqueda/filtros/paginación + 4 estados; `books.ts` única puerta a books; 32/32 unit, e2e catálogo 3/3 contra el remoto                                                                                                                                                                                                                                                   |
+| 2026-07-10 | F2.2 Catálogo detalle+favoritos | B      | 4c05da6 | **Cierra Fase 2.** `/catalogo/[id]` (detalle + "libro no encontrado") y `/favoritos` (toggle+lista, RLS, 4 estados); `books.ts` +favoritos; 37/37 unit, e2e catálogo 6/6 contra el remoto. Módulo C queda Disponible                                                                                                                                                                      |
+| 2026-07-10 | F3.1 Reservas y préstamos       | C      | (pend.) | Flujo transaccional prestar/reservar. RPC atómicas `create_loan`/`create_reservation` (SECURITY DEFINER, `for update`, índices únicos parciales) aplicadas al remoto; `loans.ts`/`reservations.ts` únicas puertas; `circulation.ts` (fecha≥hoy); confirmación con diálogos + oferta de reserva si se agota. 56/56 unit; RPC verificadas end-to-end con rollback (BT001/BT002/BT003/BT404) |
