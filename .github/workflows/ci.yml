@@ -69,6 +69,17 @@ jobs:
         if: steps.secrets.outputs.present == 'true'
         run: npx playwright install --with-deps chromium
 
+      # El e2e corre contra el build de producción (ver playwright.config.ts):
+      # el modo dev compila bajo demanda y en un runner en frío el login puede no
+      # hidratar a tiempo. Producción sirve el JS ya compilado.
+      - name: Build (producción, para el e2e)
+        if: steps.secrets.outputs.present == 'true'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        run: npm run build
+
       - name: Run E2E (flujos críticos)
         if: steps.secrets.outputs.present == 'true'
         env:
