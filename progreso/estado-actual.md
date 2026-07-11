@@ -2,7 +2,7 @@
 
 **Última actualización:** 2026-07-11 (cierre F6.2 — Endurecimiento, PWA y despliegue → **PROYECTO COMPLETO**)
 **Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última)
-**Próxima subfase:** — ninguna. **Las 6 fases (17/17 subfases) están completas.** Solo queda la operación/entrega (recolectar SUS real, push a producción y verificación de Lighthouse PWA en el móvil).
+**Próxima subfase:** — ninguna. **Las 6 fases (17/17 subfases) están completas.** Deploy en producción, PWA verificada en móvil, e2e en verde en CI y secretos configurados. **Único pendiente de entrega:** recolectar el **SUS real** con el kit `docs/sus-kit/`.
 
 ## Progreso global
 
@@ -301,19 +301,24 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - [ ] Instalar **Docker Desktop** si se quiere levantar el stack local (`supabase start` / `db reset`). Hoy la BD se aplica y verifica contra el remoto.
 - [ ] Crear el GitHub Project desde `docs/backlog.md` (o generar issues con `gh`).
 - [ ] Instalar **gitleaks** localmente (`winget install gitleaks`) para activar el escaneo de secretos en pre-commit (hoy hace fallback si no está).
-- [ ] **(F6.2) Configurar los 3 secretos** en GitHub → Settings → Secrets → Actions
+- [x] ~~**(F6.2) Configurar los 3 secretos** en GitHub Actions~~ — **hecho**
       (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
-      `SUPABASE_SERVICE_ROLE_KEY`) para que el job e2e del CI se ejecute (hoy se
-      omite en verde si faltan).
-- [ ] **(F6.2) Entrega final:** recolectar el **SUS real** (F6.1), hacer `git push`
-      a `main` (auto-deploy en Vercel) y verificar en un móvil la **instalación PWA** + **Lighthouse PWA en verde** contra la URL de producción.
+      `SUPABASE_SERVICE_ROLE_KEY` cargados con `gh secret set`). El job e2e ya
+      corre en CI y quedó **verde** (auth 3/3 + catálogo 6/6) contra el build de
+      producción (run `29166663484`).
+- [x] ~~Deploy a producción~~ — **hecho**: `main` empujado, auto-deploy en Vercel
+      verificado (headers/manifest/SW/íconos 200 sobre HTTPS). PWA instalable
+      verificada en móvil por el usuario.
+- [ ] **(F6.2) Entrega final — único pendiente:** recolectar el **SUS real** con el
+      kit `docs/sus-kit/` (5–8 usuarios) y pegar la tabla en
+      `docs/evaluacion-usabilidad.md` §4.3, sustituyendo el piloto simulado.
 
 ## Deudas técnicas anotadas
 
 - **Auth:** activar _Leaked Password Protection_ (HaveIBeenPwned) en Supabase Auth (advisor de seguridad, alineado con A07). Es un ajuste de dashboard/config, no de migración. **Pendiente tras F1.4.**
 - **Recuperación de contraseña:** el flujo llama `resetPasswordForEmail`, pero el envío real requiere configurar SMTP en Supabase Auth (no configurado en el MVP). Flujo/validación correctos; falta la config de correo.
 - **Rate limiting en memoria (F1.4):** `lib/utils/rate-limit.ts` es por-instancia (se reinicia con el proceso, no se comparte entre lambdas). Suficiente para el piloto; en producción multi-instancia movería a Upstash/Redis.
-- ~~**CI e2e:** añadir `npx playwright install --with-deps chromium`~~ — **hecho en F6.2** (job `e2e` con guard por secretos).
+- ~~**CI e2e:** añadir `npx playwright install --with-deps chromium`~~ — **hecho en F6.2** (job `e2e` con guard por secretos). El e2e corre contra el **build de producción** (`npm run start`), no `dev`: en un runner en frío el modo dev no hidrataba a tiempo y el login caía a submit nativo GET (fix commit `ad2eddb`). **Verde en CI** (run `29166663484`).
 - **RLS/advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/is_librarian` (revela solo el rol del propio llamante, ningún dato ajeno). Endurecimiento opcional: mover la función a un esquema no expuesto por PostgREST. Ver `fase-1.2-A.md`.
 - **Nuevo (F3.1) advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/create_loan` y `rpc/create_reservation` (`SECURITY DEFINER`). Es intencional: el estudiante debe poder prestar/reservar y la función requiere DEFINER para decrementar `books` bajo RLS. Autorizan por `auth.uid()` internamente y solo tocan filas propias + el libro puntual. No exponen datos ajenos. Misma postura que `is_librarian`.
 - 2FA para el rol bibliotecario (fuera del MVP; anotado en especificaciones §5.8).
