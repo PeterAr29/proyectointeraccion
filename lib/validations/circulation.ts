@@ -22,6 +22,12 @@ export function parseBookId(value: string | undefined): string | null {
   return result.success ? result.data : null;
 }
 
+/** Un id de préstamo también es UUID; se valida antes de tocar la BD. */
+export function parseLoanId(value: string | undefined): string | null {
+  const result = bookIdSchema.safeParse(value);
+  return result.success ? result.data : null;
+}
+
 /**
  * `true` si una fecha de devolución NO es anterior a hoy (regla §7.2.2: la fecha
  * de devolución no puede ser anterior a la fecha actual). Hoy cuenta como válido.

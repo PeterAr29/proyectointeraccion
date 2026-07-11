@@ -4,6 +4,7 @@ import {
   dueDateSchema,
   isDueDateValid,
   parseBookId,
+  parseLoanId,
 } from "@/lib/validations/circulation";
 
 describe("parseBookId (circulation)", () => {
@@ -17,6 +18,15 @@ describe("parseBookId (circulation)", () => {
     expect(parseBookId("../../etc")).toBeNull();
     expect(parseBookId(undefined)).toBeNull();
     expect(parseBookId("")).toBeNull();
+  });
+});
+
+describe("parseLoanId (circulation)", () => {
+  it("acepta un UUID válido y rechaza lo que no lo es", () => {
+    const uuid = "10000000-0000-0000-0000-000000000001";
+    expect(parseLoanId(uuid)).toBe(uuid);
+    expect(parseLoanId("l1")).toBeNull();
+    expect(parseLoanId(undefined)).toBeNull();
   });
 });
 

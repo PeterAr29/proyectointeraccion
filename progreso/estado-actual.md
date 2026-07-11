@@ -1,19 +1,37 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F3.1 — Circulación: reservas y préstamos)
-**Última subfase completada:** F3.1 — Reservas y préstamos (módulo C, Circulación)
-**Próxima subfase:** F3.2 — Mis préstamos (renovar/devolver/vencidos) (módulo C)
+**Última actualización:** 2026-07-10 (cierre F3.2 — Circulación: Mis préstamos)
+**Última subfase completada:** F3.2 — Mis préstamos (renovar/devolver/vencidos) (módulo C)
+**Próxima subfase:** F3.3 — Historial (módulo C, última de Circulación)
 
 ## Progreso global
 
 - Fases completadas: **2/6** (Fase 1 · Fundación & Acceso; Fase 2 · Catálogo)
-- Subfases completadas: 7/17
-- Porcentaje estimado: ~41%
+- Subfases completadas: 8/17
+- Porcentaje estimado: ~47%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
 - **Módulo B (Catálogo) COMPLETADO**: F2.1 y F2.2 cerradas.
-- **Módulo C (Circulación) EN PROGRESO**: F3.1 cerrada; siguen F3.2 y F3.3.
+- **Módulo C (Circulación) EN PROGRESO**: F3.1 y F3.2 cerradas; queda F3.3 (historial).
 
 ## Resumen de lo construido hasta ahora
+
+**F3.2 completada.** Nueva ruta `/mis-prestamos`: el estudiante ve sus préstamos
+activos/vencidos y puede **renovar** y **devolver**, con confirmación:
+
+- **Tabla responsive** (`LoanTable`, scroll horizontal <768px) con Libro/Estado/
+  Devolución/Renovaciones/Acciones; **estado efectivo derivado** en lectura
+  (`effectiveLoanStatus`: vencido si la fecha estimada ya pasó, §7.2.3).
+- **Renovar** recalcula fecha (hoy + `dias_prestamo`) y respeta §7.2.5 (máximo de
+  renovaciones; bloqueado con multa pendiente — botón deshabilitado con tooltip).
+  **Devolver** marca la devolución y **repone stock** de forma atómica.
+- **RPC atómicas** `renew_loan`/`return_loan` (`SECURITY DEFINER`, aceptan owner o
+  bibliotecario para reusarse en F5.3). `lib/services/loans.ts` extendido
+  (`listOwnLoansWithBooks`, `renewLoan`, `returnLoan`, lógica pura) +
+  `lib/services/settings.ts` (`getCirculationSettings`). Nav "Mis préstamos" ON.
+- **Verificado:** typecheck/lint/build/audit-high verdes; **68/68 unit**; RPC
+  probadas end-to-end contra el remoto con rollback (renovaciones 0→1, stock de
+  Redes 2→3 al devolver, SQLSTATE BT100/BT101/BT200). Migración aplicada al
+  remoto. Detalle en `progreso/fase-3.2-C.md`.
 
 **F3.1 completada.** El detalle del libro presta y reserva de verdad, con flujo
 transaccional y confirmación obligatoria:
@@ -101,13 +119,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                        | Dev        | Desde      |
-| --------------------------- | ----------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
-| C — Circulación             | 🔄 En progreso (F3.1 cerrada) | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | Bloqueado por C               | —          | —          |
-| E — Administración          | Bloqueado por B, C, D         | —          | —          |
+| Módulo                      | Estado                     | Dev        | Desde      |
+| --------------------------- | -------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)     | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)     | integrador | 2026-07-10 |
+| C — Circulación             | 🔄 En progreso (F3.1–F3.2) | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | Bloqueado por C            | —          | —          |
+| E — Administración          | Bloqueado por B, C, D      | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 

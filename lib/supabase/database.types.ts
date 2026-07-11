@@ -245,6 +245,16 @@ export type Database = {
         Args: { p_book_id: string };
         Returns: Database["public"]["Tables"]["reservations"]["Row"];
       };
+      /** F3.2: registra la devolución y repone stock; devuelve la fila de `loans`. */
+      return_loan: {
+        Args: { p_loan_id: string };
+        Returns: Database["public"]["Tables"]["loans"]["Row"];
+      };
+      /** F3.2: renueva el préstamo recalculando la fecha; devuelve la fila de `loans`. */
+      renew_loan: {
+        Args: { p_loan_id: string };
+        Returns: Database["public"]["Tables"]["loans"]["Row"];
+      };
     };
     Enums: {
       user_role: UserRole;
