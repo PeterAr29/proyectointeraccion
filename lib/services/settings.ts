@@ -40,3 +40,25 @@ export async function getCirculationSettings(): Promise<CirculationSettings> {
     maxRenovaciones: data.max_renovaciones,
   };
 }
+
+/**
+ * Actualiza la configuración de circulación (fila única id=1). Solo el
+ * bibliotecario (RLS `settings_update_librarian`); la Server Action revalida el
+ * rol. Los cambios afectan a los préstamos NUEVOS, no a los ya emitidos: la RPC
+ * `create_loan` lee `dias_prestamo` en el momento de prestar. Escritura con
+ * `update` sobre el singleton (creado en el seed).
+ */
+export async function updateCirculationSettings(
+  input: CirculationSettings,
+): Promise<{ ok: boolean }> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("settings")
+    .update({
+      dias_prestamo: input.diasPrestamo,
+      multa_diaria: input.multaDiaria,
+      max_renovaciones: input.maxRenovaciones,
+    })
+    .eq("id", 1);
+  return { ok: !error };
+}

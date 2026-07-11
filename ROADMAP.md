@@ -15,8 +15,8 @@
 | ---------------- | ------- |
 | Fases totales    | 6       |
 | Subfases totales | 17      |
-| Completadas      | 14 / 17 |
-| % avance         | ~80%    |
+| Completadas      | 15 / 17 |
+| % avance         | ~88%    |
 
 ## Detalle por fase
 
@@ -53,16 +53,16 @@
 
 ### F5: Administración — Módulo [E]
 
-**Estado:** 🔄 En curso (3/4) · **A cargo de:** dev integrador
+**Estado:** ✅ Completada · **A cargo de:** dev integrador
 
 - ✅ F5.1 [E] — Dashboard con KPIs
 - ✅ F5.2 [E] — CRUD de libros y usuarios
 - ✅ F5.3 [E] — Préstamos, devoluciones y multas
-- ⏳ F5.4 [E] — Reportes y configuración
+- ✅ F5.4 [E] — Reportes y configuración
 
 ### F6: Evaluación IHC & Producción
 
-**Estado:** ⚠️ Bloqueada por todas
+**Estado:** 🟢 Disponible (dependencias A–E listas)
 
 - ⏳ F6.1 — Evaluación de usabilidad (Nielsen + recorrido cognitivo + SUS)
 - ⏳ F6.2 — Endurecimiento y despliegue
@@ -71,7 +71,7 @@
 
 - **M1 — Fundación lista (`v0.1.0`):** ✅ **alcanzado 2026-07-10.** F1 cerrada; módulos B–E abiertos para reclamar.
 - **M2 — Estudiante funcional:** ✅ **alcanzado 2026-07-10.** F4 cerrada (catálogo + circulación + multas/notificaciones).
-- **M3 — Sistema completo:** al cerrar F5 (admin operativo).
+- **M3 — Sistema completo:** ✅ **alcanzado 2026-07-11.** F5 cerrada (admin operativo: dashboard, CRUD, circulación, reportes, configuración).
 - **M4 — V1.0 en producción (`v1.0.0`):** al cerrar F6.
 
 ## Bitácora de cierres

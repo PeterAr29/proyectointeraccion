@@ -1,20 +1,36 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-11 (cierre F5.3 — Préstamos, devoluciones y multas, módulo E)
-**Última subfase completada:** F5.3 — Préstamos, devoluciones y multas (módulo E, Administración)
-**Próxima subfase:** F5.4 — Reportes y configuración (módulo E, cierra la Fase 5)
+**Última actualización:** 2026-07-11 (cierre F5.4 — Reportes y configuración, módulo E; **cierra Fase 5**, hito M3)
+**Última subfase completada:** F5.4 — Reportes y configuración (módulo E, Administración)
+**Próxima subfase:** F6.1 — Evaluación de usabilidad (Nielsen + recorrido cognitivo + SUS)
 
 ## Progreso global
 
-- Fases completadas: **4/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación; Fase 4 · Multas & Notificaciones). **Fase 5 (Administración) EN CURSO** (3/4 subfases).
-- Subfases completadas: 14/17
-- Porcentaje estimado: ~80%
+- Fases completadas: **5/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación; Fase 4 · Multas & Notificaciones; **Fase 5 · Administración**). Solo queda **Fase 6 (Evaluación IHC & Producción)**.
+- Subfases completadas: 15/17
+- Porcentaje estimado: ~88%
+- **Hito M3 alcanzado**: sistema completo (panel de administración operativo).
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
 - **Hito M2 alcanzado**: estudiante funcional (catálogo + circulación + multas/notificaciones).
-- **Módulos B, C y D COMPLETADOS**; **Módulo E (Administración) EN PROGRESO** (F5.1 cerrada; el panel del bibliotecario empieza a existir).
+- **Hito M3 alcanzado**: sistema completo — **Módulos A, B, C, D y E COMPLETADOS**. El bibliotecario tiene dashboard, CRUD de libros/usuarios, circulación (devoluciones+multas), reportes y configuración.
 - **Preview desplegada en Vercel**: https://proyectointeraccion.vercel.app (contra el Supabase remoto; auto-deploy en cada push a `main`).
 
 ## Resumen de lo construido hasta ahora
+
+**F5.4 completada — cierra la Fase 5 (Administración) y alcanza el hito M3.**
+Últimas vistas del panel: reportes y configuración.
+
+- **`/reportes`**: préstamos por mes, libros más prestados y resumen de multas,
+  con **export CSV** (generado en el cliente con `lib/utils/csv`). `reports.ts`
+  compone `loans-admin`/`fines-admin` y agrega con puros testeables. 4 estados.
+- **`/configuracion`**: edita `dias_prestamo`/`multa_diaria`/`max_renovaciones`
+  (Zod, solo bibliotecario). No retroactivo: `create_loan` lee el valor vigente.
+- Nav "Reportes" y "Configuración" activados. `settings.updateCirculationSettings`.
+- **Verificado:** typecheck/lint/build/audit-high verdes; **137/137 unit**;
+  end-to-end con rollback (bibliotecario edita config → préstamo nuevo toma el
+  nuevo plazo de 7 días; estudiante NO edita settings; seed intacto). Detalle en
+  `fase-5.4-E.md`. **Hito de integración F5 verificado** (KPIs + CRUD +
+  devolución con multa + config que afecta préstamos nuevos).
 
 **F5.3 completada.** El bibliotecario opera la circulación de todos los usuarios:
 
@@ -221,13 +237,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                        | Dev        | Desde      |
-| --------------------------- | ----------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
-| C — Circulación             | ✅ Completado (Fase 3)        | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | ✅ Completado (Fase 4)        | integrador | 2026-07-10 |
-| E — Administración          | 🔄 En progreso (F5.3 cerrada) | integrador | 2026-07-11 |
+| Módulo                      | Estado                 | Dev        | Desde      |
+| --------------------------- | ---------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1) | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2) | integrador | 2026-07-10 |
+| C — Circulación             | ✅ Completado (Fase 3) | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | ✅ Completado (Fase 4) | integrador | 2026-07-10 |
+| E — Administración          | ✅ Completado (Fase 5) | integrador | 2026-07-11 |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 

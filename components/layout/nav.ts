@@ -1,4 +1,5 @@
 import {
+  BarChart3,
   Bell,
   BookMarked,
   BookOpen,
@@ -57,11 +58,12 @@ const LIBRARIAN_NAV: NavItem[] = [
   { label: "Préstamos", href: "/prestamos", icon: BookMarked, enabled: true },
   { label: "Devoluciones", href: "/devoluciones", icon: Undo2, enabled: true },
   { label: "Multas", href: "/multas", icon: ReceiptText, enabled: true },
+  { label: "Reportes", href: "/reportes", icon: BarChart3, enabled: true },
   {
     label: "Configuración",
     href: "/configuracion",
     icon: Settings,
-    enabled: false,
+    enabled: true,
   },
   { label: "Perfil", href: "/perfil", icon: User, enabled: true },
 ];
