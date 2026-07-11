@@ -196,6 +196,22 @@ export async function getCatalogFacets(): Promise<{
 }
 
 // ---------------------------------------------------------------------------
+// Métricas (Módulo E, F5.1)
+// ---------------------------------------------------------------------------
+// El bibliotecario puede contar todo el catálogo (RLS `books_select_authenticated`
+// permite la lectura a cualquier autenticado). Lo consume el dashboard de admin.
+
+/** Número total de libros del catálogo. `null` ante error de BD (→ ErrorState). */
+export async function countBooks(): Promise<number | null> {
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("books")
+    .select("id", { count: "exact", head: true });
+  if (error) return null;
+  return count ?? 0;
+}
+
+// ---------------------------------------------------------------------------
 // Favoritos (Módulo B, F2.2)
 // ---------------------------------------------------------------------------
 // La tabla `favorites` tiene RLS "solo los propios" (user_id = auth.uid()), así

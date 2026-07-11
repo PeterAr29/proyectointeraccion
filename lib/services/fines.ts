@@ -64,6 +64,21 @@ export async function getPendingFineLoanIds(): Promise<string[]> {
   return data.map((row) => row.loan_id);
 }
 
+/**
+ * Número de multas PENDIENTES de todo el sistema (KPI del dashboard de admin,
+ * F5.1). El bibliotecario las ve todas (RLS `fines_select_own_or_librarian` vía
+ * `is_librarian()`). `null` ante error de BD (→ ErrorState).
+ */
+export async function countPendingFines(): Promise<number | null> {
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("fines")
+    .select("id", { count: "exact", head: true })
+    .eq("estado", "pendiente");
+  if (error) return null;
+  return count ?? 0;
+}
+
 /** Multas del usuario autenticado, de la más reciente a la más antigua (RLS). */
 export async function listOwnFines(): Promise<Fine[] | null> {
   const supabase = await createClient();

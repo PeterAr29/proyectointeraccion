@@ -274,6 +274,55 @@ export async function listOwnLoansWithBooks(
   return mergeLoansWithBooks(loans, books ?? []);
 }
 
+// ---------------------------------------------------------------------------
+// Métricas y listados de administración (Módulo E, F5.1)
+// ---------------------------------------------------------------------------
+// El bibliotecario ve todos los préstamos (RLS `loans_select_own_or_librarian`
+// vía `is_librarian()`); lo consume el dashboard de admin a través de dashboard.ts.
+
+/**
+ * Número de préstamos EN CIRCULACIÓN (aún no devueltos: activos + vencidos).
+ * Cuenta por ausencia de `fecha_devolucion_real` para no depender del `estado`
+ * persistido (que se deriva en lectura). `null` ante error de BD (→ ErrorState).
+ */
+export async function countActiveLoans(): Promise<number | null> {
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("loans")
+    .select("id", { count: "exact", head: true })
+    .is("fecha_devolucion_real", null);
+  if (error) return null;
+  return count ?? 0;
+}
+
+/**
+ * Los `limit` préstamos más recientes (de todos los usuarios, RLS de bibliotecario)
+ * junto con su libro. Mismo patrón de dos pasos que `listOwnLoansWithBooks`
+ * (loans → books por id). Devuelve `null` ante error; `[]` si no hay préstamos.
+ * El nombre del usuario lo resuelve `dashboard.ts` vía `users.getProfilesByIds`.
+ */
+export async function listRecentLoansWithBooks(
+  limit = 5,
+): Promise<LoanWithBook[] | null> {
+  const supabase = await createClient();
+  const { data: loans, error } = await supabase
+    .from("loans")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) return null;
+  if (!loans || loans.length === 0) return [];
+
+  const bookIds = [...new Set(loans.map((loan) => loan.book_id))];
+  const { data: books, error: booksError } = await supabase
+    .from("books")
+    .select("id, titulo, autor")
+    .in("id", bookIds);
+  if (booksError) return null;
+
+  return mergeLoansWithBooks(loans, books ?? []);
+}
+
 /** Renueva un préstamo del usuario. Delega en la RPC atómica `renew_loan`. */
 export async function renewLoan(loanId: string): Promise<RenewResult> {
   const supabase = await createClient();

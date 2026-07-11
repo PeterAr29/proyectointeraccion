@@ -1,20 +1,42 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F4.2 — Motor de notificaciones + vista, módulo D; **cierra Fase 4**)
-**Última subfase completada:** F4.2 — Motor de notificaciones + vista (módulo D, Multas & Notificaciones)
-**Próxima subfase:** F5.1 — Dashboard con KPIs (módulo E, Administración)
+**Última actualización:** 2026-07-11 (cierre F5.1 — Dashboard con KPIs, módulo E; **abre Fase 5**)
+**Última subfase completada:** F5.1 — Dashboard con KPIs (módulo E, Administración)
+**Próxima subfase:** F5.2 — CRUD de libros y usuarios (módulo E, Administración)
 
 ## Progreso global
 
-- Fases completadas: **4/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación; Fase 4 · Multas & Notificaciones)
-- Subfases completadas: 11/17
-- Porcentaje estimado: ~65%
+- Fases completadas: **4/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación; Fase 4 · Multas & Notificaciones). **Fase 5 (Administración) EN CURSO** (1/4 subfases).
+- Subfases completadas: 12/17
+- Porcentaje estimado: ~70%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
 - **Hito M2 alcanzado**: estudiante funcional (catálogo + circulación + multas/notificaciones).
-- **Módulos B, C y D COMPLETADOS**; **Módulo E (Administración) DISPONIBLE para reclamar** (depende de A,B,C,D — ya listos).
+- **Módulos B, C y D COMPLETADOS**; **Módulo E (Administración) EN PROGRESO** (F5.1 cerrada; el panel del bibliotecario empieza a existir).
 - **Preview desplegada en Vercel**: https://proyectointeraccion.vercel.app (contra el Supabase remoto; auto-deploy en cada push a `main`).
 
 ## Resumen de lo construido hasta ahora
+
+**F5.1 completada — abre la Fase 5 (Administración).** Nuevo route group
+`app/(admin)/` con `layout.tsx` que exige rol **bibliotecario** (deny-by-default;
+RLS es la autorización real) y reusa el shell. `/dashboard` muestra 4 KPIs reales
+(**libros**, **usuarios**, **préstamos activos**, **multas pendientes**) + tabla de
+**préstamos recientes**, con sus 4 estados:
+
+- **`lib/services/dashboard.ts`** es el agregador del Módulo E: **no accede a
+  ninguna tabla**, compone las funciones de conteo/lectura de cada service (respeta
+  la frontera). `getDashboardData()` + la función pura `buildRecentLoanRows`.
+- **Conteos añadidos a cada service** (cada uno sigue siendo la única puerta a su
+  tabla; el bibliotecario ve todo por `is_librarian()`): `books.countBooks`,
+  `users.countUsers` + `users.getProfilesByIds`, `loans.countActiveLoans` +
+  `loans.listRecentLoansWithBooks`, `fines.countPendingFines`.
+- **Componentes** `KpiCard` y `RecentLoansTable` (Server Components, responsive).
+  Nav "Dashboard" activado (el resto de admin sigue deshabilitado por subfase).
+- **Verificado:** typecheck/lint/build/audit-high verdes; **101/101 unit**; KPIs y
+  RLS verificados end-to-end contra el remoto con rollback (bibliotecario ve
+  7/5/0/0 por `is_librarian`; estudiante restringida a su propio perfil; join de
+  recientes resuelve libro+usuario; seed intacto). Detalle en `progreso/fase-5.1-E.md`.
+
+**F4.2 completada — cierra la Fase 4 (hito M2).** `lib/services/notifications.ts`
 
 **F4.2 completada — cierra la Fase 4 (hito M2).** `lib/services/notifications.ts`
 (única puerta a `notifications`) genera y expone los avisos in-app, y
@@ -162,13 +184,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                      | Dev        | Desde      |
-| --------------------------- | --------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)      | integrador | 2026-07-10 |
-| C — Circulación             | ✅ Completado (Fase 3)      | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | ✅ Completado (Fase 4)      | integrador | 2026-07-10 |
-| E — Administración          | 🟢 Disponible (deps listas) | —          | —          |
+| Módulo                      | Estado                        | Dev        | Desde      |
+| --------------------------- | ----------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
+| C — Circulación             | ✅ Completado (Fase 3)        | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | ✅ Completado (Fase 4)        | integrador | 2026-07-10 |
+| E — Administración          | 🔄 En progreso (F5.1 cerrada) | integrador | 2026-07-11 |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 

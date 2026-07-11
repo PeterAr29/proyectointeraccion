@@ -32,6 +32,41 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   return data;
 }
 
+// ---------------------------------------------------------------------------
+// Métricas y lectura por lote (Módulo E, F5.1)
+// ---------------------------------------------------------------------------
+// El bibliotecario ve todos los perfiles (RLS `profiles_select_own_or_librarian`
+// con `is_librarian()`); estas funciones las consume el dashboard de admin.
+
+/** Datos mínimos de un perfil para mostrar el nombre en tablas de admin. */
+export type ProfileName = Pick<Profile, "id" | "nombre">;
+
+/** Número total de usuarios registrados. `null` ante error de BD (→ ErrorState). */
+export async function countUsers(): Promise<number | null> {
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true });
+  if (error) return null;
+  return count ?? 0;
+}
+
+/**
+ * Nombres de los perfiles cuyos ids se pasan (para resolver el usuario de cada
+ * préstamo en las tablas de admin, sin acoplar `loans.ts` a la tabla `profiles`).
+ * Devuelve solo los que existen; `[]` si no hay ids o ante error.
+ */
+export async function getProfilesByIds(ids: string[]): Promise<ProfileName[]> {
+  if (ids.length === 0) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, nombre")
+    .in("id", ids);
+  if (error || !data) return [];
+  return data;
+}
+
 /** Actualiza el perfil del propio usuario (acceso/rectificación, Ley 29733). */
 export async function updateOwnProfile(
   input: UpdateProfileInput,
