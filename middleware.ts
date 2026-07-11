@@ -17,7 +17,13 @@ const PUBLIC_PATHS = [
   "/login",
   "/registro",
   "/recuperar",
+  "/privacidad",
   "/kitchen-sink",
+  // Recursos de la PWA (F6.2): deben servirse sin sesión para que la app sea
+  // instalable y el service worker se registre. No exponen datos.
+  "/manifest.webmanifest",
+  "/sw.js",
+  "/offline.html",
 ];
 const AUTH_PATHS = ["/login", "/registro", "/recuperar"];
 

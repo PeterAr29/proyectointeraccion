@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BookOpen } from "lucide-react";
 
 /**
@@ -22,6 +23,14 @@ export default function AuthLayout({
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           {children}
         </div>
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          <Link
+            href="/privacidad"
+            className="hover:text-foreground hover:underline"
+          >
+            Política de privacidad
+          </Link>
+        </p>
       </div>
     </main>
   );

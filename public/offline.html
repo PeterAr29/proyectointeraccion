@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1D4ED8" />
+    <title>Sin conexión · BiblioTEC</title>
+    <style>
+      :root {
+        --azul: #1d4ed8;
+        --fondo: #f8fafc;
+        --texto: #0f172a;
+        --gris: #64748b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--fondo);
+        color: var(--texto);
+        font-family:
+          system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+          sans-serif;
+        padding: 24px;
+      }
+      .tarjeta {
+        max-width: 22rem;
+        text-align: center;
+      }
+      .icono {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin: 0 0 8px;
+      }
+      p {
+        color: var(--gris);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0 0 24px;
+      }
+      button {
+        background: var(--azul);
+        color: #fff;
+        border: 0;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.92;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="tarjeta">
+      <div class="icono" aria-hidden="true">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M2 8.82a15 15 0 0 1 20 0" />
+          <path d="M5 12.859a10 10 0 0 1 14 0" />
+          <path d="M8.5 16.429a5 5 0 0 1 7 0" />
+          <line x1="12" y1="20" x2="12.01" y2="20" />
+          <line x1="2" y1="2" x2="22" y2="22" />
+        </svg>
+      </div>
+      <h1>Sin conexión</h1>
+      <p>
+        No pudimos conectar con el servidor. Verifica tu conexión a internet y
+        vuelve a intentarlo. Tus datos están seguros.
+      </p>
+      <button onclick="location.reload()">Reintentar</button>
+    </main>
+  </body>
+</html>

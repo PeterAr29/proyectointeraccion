@@ -1,21 +1,51 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-11 (cierre F6.1 — Evaluación de usabilidad IHC)
-**Última subfase completada:** F6.1 — Evaluación de usabilidad (Nielsen + recorrido cognitivo + SUS)
-**Próxima subfase:** F6.2 — Endurecimiento, PWA y despliegue (última; hito M4 / `v1.0.0`)
+**Última actualización:** 2026-07-11 (cierre F6.2 — Endurecimiento, PWA y despliegue → **PROYECTO COMPLETO**)
+**Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última)
+**Próxima subfase:** — ninguna. **Las 6 fases (17/17 subfases) están completas.** Solo queda la operación/entrega (recolectar SUS real, push a producción y verificación de Lighthouse PWA en el móvil).
 
 ## Progreso global
 
-- Fases completadas: **5/6** (Fase 1–5). **Fase 6 (Evaluación IHC & Producción) EN CURSO** (1/2 subfases); solo queda F6.2.
-- Subfases completadas: 16/17
-- Porcentaje estimado: ~94%
-- **Hito M3 alcanzado**: sistema completo (panel de administración operativo).
+- Fases completadas: **6/6**. **Proyecto COMPLETO.**
+- Subfases completadas: **17/17**
+- Porcentaje estimado: **100%**
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
 - **Hito M2 alcanzado**: estudiante funcional (catálogo + circulación + multas/notificaciones).
 - **Hito M3 alcanzado**: sistema completo — **Módulos A, B, C, D y E COMPLETADOS**. El bibliotecario tiene dashboard, CRUD de libros/usuarios, circulación (devoluciones+multas), reportes y configuración.
+- **Hito M4 alcanzado** (`v1.0.0`): endurecimiento de seguridad + PWA instalable + política de privacidad + e2e en CI. Listo para producción.
 - **Preview desplegada en Vercel**: https://proyectointeraccion.vercel.app (contra el Supabase remoto; auto-deploy en cada push a `main`).
 
 ## Resumen de lo construido hasta ahora
+
+**F6.2 completada — cierra el proyecto (hito M4 / `v1.0.0`).** Endurecimiento,
+PWA instalable y preparación de producción, sin tocar lógica de negocio:
+
+- **Headers de seguridad** en `next.config.ts` para toda respuesta:
+  **CSP** deny-by-default (permite el SW/manifest propios y Supabase REST+Storage+
+  Realtime; `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'`),
+  **HSTS**, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy` y `Permissions-Policy` (cámara/micro/geo off). Verificados con
+  `curl` contra el server de producción. Sin CORS abierto: arquitectura same-origin.
+- **PWA instalable** (RNF-10, §9.4): `app/manifest.ts` (standalone, start_url
+  `/inicio`, theme `#1D4ED8`/bg `#F8FAFC`), **íconos 192/512 + maskable + apple-
+  touch-icon** (PNG generados sin dependencias), meta `theme-color`/viewport en el
+  layout, y **service worker propio** (`public/sw.js`) con network-first para
+  navegaciones (fallback a `public/offline.html`) y cache-first para estáticos —
+  **nunca cachea datos de Supabase**. Registro en `components/pwa/ServiceWorker.tsx`
+  (solo producción) que **engancha el diálogo global `offline`** al estado de red.
+  **ADR-0002** documenta la decisión de no usar librería de PWA.
+- **Middleware:** se añadieron a rutas públicas `/privacidad`, `/manifest.webmanifest`,
+  `/sw.js` y `/offline.html` (se detectó y corrigió que el middleware redirigía el
+  manifest y el SW al login, lo que habría impedido instalar la PWA).
+- **Política de privacidad** (`/privacidad`, Ley 29733 §11): página pública
+  enlazada desde el pie de las pantallas de acceso.
+- **CI:** job **e2e** habilitado (`playwright install --with-deps chromium` + specs
+  de login y catálogo), con guard por secretos para no romper CI si faltan.
+- **Backup/restore documentado** (`docs/backup-restore.md`) con prueba de
+  restauración. **Sin PII en logs** verificado (auth loggea con `maskCodigo`).
+- **Verificado:** typecheck/lint/build (28/28 páginas)/audit-high verdes;
+  **137/137 unit**; headers, manifest, SW, offline e íconos verificados por HTTP
+  contra el server de producción. Detalle en `progreso/fase-6.2.md`.
 
 **F6.1 completada — evaluación de usabilidad (entregable IHC).**
 `docs/evaluacion-usabilidad.md`: (1) evaluación heurística de Nielsen pantalla por
@@ -271,13 +301,19 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - [ ] Instalar **Docker Desktop** si se quiere levantar el stack local (`supabase start` / `db reset`). Hoy la BD se aplica y verifica contra el remoto.
 - [ ] Crear el GitHub Project desde `docs/backlog.md` (o generar issues con `gh`).
 - [ ] Instalar **gitleaks** localmente (`winget install gitleaks`) para activar el escaneo de secretos en pre-commit (hoy hace fallback si no está).
+- [ ] **(F6.2) Configurar los 3 secretos** en GitHub → Settings → Secrets → Actions
+      (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+      `SUPABASE_SERVICE_ROLE_KEY`) para que el job e2e del CI se ejecute (hoy se
+      omite en verde si faltan).
+- [ ] **(F6.2) Entrega final:** recolectar el **SUS real** (F6.1), hacer `git push`
+      a `main` (auto-deploy en Vercel) y verificar en un móvil la **instalación PWA** + **Lighthouse PWA en verde** contra la URL de producción.
 
 ## Deudas técnicas anotadas
 
 - **Auth:** activar _Leaked Password Protection_ (HaveIBeenPwned) en Supabase Auth (advisor de seguridad, alineado con A07). Es un ajuste de dashboard/config, no de migración. **Pendiente tras F1.4.**
 - **Recuperación de contraseña:** el flujo llama `resetPasswordForEmail`, pero el envío real requiere configurar SMTP en Supabase Auth (no configurado en el MVP). Flujo/validación correctos; falta la config de correo.
 - **Rate limiting en memoria (F1.4):** `lib/utils/rate-limit.ts` es por-instancia (se reinicia con el proceso, no se comparte entre lambdas). Suficiente para el piloto; en producción multi-instancia movería a Upstash/Redis.
-- **CI e2e:** añadir `npx playwright install --with-deps chromium` antes de `npm run test:e2e` en el pipeline (localmente ya se instaló el navegador).
+- ~~**CI e2e:** añadir `npx playwright install --with-deps chromium`~~ — **hecho en F6.2** (job `e2e` con guard por secretos).
 - **RLS/advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/is_librarian` (revela solo el rol del propio llamante, ningún dato ajeno). Endurecimiento opcional: mover la función a un esquema no expuesto por PostgREST. Ver `fase-1.2-A.md`.
 - **Nuevo (F3.1) advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/create_loan` y `rpc/create_reservation` (`SECURITY DEFINER`). Es intencional: el estudiante debe poder prestar/reservar y la función requiere DEFINER para decrementar `books` bajo RLS. Autorizan por `auth.uid()` internamente y solo tocan filas propias + el libro puntual. No exponen datos ajenos. Misma postura que `is_librarian`.
 - 2FA para el rol bibliotecario (fuera del MVP; anotado en especificaciones §5.8).
@@ -289,5 +325,14 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
   con service role) que barra a todos los usuarios. Realtime de la campana
   opcional (hoy se refresca en SSR/navegación). Ver `fase-4.2-D.md`.
 - `next lint` deprecado (se elimina en Next 16): migrar a ESLint CLI antes de subir de major.
+- **Nueva (F6.2) — CSP con `'unsafe-inline'`:** `script-src`/`style-src` permiten
+  inline porque Next.js (App Router) inyecta scripts de hidratación y estilos sin
+  nonce. El resto de la CSP es estricta (connect/img/frame-ancestors/object-src
+  cerrados). Endurecer a **CSP con nonce** exige mover la política al middleware y
+  desactiva la generación estática de varias páginas. Anotado para un endurecimiento
+  posterior. Ver `next.config.ts` y `docs/adr/0002-...`.
+- **Nueva (F6.2) — SW versionado a mano:** invalidar el caché del service worker
+  requiere subir `CACHE` (`bibliotec-shell-v1`) en `public/sw.js` al cambiar assets
+  críticos. Network-first en navegaciones evita HTML obsoleto estando online. Ver ADR-0002.
 - 2 vulnerabilidades **moderate** en el `postcss` interno de next 15.5.20 (bajo el gate `high`); se resolverán al actualizar next.
 - **Nueva (F2.1):** vuln **low** en `@supabase/auth-js` (Insecure Path Routing, GHSA-8r88-6cj9-9fh5); se resuelve subiendo `@supabase/supabase-js` a ≥2.110. Bajo el gate `high`, no bloquea CI.

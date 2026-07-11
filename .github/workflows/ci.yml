@@ -34,17 +34,46 @@ jobs:
         run: npm audit --audit-level=high
         continue-on-error: true
 
-  # E2E se habilita a partir de F1.4 (login) y se hace obligatorio en F6.2.
-  # Descomentar cuando Playwright tenga specs:
-  #
-  # e2e:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npx playwright install --with-deps
-  #     - run: npm run test:e2e
+  # E2E de flujos críticos (login, catálogo). Obligatorio desde F6.2.
+  # Requiere estos secretos del repositorio (Settings → Secrets → Actions):
+  #   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+  # Si no están configurados, los tests se omiten (el job queda verde) para no
+  # bloquear a quien clone el repo sin acceso al proyecto Supabase.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Detect Supabase secrets
+        id: secrets
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        run: |
+          if [ -n "$SUPABASE_URL" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Secretos de Supabase no configurados; se omiten los e2e."
+          fi
+
+      - name: Install Playwright (Chromium)
+        if: steps.secrets.outputs.present == 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E (flujos críticos)
+        if: steps.secrets.outputs.present == 'true'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        run: npm run test:e2e
