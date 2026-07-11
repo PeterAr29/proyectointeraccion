@@ -4,13 +4,13 @@
 
 ## Módulos
 
-| Módulo                      | Estado                        | Dev        | Desde      |
-| --------------------------- | ----------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
-| C — Circulación             | ✅ Completado (Fase 3)        | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | 🔄 En progreso (F4.1 cerrada) | integrador | 2026-07-10 |
-| E — Administración          | Bloqueado por B, C, D         | —          | —          |
+| Módulo                      | Estado                      | Dev        | Desde      |
+| --------------------------- | --------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)      | integrador | 2026-07-10 |
+| C — Circulación             | ✅ Completado (Fase 3)      | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | ✅ Completado (Fase 4)      | integrador | 2026-07-10 |
+| E — Administración          | 🟢 Disponible (deps listas) | —          | —          |
 
 ## Tareas en curso (dentro de módulos)
 
@@ -26,9 +26,10 @@
 | T-008 Mis préstamos (F3.2)                 | C      | integrador | ✅ Terminada           |
 | T-009 Historial (F3.3)                     | C      | integrador | ✅ Terminada           |
 | T-010 Cálculo de multas (F4.1)             | D      | integrador | ✅ Terminada           |
-| T-011 Notificaciones + vista (F4.2)        | D      | —          | Disponible (siguiente) |
+| T-011 Notificaciones + vista (F4.2)        | D      | integrador | ✅ Terminada           |
+| T-012 Dashboard con KPIs (F5.1)            | E      | —          | Disponible (siguiente) |
 
-> El resto de tareas (T-012…T-017) están Bloqueadas por sus dependencias. Ver `docs/backlog.md`.
+> El resto de tareas (T-013…T-017) están Bloqueadas por sus dependencias. Ver `docs/backlog.md`.
 
 ## Log de reclamos (append-only, evita disputas)
 
@@ -43,6 +44,7 @@
 - 2026-07-10 — F3.2 (Mis préstamos) **cerrada**: `/mis-prestamos` con `LoanTable` responsive (4 estados) y renovar/devolver con confirmación. RPC atómicas `return_loan` (repone stock) y `renew_loan` (§7.2.5: máximo de renovaciones, bloqueo por multa pendiente; aceptan owner o bibliotecario para reuso en F5.3) aplicadas al remoto; `loans.ts` extendido (estado efectivo derivado, `canRenew`, `listOwnLoansWithBooks`, renew/return) + nuevo `settings.ts`; nav "Mis préstamos" activado. 68/68 unit; RPC verificadas end-to-end con rollback (renovaciones 0→1, stock Redes 2→3 al devolver, SQLSTATE BT100/BT101/BT200); typecheck/lint/build/audit-high verdes. Siguiente: F3.3 (Historial, cierra la Fase 3).
 - 2026-07-10 — F3.3 (Historial) **cerrada** → **Fase 3 (Circulación) COMPLETADA**. `/historial` (activos/vencidos/devueltos) con filtro por estado y rango de fechas + paginación; reusa `LoanTable` sin acciones; lógica pura `filterLoanHistory` (por estado efectivo + fechas) y `paginateList`; nav "Historial" activado. 79/79 unit; ruta de datos verificada bajo RLS contra el remoto; typecheck/lint/build/audit-high verdes. **Hito de integración F3 verificado** (prestar/reservar/renovar/devolver end-to-end + vistas Mis préstamos/Historial). **Módulo D (Multas & Notificaciones) queda Disponible.** Siguiente sugerido: F4.1 (cálculo de multas). Además: preview desplegada en Vercel (https://proyectointeraccion.vercel.app).
 - 2026-07-10 — **Módulo D reclamado** por el dev integrador. F4.1 (Cálculo de multas) **cerrada**: `lib/services/fines.ts` (única puerta a `fines`) con cálculo `dias_retraso × multa_diaria` (redondeo 2 dec.), generación por el sistema con cliente admin/service role (persiste `vencido` + crea/actualiza multa `pendiente`, índice único `loan_id`), checker `getPendingFineLoanIds` que "Mis préstamos" pasa a `canRenew` (Renovar deshabilitado con multa pendiente, §7.2.5), `markFinePaid` listo para F5.3. 86/86 unit; integración C↔D verificada end-to-end contra el remoto con rollback (multa visible por RLS, renovar bloqueado → BT102); typecheck/lint/build/audit-high verdes. Siguiente: F4.2 (motor de notificaciones + vista, cierra la Fase 4).
+- 2026-07-10 — F4.2 (Motor de notificaciones + vista) **cerrada** → **Fase 4 (Multas & Notificaciones) COMPLETADA (hito M2)**. `lib/services/notifications.ts` (única puerta a `notifications`) genera los 3 tipos con cliente admin/service role: `multa_generada` (enganchado en `fines.syncFineForLoan`), `vencimiento_proximo` (préstamos que vencen en ≤3 días) y `reserva_disponible` (barrido que notifica al frente de la cola cuando el libro recupera stock). Idempotencia por marcadores (`vencimiento_notificado_en`/`notificada_disponible_en`; `renew_loan` re-declarada para reiniciar el de vencimiento). `/notificaciones` (4 estados) con marcar leída/todas (Server Actions, RLS); campana del Topbar = Link con badge de no-leídas (`getUnreadCount` en el layout servidor); nav activado. 96/96 unit; RLS de `notifications` verificada end-to-end contra el remoto con rollback (María ve la suya y la marca leída, Juan no la ve, seed intacto); typecheck/lint/build/audit-high verdes. **Módulo E (Administración) queda Disponible** (deps A,B,C,D listas). Siguiente sugerido: F5.1 (Dashboard con KPIs).
 
 ## Reglas rápidas
 

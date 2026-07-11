@@ -1,19 +1,39 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-10 (cierre F4.1 — Cálculo de multas, módulo D)
-**Última subfase completada:** F4.1 — Cálculo de multas (módulo D, Multas & Notificaciones)
-**Próxima subfase:** F4.2 — Motor de notificaciones + vista (módulo D)
+**Última actualización:** 2026-07-10 (cierre F4.2 — Motor de notificaciones + vista, módulo D; **cierra Fase 4**)
+**Última subfase completada:** F4.2 — Motor de notificaciones + vista (módulo D, Multas & Notificaciones)
+**Próxima subfase:** F5.1 — Dashboard con KPIs (módulo E, Administración)
 
 ## Progreso global
 
-- Fases completadas: **3/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación)
-- Subfases completadas: 10/17
-- Porcentaje estimado: ~59%
+- Fases completadas: **4/6** (Fase 1 · Fundación; Fase 2 · Catálogo; Fase 3 · Circulación; Fase 4 · Multas & Notificaciones)
+- Subfases completadas: 11/17
+- Porcentaje estimado: ~65%
 - **Hito M1 alcanzado** (`v0.1.0`): fundación lista, módulos B–E abiertos para reclamar.
-- **Módulo B y C COMPLETADOS**; **Módulo D (Multas & Notificaciones) EN PROGRESO** (F4.1 cerrada; queda F4.2).
+- **Hito M2 alcanzado**: estudiante funcional (catálogo + circulación + multas/notificaciones).
+- **Módulos B, C y D COMPLETADOS**; **Módulo E (Administración) DISPONIBLE para reclamar** (depende de A,B,C,D — ya listos).
 - **Preview desplegada en Vercel**: https://proyectointeraccion.vercel.app (contra el Supabase remoto; auto-deploy en cada push a `main`).
 
 ## Resumen de lo construido hasta ahora
+
+**F4.2 completada — cierra la Fase 4 (hito M2).** `lib/services/notifications.ts`
+(única puerta a `notifications`) genera y expone los avisos in-app, y
+`/notificaciones` los muestra con sus 4 estados:
+
+- **Tres tipos generados por el sistema** (cliente admin/service role): **`multa_generada`**
+  (enganchado en `fines.syncFineForLoan`, al crear la multa nueva), **`vencimiento_proximo`**
+  (`syncOwnDueSoonNotifications`, préstamos que vencen dentro de 3 días) y
+  **`reserva_disponible`** (`syncAvailableReservations`, barrido que notifica al frente
+  de la cola cuando el libro recupera stock).
+- **Idempotencia por marcadores** (migración `..._notification_markers.sql`): columnas
+  `loans.vencimiento_notificado_en` y `reservations.notificada_disponible_en`; `renew_loan`
+  re-declarada para reiniciar el marcador de vencimiento al renovar.
+- **Vista + campana:** `/notificaciones` (4 estados) con marcar-una / marcar-todas (Server
+  Actions con RLS); la campana del Topbar es un `Link` con badge de no-leídas (`getUnreadCount`
+  resuelto en el layout servidor). Nav "Notificaciones" activado.
+- **Verificado:** typecheck/lint/build/audit-high verdes; **96/96 unit**; RLS de
+  `notifications` verificada end-to-end contra el remoto con rollback (María ve la suya y la
+  marca leída; Juan no la ve; seed intacto). Detalle en `progreso/fase-4.2-D.md`.
 
 **F4.1 completada.** `lib/services/fines.ts` (única puerta a `fines`) calcula la
 multa (§7.2.4: `dias_retraso × multa_diaria`, S/) y la integra con Circulación:
@@ -142,13 +162,13 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 
 ## Estado por módulo (espejo del tablero)
 
-| Módulo                      | Estado                        | Dev        | Desde      |
-| --------------------------- | ----------------------------- | ---------- | ---------- |
-| A — Plataforma & Acceso     | ✅ Completado (Fase 1)        | integrador | 2026-07-10 |
-| B — Catálogo                | ✅ Completado (Fase 2)        | integrador | 2026-07-10 |
-| C — Circulación             | ✅ Completado (Fase 3)        | integrador | 2026-07-10 |
-| D — Multas & Notificaciones | 🔄 En progreso (F4.1 cerrada) | integrador | 2026-07-10 |
-| E — Administración          | Bloqueado por B, C, D         | —          | —          |
+| Módulo                      | Estado                      | Dev        | Desde      |
+| --------------------------- | --------------------------- | ---------- | ---------- |
+| A — Plataforma & Acceso     | ✅ Completado (Fase 1)      | integrador | 2026-07-10 |
+| B — Catálogo                | ✅ Completado (Fase 2)      | integrador | 2026-07-10 |
+| C — Circulación             | ✅ Completado (Fase 3)      | integrador | 2026-07-10 |
+| D — Multas & Notificaciones | ✅ Completado (Fase 4)      | integrador | 2026-07-10 |
+| E — Administración          | 🟢 Disponible (deps listas) | —          | —          |
 
 ## Decisiones técnicas vivas (las que afectan trabajo futuro)
 
@@ -174,6 +194,12 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - **Nuevo (F3.1) advisor aceptado (🟡 bajo):** `authenticated` puede llamar `rpc/create_loan` y `rpc/create_reservation` (`SECURITY DEFINER`). Es intencional: el estudiante debe poder prestar/reservar y la función requiere DEFINER para decrementar `books` bajo RLS. Autorizan por `auth.uid()` internamente y solo tocan filas propias + el libro puntual. No exponen datos ajenos. Misma postura que `is_librarian`.
 - 2FA para el rol bibliotecario (fuera del MVP; anotado en especificaciones §5.8).
 - Notificaciones por email/push (F4 solo genera notificaciones in-app).
+- **Nueva (F4.2) — generación en render:** los barridos de notificaciones
+  (`syncOwnDueSoonNotifications`, `syncAvailableReservations`) y el de multas
+  (`syncOwnOverdueFines`) corren en el GET de la vista. Idempotentes por
+  marcadores; en producción moverlos a un **job programado** (cron/Edge Function
+  con service role) que barra a todos los usuarios. Realtime de la campana
+  opcional (hoy se refresca en SSR/navegación). Ver `fase-4.2-D.md`.
 - `next lint` deprecado (se elimina en Next 16): migrar a ESLint CLI antes de subir de major.
 - 2 vulnerabilidades **moderate** en el `postcss` interno de next 15.5.20 (bajo el gate `high`); se resolverán al actualizar next.
 - **Nueva (F2.1):** vuln **low** en `@supabase/auth-js` (Insecure Path Routing, GHSA-8r88-6cj9-9fh5); se resuelve subiendo `@supabase/supabase-js` a ≥2.110. Bajo el gate `high`, no bloquea CI.

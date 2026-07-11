@@ -42,7 +42,7 @@ const STUDENT_NAV: NavItem[] = [
     label: "Notificaciones",
     href: "/notificaciones",
     icon: Bell,
-    enabled: false,
+    enabled: true,
   },
   { label: "Perfil", href: "/perfil", icon: User, enabled: true },
 ];

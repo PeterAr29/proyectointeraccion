@@ -108,6 +108,8 @@ export type Database = {
           fecha_devolucion_real: string | null;
           estado: LoanStatus;
           renovaciones: number;
+          /** F4.2: cuándo se avisó del vencimiento próximo (null = aún no). */
+          vencimiento_notificado_en: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -120,6 +122,7 @@ export type Database = {
           fecha_devolucion_real?: string | null;
           estado?: LoanStatus;
           renovaciones?: number;
+          vencimiento_notificado_en?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -134,6 +137,8 @@ export type Database = {
           fecha_reserva: string;
           fecha_estimada_disponibilidad: string | null;
           estado: ReservationStatus;
+          /** F4.2: cuándo se avisó que la reserva pasó a disponible (null = aún no). */
+          notificada_disponible_en: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -144,6 +149,7 @@ export type Database = {
           fecha_reserva?: string;
           fecha_estimada_disponibilidad?: string | null;
           estado?: ReservationStatus;
+          notificada_disponible_en?: string | null;
           created_at?: string;
           updated_at?: string;
         };

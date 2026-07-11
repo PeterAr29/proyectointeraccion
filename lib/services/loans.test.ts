@@ -26,6 +26,7 @@ function makeLoan(overrides: Partial<Loan> = {}): Loan {
     fecha_devolucion_real: null,
     estado: "activo",
     renovaciones: 0,
+    vencimiento_notificado_en: null,
     created_at: "2026-07-01T00:00:00Z",
     updated_at: "2026-07-01T00:00:00Z",
     ...overrides,

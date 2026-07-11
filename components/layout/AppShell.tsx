@@ -19,9 +19,11 @@ import { MobileNav } from "./MobileNav";
  */
 export function AppShell({
   profile,
+  unreadCount = 0,
   children,
 }: {
   profile: Profile;
+  unreadCount?: number;
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -56,7 +58,11 @@ export function AppShell({
         />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar profile={profile} onOpenMenu={() => setMobileOpen(true)} />
+          <Topbar
+            profile={profile}
+            unreadCount={unreadCount}
+            onOpenMenu={() => setMobileOpen(true)}
+          />
           <main className="flex-1 p-4 sm:p-6">{children}</main>
         </div>
       </div>

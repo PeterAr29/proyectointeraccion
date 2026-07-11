@@ -1,20 +1,25 @@
 "use client";
 
+import Link from "next/link";
 import { Bell, Menu } from "lucide-react";
 import type { Profile } from "@/lib/services/users";
 
 /**
  * Barra superior del shell. En móvil (<768px) muestra el botón hamburguesa que
- * abre el drawer. La campana es el punto de enganche del contador de
- * notificaciones (lo cablea el Módulo D en F4).
+ * abre el drawer. La campana enlaza a /notificaciones y muestra el contador de
+ * avisos sin leer (Módulo D, F4.2); el conteo lo resuelve el layout en servidor.
  */
 export function Topbar({
   profile,
+  unreadCount = 0,
   onOpenMenu,
 }: {
   profile: Profile;
+  unreadCount?: number;
   onOpenMenu: () => void;
 }) {
+  const hasUnread = unreadCount > 0;
+  const badge = unreadCount > 9 ? "9+" : String(unreadCount);
   const iniciales = profile.nombre
     .split(" ")
     .slice(0, 2)
@@ -33,13 +38,25 @@ export function Topbar({
       </button>
 
       <div className="ml-auto flex items-center gap-3">
-        <button
-          type="button"
-          aria-label="Notificaciones"
+        <Link
+          href="/notificaciones"
+          aria-label={
+            hasUnread
+              ? `Notificaciones (${unreadCount} sin leer)`
+              : "Notificaciones"
+          }
           className="relative rounded-md p-2 text-muted-foreground hover:bg-secondary"
         >
           <Bell className="h-5 w-5" aria-hidden="true" />
-        </button>
+          {hasUnread && (
+            <span
+              aria-hidden="true"
+              className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground"
+            >
+              {badge}
+            </span>
+          )}
+        </Link>
 
         <div className="flex items-center gap-2">
           <span

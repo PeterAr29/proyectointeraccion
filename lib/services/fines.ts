@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
 import { daysBetween } from "@/lib/utils/dates";
+import { notifyFineGenerated } from "@/lib/services/notifications";
 
 /**
  * Servicio de multas (Módulo D): ÚNICA puerta a la tabla `fines`.
@@ -97,7 +98,7 @@ export async function syncFineForLoan(
   const { data: loan } = await admin
     .from("loans")
     .select(
-      "id, user_id, estado, fecha_devolucion_estimada, fecha_devolucion_real",
+      "id, user_id, book_id, estado, fecha_devolucion_estimada, fecha_devolucion_real",
     )
     .eq("id", loanId)
     .maybeSingle();
@@ -140,6 +141,23 @@ export async function syncFineForLoan(
     })
     .select("*")
     .maybeSingle();
+
+  // Aviso in-app SOLO al crear la multa (no al actualizar el monto): el índice
+  // único `fines(loan_id)` garantiza que este bloque corre una vez por préstamo.
+  if (created) {
+    const { data: book } = await admin
+      .from("books")
+      .select("titulo")
+      .eq("id", loan.book_id)
+      .maybeSingle();
+    await notifyFineGenerated(
+      admin,
+      loan.user_id,
+      book?.titulo ?? "tu libro",
+      monto,
+    );
+  }
+
   return created ?? null;
 }
 
