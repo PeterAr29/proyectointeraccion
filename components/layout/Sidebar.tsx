@@ -38,7 +38,7 @@ export function SidebarNav({
               key={item.href}
               aria-disabled="true"
               title="Disponible próximamente"
-              className="flex cursor-not-allowed items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground/50"
+              className="flex cursor-not-allowed items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-primary-foreground/40"
             >
               <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
               {item.label}
@@ -55,8 +55,8 @@ export function SidebarNav({
             className={cn(
               "flex items-center gap-3 rounded-md border-l-[3px] px-3 py-2.5 text-sm font-medium transition-colors",
               active
-                ? "border-primary bg-primary-soft text-primary"
-                : "border-transparent text-foreground/80 hover:bg-secondary",
+                ? "border-white bg-white/15 text-white shadow-sm"
+                : "border-transparent text-primary-foreground/75 hover:bg-white/10 hover:text-white",
             )}
           >
             <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
@@ -68,7 +68,7 @@ export function SidebarNav({
       <button
         type="button"
         onClick={onLogout}
-        className="mt-2 flex items-center gap-3 rounded-md border-l-[3px] border-transparent px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-red-50"
+        className="mt-2 flex items-center gap-3 rounded-md border-l-[3px] border-transparent px-3 py-2.5 text-sm font-medium text-red-100 transition-colors hover:bg-white/10 hover:text-white"
       >
         <LogOut className="h-5 w-5 shrink-0" aria-hidden="true" />
         Cerrar sesión

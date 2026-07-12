@@ -27,7 +27,7 @@ export function Topbar({
     .join("");
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-card px-4">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/70 bg-card/80 px-4 backdrop-blur supports-[backdrop-filter]:bg-card/70">
       <button
         type="button"
         onClick={onOpenMenu}

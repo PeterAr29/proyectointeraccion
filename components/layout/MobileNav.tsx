@@ -40,10 +40,10 @@ export function MobileNav({
         role="dialog"
         aria-modal="true"
         aria-label="Menú de navegación"
-        className="absolute inset-y-0 left-0 flex w-64 flex-col bg-card shadow-xl"
+        className="absolute inset-y-0 left-0 flex w-64 flex-col bg-gradient-to-b from-primary to-indigo-800 text-primary-foreground shadow-xl"
       >
-        <div className="flex h-16 items-center gap-2 border-b px-4">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+        <div className="flex h-16 items-center gap-2 border-b border-white/10 px-4">
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white/15 text-white">
             <BookOpen className="h-5 w-5" aria-hidden="true" />
           </span>
           <span className="font-bold">BiblioTEC</span>
@@ -51,7 +51,7 @@ export function MobileNav({
             type="button"
             onClick={onClose}
             aria-label="Cerrar menú"
-            className="ml-auto rounded-md p-1.5 text-muted-foreground hover:bg-secondary"
+            className="ml-auto rounded-md p-1.5 text-primary-foreground/70 hover:bg-white/10 hover:text-white"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>

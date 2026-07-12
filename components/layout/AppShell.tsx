@@ -42,13 +42,19 @@ export function AppShell({
       >
         Saltar al contenido
       </a>
-      <div className="flex min-h-screen bg-background">
-        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-card md:flex">
+      <div
+        className="flex min-h-screen text-foreground"
+        style={{
+          background:
+            "radial-gradient(1100px 520px at 100% -8%, rgba(79,70,229,0.12), transparent 60%), linear-gradient(180deg, #EEF2FF 0%, #F5F7FB 34%, #F8FAFC 100%)",
+        }}
+      >
+        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-white/10 bg-gradient-to-b from-primary to-indigo-800 text-primary-foreground md:flex">
           <Link
             href="/inicio"
-            className="flex h-16 items-center gap-2 border-b px-4"
+            className="flex h-16 items-center gap-2 border-b border-white/10 px-4 transition-colors hover:bg-white/5"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white/15 text-white">
               <BookOpen className="h-5 w-5" aria-hidden="true" />
             </span>
             <span className="font-bold">BiblioTEC</span>
