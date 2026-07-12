@@ -11,7 +11,6 @@ import {
   ReceiptText,
   Settings,
   Undo2,
-  User,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -47,7 +46,6 @@ const STUDENT_NAV: NavItem[] = [
     icon: Bell,
     enabled: true,
   },
-  { label: "Perfil", href: "/perfil", icon: User, enabled: true },
 ];
 
 const LIBRARIAN_NAV: NavItem[] = [
@@ -65,7 +63,6 @@ const LIBRARIAN_NAV: NavItem[] = [
     icon: Settings,
     enabled: true,
   },
-  { label: "Perfil", href: "/perfil", icon: User, enabled: true },
 ];
 
 export function getNavItems(rol: UserRole): NavItem[] {

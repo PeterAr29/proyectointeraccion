@@ -1,69 +1,153 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, Compass, User } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  BookMarked,
+  BookOpen,
+  Clock,
+  Heart,
+  LayoutGrid,
+  LibraryBig,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
 import { getCurrentProfile } from "@/lib/services/users";
 
 export const metadata: Metadata = { title: "Inicio" };
 
+interface QuickLink {
+  href: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}
+
+const STUDENT_LINKS: QuickLink[] = [
+  {
+    href: "/catalogo",
+    title: "Explorar el catálogo",
+    description: "Busca libros por título, autor o ISBN.",
+    icon: BookOpen,
+  },
+  {
+    href: "/mis-prestamos",
+    title: "Mis préstamos",
+    description: "Renueva o devuelve tus libros a tiempo.",
+    icon: BookMarked,
+  },
+  {
+    href: "/favoritos",
+    title: "Favoritos",
+    description: "Los libros que guardaste para después.",
+    icon: Heart,
+  },
+  {
+    href: "/historial",
+    title: "Historial",
+    description: "Revisa tus préstamos anteriores.",
+    icon: Clock,
+  },
+];
+
+const LIBRARIAN_LINKS: QuickLink[] = [
+  {
+    href: "/dashboard",
+    title: "Dashboard",
+    description: "Indicadores clave de la biblioteca.",
+    icon: LayoutGrid,
+  },
+  {
+    href: "/libros",
+    title: "Gestión de libros",
+    description: "Crea, edita y da de baja el catálogo.",
+    icon: LibraryBig,
+  },
+  {
+    href: "/usuarios",
+    title: "Usuarios",
+    description: "Administra las cuentas de la comunidad.",
+    icon: Users,
+  },
+  {
+    href: "/reportes",
+    title: "Reportes",
+    description: "Préstamos, libros y multas en cifras.",
+    icon: BarChart3,
+  },
+];
+
 /**
- * Pantalla de inicio del shell. Da la bienvenida y orienta hacia las próximas
- * funcionalidades (catálogo, préstamos), que llegan con los módulos B–C.
+ * Pantalla de inicio del shell. Cabecera de bienvenida y accesos rápidos que
+ * navegan de verdad, adaptados al rol (estudiante o bibliotecario).
  */
 export default async function InicioPage() {
   const profile = await getCurrentProfile();
   const nombreCorto = profile?.nombre.split(" ")[0] ?? "";
+  const esBibliotecario = profile?.rol === "bibliotecario";
+  const links = esBibliotecario ? LIBRARIAN_LINKS : STUDENT_LINKS;
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-bold tracking-tight">
-        Hola, {nombreCorto} 👋
-      </h1>
-      <p className="mt-1 text-muted-foreground">
-        Bienvenida/o a BiblioTEC. Desde aquí gestionarás tus préstamos, reservas
-        y favoritos de la biblioteca universitaria.
-      </p>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        <Card
-          icon={Compass}
-          title="Explora el catálogo"
-          description="Busca libros por título, autor o ISBN. (Disponible pronto)"
+    <div className="mx-auto max-w-5xl">
+      {/* Cabecera de bienvenida */}
+      <section className="relative overflow-hidden rounded-2xl bg-primary p-6 text-primary-foreground shadow-sm sm:p-8">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 85% 15%, rgba(255,255,255,0.35), transparent 40%)",
+          }}
         />
-        <Card
-          icon={BookOpen}
-          title="Tus préstamos"
-          description="Renueva o devuelve tus libros a tiempo. (Disponible pronto)"
-        />
-        <Link
-          href="/perfil"
-          className="flex flex-col gap-2 rounded-lg border bg-card p-5 transition-colors hover:border-primary"
-        >
-          <User className="h-6 w-6 text-primary" aria-hidden="true" />
-          <span className="font-semibold">Tu perfil</span>
-          <span className="text-sm text-muted-foreground">
-            Revisa y actualiza tus datos de contacto.
+        <div className="relative">
+          <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium">
+            {esBibliotecario ? "Personal de biblioteca" : "Estudiante"}
           </span>
-        </Link>
+          <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+            Hola, {nombreCorto}
+          </h1>
+          <p className="mt-2 max-w-xl text-primary-foreground/80">
+            {esBibliotecario
+              ? "Gestiona el catálogo, la circulación y los reportes de BiblioTEC desde un solo lugar."
+              : "Bienvenida/o a BiblioTEC. Aquí gestionas tus préstamos, reservas y favoritos de la biblioteca universitaria."}
+          </p>
+        </div>
+      </section>
+
+      {/* Accesos rápidos */}
+      <h2 className="mb-4 mt-8 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        Accesos rápidos
+      </h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {links.map((link) => (
+          <QuickCard key={link.href} link={link} />
+        ))}
       </div>
     </div>
   );
 }
 
-function Card({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: typeof BookOpen;
-  title: string;
-  description: string;
-}) {
+function QuickCard({ link }: { link: QuickLink }) {
+  const Icon = link.icon;
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-card p-5">
-      <Icon className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
-      <span className="font-semibold">{title}</span>
-      <span className="text-sm text-muted-foreground">{description}</span>
-    </div>
+    <Link
+      href={link.href}
+      className="group flex items-center gap-4 rounded-xl border bg-card p-5 transition-colors hover:border-primary hover:bg-primary-soft"
+    >
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+        <Icon className="h-5 w-5" aria-hidden="true" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold">{link.title}</p>
+        <p className="truncate text-sm text-muted-foreground">
+          {link.description}
+        </p>
+      </div>
+      <ArrowRight
+        className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+        aria-hidden="true"
+      />
+    </Link>
   );
 }

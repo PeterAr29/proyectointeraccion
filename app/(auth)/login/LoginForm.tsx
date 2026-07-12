@@ -37,10 +37,9 @@ export function LoginForm() {
       className="flex flex-col gap-4"
     >
       <div>
-        <h2 className="text-lg font-bold">Iniciar sesión</h2>
-        <p className="text-sm text-muted-foreground">
-          Ingresa con tu código de acceso. Es el mismo para estudiantes y
-          personal de biblioteca.
+        <h2 className="text-xl font-bold tracking-tight">Iniciar sesión</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Bienvenido de nuevo a tu biblioteca.
         </p>
       </div>
 

@@ -58,17 +58,21 @@ export function Topbar({
           )}
         </Link>
 
-        <div className="flex items-center gap-2">
+        <Link
+          href="/perfil"
+          aria-label="Ir a mi perfil"
+          className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 transition-colors hover:bg-secondary sm:pr-3"
+        >
           <span
             aria-hidden="true"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground"
           >
             {iniciales}
           </span>
           <span className="hidden text-sm font-medium sm:inline">
             {profile.nombre}
           </span>
-        </div>
+        </Link>
       </div>
     </header>
   );
