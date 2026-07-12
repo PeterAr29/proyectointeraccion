@@ -1,153 +1,150 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
-  ArrowRight,
-  BarChart3,
   BookMarked,
-  BookOpen,
-  Clock,
+  Bell,
+  CalendarClock,
   Heart,
-  LayoutGrid,
   LibraryBig,
+  ReceiptText,
   Users,
-  type LucideIcon,
 } from "lucide-react";
 
 import { getCurrentProfile } from "@/lib/services/users";
+import {
+  effectiveLoanStatus,
+  listOwnLoansWithBooks,
+} from "@/lib/services/loans";
+import { listFavorites } from "@/lib/services/books";
+import { getUnreadCount } from "@/lib/services/notifications";
+import { getDashboardData } from "@/lib/services/dashboard";
+import {
+  DueSoon,
+  Hero,
+  LIBRARIAN_LINKS,
+  QuickAccess,
+  StatCard,
+  STUDENT_LINKS,
+} from "@/components/inicio/InicioUI";
 
 export const metadata: Metadata = { title: "Inicio" };
 
-interface QuickLink {
-  href: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-}
-
-const STUDENT_LINKS: QuickLink[] = [
-  {
-    href: "/catalogo",
-    title: "Explorar el catálogo",
-    description: "Busca libros por título, autor o ISBN.",
-    icon: BookOpen,
-  },
-  {
-    href: "/mis-prestamos",
-    title: "Mis préstamos",
-    description: "Renueva o devuelve tus libros a tiempo.",
-    icon: BookMarked,
-  },
-  {
-    href: "/favoritos",
-    title: "Favoritos",
-    description: "Los libros que guardaste para después.",
-    icon: Heart,
-  },
-  {
-    href: "/historial",
-    title: "Historial",
-    description: "Revisa tus préstamos anteriores.",
-    icon: Clock,
-  },
-];
-
-const LIBRARIAN_LINKS: QuickLink[] = [
-  {
-    href: "/dashboard",
-    title: "Dashboard",
-    description: "Indicadores clave de la biblioteca.",
-    icon: LayoutGrid,
-  },
-  {
-    href: "/libros",
-    title: "Gestión de libros",
-    description: "Crea, edita y da de baja el catálogo.",
-    icon: LibraryBig,
-  },
-  {
-    href: "/usuarios",
-    title: "Usuarios",
-    description: "Administra las cuentas de la comunidad.",
-    icon: Users,
-  },
-  {
-    href: "/reportes",
-    title: "Reportes",
-    description: "Préstamos, libros y multas en cifras.",
-    icon: BarChart3,
-  },
-];
-
 /**
- * Pantalla de inicio del shell. Cabecera de bienvenida y accesos rápidos que
- * navegan de verdad, adaptados al rol (estudiante o bibliotecario).
+ * Pantalla de inicio del shell: tablero personalizado con cabecera de
+ * bienvenida, un resumen con datos reales (préstamos, favoritos, avisos) y
+ * accesos rápidos. Server Component que compone `lib/services/*` (RLS acota los
+ * datos). La presentación vive en `components/inicio/InicioUI`.
  */
 export default async function InicioPage() {
   const profile = await getCurrentProfile();
-  const nombreCorto = profile?.nombre.split(" ")[0] ?? "";
   const esBibliotecario = profile?.rol === "bibliotecario";
-  const links = esBibliotecario ? LIBRARIAN_LINKS : STUDENT_LINKS;
+  const nombreCorto = profile?.nombre.split(" ")[0] ?? "";
 
   return (
-    <div className="mx-auto max-w-5xl">
-      {/* Cabecera de bienvenida */}
-      <section className="relative overflow-hidden rounded-2xl bg-primary p-6 text-primary-foreground shadow-sm sm:p-8">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 85% 15%, rgba(255,255,255,0.35), transparent 40%)",
-          }}
-        />
-        <div className="relative">
-          <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium">
-            {esBibliotecario ? "Personal de biblioteca" : "Estudiante"}
-          </span>
-          <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-            Hola, {nombreCorto}
-          </h1>
-          <p className="mt-2 max-w-xl text-primary-foreground/80">
-            {esBibliotecario
-              ? "Gestiona el catálogo, la circulación y los reportes de BiblioTEC desde un solo lugar."
-              : "Bienvenida/o a BiblioTEC. Aquí gestionas tus préstamos, reservas y favoritos de la biblioteca universitaria."}
-          </p>
-        </div>
-      </section>
-
-      {/* Accesos rápidos */}
-      <h2 className="mb-4 mt-8 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        Accesos rápidos
-      </h2>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {links.map((link) => (
-          <QuickCard key={link.href} link={link} />
-        ))}
-      </div>
+    <div className="mx-auto max-w-5xl space-y-8">
+      <Hero nombre={nombreCorto} esBibliotecario={esBibliotecario} />
+      {esBibliotecario ? <LibrarianBoard /> : <StudentBoard />}
     </div>
   );
 }
 
-function QuickCard({ link }: { link: QuickLink }) {
-  const Icon = link.icon;
+async function StudentBoard() {
+  const [loans, favorites, unread] = await Promise.all([
+    listOwnLoansWithBooks(),
+    listFavorites(),
+    getUnreadCount(),
+  ]);
+
+  const abiertos = loans ?? [];
+  const enPlazo = abiertos.filter(
+    ({ loan }) => effectiveLoanStatus(loan) === "activo",
+  );
+  const vencidos = abiertos.filter(
+    ({ loan }) => effectiveLoanStatus(loan) === "vencido",
+  );
+  // Préstamo con la fecha de devolución más próxima (incluye vencidos).
+  const proximo = [...abiertos].sort(
+    (a, b) =>
+      new Date(a.loan.fecha_devolucion_estimada).getTime() -
+      new Date(b.loan.fecha_devolucion_estimada).getTime(),
+  )[0];
+
   return (
-    <Link
-      href={link.href}
-      className="group flex items-center gap-4 rounded-xl border bg-card p-5 transition-colors hover:border-primary hover:bg-primary-soft"
-    >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-        <Icon className="h-5 w-5" aria-hidden="true" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="font-semibold">{link.title}</p>
-        <p className="truncate text-sm text-muted-foreground">
-          {link.description}
-        </p>
+    <>
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          href="/mis-prestamos"
+          icon={BookMarked}
+          tone="sky"
+          value={enPlazo.length}
+          label="Préstamos activos"
+        />
+        <StatCard
+          href="/mis-prestamos"
+          icon={CalendarClock}
+          tone="amber"
+          value={vencidos.length}
+          label="Por devolver (vencidos)"
+        />
+        <StatCard
+          href="/favoritos"
+          icon={Heart}
+          tone="rose"
+          value={favorites?.length ?? 0}
+          label="Favoritos"
+        />
+        <StatCard
+          href="/notificaciones"
+          icon={Bell}
+          tone="violet"
+          value={unread}
+          label="Avisos sin leer"
+        />
       </div>
-      <ArrowRight
-        className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
-        aria-hidden="true"
-      />
-    </Link>
+
+      {proximo && <DueSoon item={proximo} />}
+
+      <QuickAccess links={STUDENT_LINKS} />
+    </>
+  );
+}
+
+async function LibrarianBoard() {
+  const { kpis } = await getDashboardData();
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          href="/libros"
+          icon={LibraryBig}
+          tone="sky"
+          value={kpis.totalBooks}
+          label="Libros"
+        />
+        <StatCard
+          href="/usuarios"
+          icon={Users}
+          tone="violet"
+          value={kpis.totalUsers}
+          label="Usuarios"
+        />
+        <StatCard
+          href="/prestamos"
+          icon={BookMarked}
+          tone="emerald"
+          value={kpis.activeLoans}
+          label="Préstamos activos"
+        />
+        <StatCard
+          href="/multas"
+          icon={ReceiptText}
+          tone="amber"
+          value={kpis.pendingFines}
+          label="Multas pendientes"
+        />
+      </div>
+
+      <QuickAccess links={LIBRARIAN_LINKS} />
+    </>
   );
 }
