@@ -18,11 +18,15 @@ export interface CirculationSettings {
   maxRenovaciones: number;
 }
 
-/** Valores por defecto del dominio (docs/especificaciones.md §7.2). */
+/**
+ * Valores por defecto del dominio: préstamo de 2 días y una única ampliación de
+ * 1 día (política de circulación de BiblioTEC). Se usan como respaldo si la fila
+ * de `settings` no está disponible.
+ */
 export const DEFAULT_CIRCULATION_SETTINGS: CirculationSettings = {
-  diasPrestamo: 14,
+  diasPrestamo: 2,
   multaDiaria: 1.0,
-  maxRenovaciones: 2,
+  maxRenovaciones: 1,
 };
 
 export async function getCirculationSettings(): Promise<CirculationSettings> {

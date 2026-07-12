@@ -77,8 +77,10 @@ values
 -- --------------------------------------------------------------------------
 -- 2) Configuración global (fila única)
 -- --------------------------------------------------------------------------
+-- Política de circulación de BiblioTEC: préstamo de 2 días y una única
+-- ampliación de 1 día (max_renovaciones = 1).
 insert into public.settings (id, dias_prestamo, multa_diaria, max_renovaciones)
-values (1, 14, 1.00, 2);
+values (1, 2, 1.00, 1);
 
 -- --------------------------------------------------------------------------
 -- 3) Catálogo de libros (títulos/autores del contexto §9)
@@ -118,7 +120,7 @@ insert into public.loans (id, book_id, user_id, fecha_prestamo, fecha_devolucion
 values
   ('10000000-0000-0000-0000-000000000001',
    'b0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111111',
-   now() - interval '3 days', now() + interval '11 days', 'activo', 0);  -- [demo]
+   now(), now() + interval '2 days', 'activo', 0);  -- [demo] préstamo de 2 días
 
 insert into public.favorites (user_id, book_id)
 values

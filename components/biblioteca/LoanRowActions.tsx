@@ -122,9 +122,9 @@ export function LoanRowActions({
         open={view === "confirm-renew"}
         onClose={close}
         variant="confirm"
-        title="Confirmar renovación"
-        message={`Vas a renovar «${titulo}». Se calculará una nueva fecha de devolución desde hoy. ¿Continuar?`}
-        confirmLabel="Renovar"
+        title="Confirmar ampliación"
+        message={`Vas a ampliar el préstamo de «${titulo}» 1 día más. Solo puedes ampliarlo una vez. ¿Continuar?`}
+        confirmLabel="Ampliar"
         onConfirm={doRenew}
       />
 

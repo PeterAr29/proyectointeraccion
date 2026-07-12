@@ -67,11 +67,12 @@ export function SettingsForm({ settings }: { settings: CirculationSettings }) {
           type="number"
           inputMode="numeric"
           min={1}
+          max={2}
           aria-invalid={Boolean(errors.diasPrestamo)}
           {...register("diasPrestamo")}
         />
         <p className="mt-1 text-xs text-muted-foreground">
-          Plazo de devolución de un préstamo nuevo.
+          Plazo de devolución de un préstamo nuevo (máximo 2 días).
         </p>
         <FieldError message={errors.diasPrestamo?.message} />
       </div>
@@ -94,17 +95,19 @@ export function SettingsForm({ settings }: { settings: CirculationSettings }) {
       </div>
 
       <div>
-        <Label htmlFor="maxRenovaciones">Máximo de renovaciones</Label>
+        <Label htmlFor="maxRenovaciones">Máximo de ampliaciones</Label>
         <Input
           id="maxRenovaciones"
           type="number"
           inputMode="numeric"
           min={0}
+          max={1}
           aria-invalid={Boolean(errors.maxRenovaciones)}
           {...register("maxRenovaciones")}
         />
         <p className="mt-1 text-xs text-muted-foreground">
-          Cuántas veces se puede renovar un préstamo.
+          Cuántas veces se puede ampliar un préstamo (cada ampliación suma 1
+          día; máximo 1).
         </p>
         <FieldError message={errors.maxRenovaciones?.message} />
       </div>
