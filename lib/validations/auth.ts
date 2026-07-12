@@ -80,13 +80,18 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type RecoverInput = z.infer<typeof recoverSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
-/** Carreras disponibles en el registro (del prototipo design/). */
+/** Carreras disponibles en el registro (programas ofrecidos por la universidad). */
 export const CARRERAS = [
   "Ingeniería de Sistemas",
-  "Ingeniería Civil",
-  "Medicina",
-  "Derecho",
+  "Informática",
+  "Enfermería",
   "Administración",
-  "Humanidades",
-  "Ciencias",
+  "Contabilidad",
+  "Trabajo Social",
+  "Agronomía",
+  "Ingeniería Agroindustrial",
+  "Ingeniería Industrial",
+  "Ingeniería Mecánica",
 ] as const;
+
+export type Carrera = (typeof CARRERAS)[number];

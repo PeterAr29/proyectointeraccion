@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { AREA_LABELS } from "@/lib/domain/areas";
+
 /**
  * Esquema del formulario de libro (Módulo E, F5.2). Se reutiliza en cliente
  * (react-hook-form) y en servidor (Server Action): la validación del servidor es
@@ -41,7 +43,9 @@ export const bookFormSchema = z
       .regex(/^[0-9Xx-]{10,20}$/, "ISBN inválido")
       .optional()
       .or(z.literal("")),
-    categoria: optionalText(80),
+    // El área (categoría) es una lista controlada: el catálogo se organiza por
+    // ella. Se permite "" (sin área) para libros aún sin clasificar.
+    categoria: z.enum(AREA_LABELS).or(z.literal("")).optional(),
     ubicacion: optionalText(120),
     descripcion: optionalText(2000),
     cantidad_total: cantidad,

@@ -20,9 +20,16 @@ function hrefForPage(filters: CatalogFilters, page: number): string {
   if (filters.disponibilidad !== "todos") {
     params.set("disponibilidad", filters.disponibilidad);
   }
+  // Sin filtros activos, el listado es la vista "ver todo": preservarla para que
+  // paginar no rebote al hub de áreas.
+  const sinFiltros =
+    !filters.q &&
+    !filters.categoria &&
+    !filters.ubicacion &&
+    filters.disponibilidad === "todos";
+  if (sinFiltros) params.set("ver", "todo");
   if (page > 1) params.set("page", String(page));
-  const qs = params.toString();
-  return qs ? `/catalogo?${qs}` : "/catalogo";
+  return `/catalogo?${params.toString()}`;
 }
 
 export interface PaginationProps {

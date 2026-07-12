@@ -59,6 +59,20 @@ describe("bookFormSchema", () => {
       false,
     );
   });
+
+  it("el área (categoría) es una lista controlada", () => {
+    expect(
+      bookFormSchema.safeParse({ ...base, categoria: "Ciencias de la Salud" })
+        .success,
+    ).toBe(true);
+    expect(bookFormSchema.safeParse({ ...base, categoria: "" }).success).toBe(
+      true,
+    );
+    expect(
+      bookFormSchema.safeParse({ ...base, categoria: "Cualquier cosa" })
+        .success,
+    ).toBe(false);
+  });
 });
 
 describe("bookInputToRow", () => {

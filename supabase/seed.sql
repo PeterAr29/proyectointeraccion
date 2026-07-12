@@ -89,19 +89,19 @@ values (1, 2, 1.00, 1);
 -- --------------------------------------------------------------------------
 insert into public.books (id, titulo, autor, editorial, anio, isbn, categoria, ubicacion, descripcion, cantidad_total, cantidad_disponible)
 values
-  ('b0000000-0000-0000-0000-000000000001', 'Bases de Datos', 'Héctor García Molina', 'Pearson', 2020, '978-612-00-1234-5', 'Ingeniería', 'Estantería 3 – Fila B',
+  ('b0000000-0000-0000-0000-000000000001', 'Bases de Datos', 'Héctor García Molina', 'Pearson', 2020, '978-612-00-1234-5', 'Ingeniería y Tecnología', 'Estantería 3 – Fila B',
    'Fundamentos de sistemas de bases de datos: modelado, SQL y transacciones.', 5, 5),                        -- [demo] cantidades
-  ('b0000000-0000-0000-0000-000000000002', 'Algoritmos', 'T. Cormen', null, null, null, 'Ingeniería', null,
+  ('b0000000-0000-0000-0000-000000000002', 'Algoritmos', 'T. Cormen', null, null, null, 'Ingeniería y Tecnología', null,
    null, 4, 3),                                                                                                -- [demo] cantidades
-  ('b0000000-0000-0000-0000-000000000003', 'Redes de Computadoras', 'A. Tanenbaum', null, null, null, 'Ingeniería', null,
+  ('b0000000-0000-0000-0000-000000000003', 'Redes de Computadoras', 'A. Tanenbaum', null, null, null, 'Ingeniería y Tecnología', null,
    null, 3, 2),                                                                                                -- [demo] cantidades
-  ('b0000000-0000-0000-0000-000000000004', 'Inteligencia Artificial', 'S. Russell', null, null, null, 'Ingeniería', null,
+  ('b0000000-0000-0000-0000-000000000004', 'Inteligencia Artificial', 'S. Russell', null, null, null, 'Ingeniería y Tecnología', null,
    null, 2, 0),                                                                                                -- [demo] sin stock (para reservas)
-  ('b0000000-0000-0000-0000-000000000005', 'Sistemas Operativos Modernos', 'A. Tanenbaum', 'Pearson', 2023, null, 'Ingeniería', 'Estantería 4 – Fila A',
+  ('b0000000-0000-0000-0000-000000000005', 'Sistemas Operativos Modernos', 'A. Tanenbaum', 'Pearson', 2023, null, 'Ingeniería y Tecnología', 'Estantería 4 – Fila A',
    null, 4, 4),                                                                                                -- [demo] cantidades
-  ('b0000000-0000-0000-0000-000000000006', 'Programación en Java', null, null, null, null, 'Ingeniería', null,
+  ('b0000000-0000-0000-0000-000000000006', 'Programación en Java', null, null, null, null, 'Ingeniería y Tecnología', null,
    null, 3, 3),                                                                                                -- autor no dado por el contexto -> NULL; [demo] cantidades
-  ('b0000000-0000-0000-0000-000000000007', 'Estructuras de Datos', null, null, null, null, 'Ingeniería', null,
+  ('b0000000-0000-0000-0000-000000000007', 'Estructuras de Datos', null, null, null, null, 'Ingeniería y Tecnología', null,
    null, 3, 2);                                                                                                -- autor no dado -> NULL; [demo] cantidades
 
 -- 'Programación en Java' y 'Estructuras de Datos': el contexto no da autor.

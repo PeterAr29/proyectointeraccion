@@ -57,7 +57,7 @@ export function CatalogFilters({ filters, facets }: CatalogFiltersProps) {
       </div>
 
       <div>
-        <Label htmlFor="categoria">Categoría</Label>
+        <Label htmlFor="categoria">Área</Label>
         <select
           id="categoria"
           name="categoria"

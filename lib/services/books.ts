@@ -201,6 +201,26 @@ export async function getCatalogFacets(): Promise<{
   };
 }
 
+/**
+ * Número de libros vigentes por área (valor de `categoria`), para el hub del
+ * catálogo. Devuelve un mapa etiqueta→conteo; áreas sin libros simplemente no
+ * aparecen (el hub las muestra con 0). Ante error de BD devuelve `{}`.
+ */
+export async function getAreaCounts(): Promise<Record<string, number>> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("books")
+    .select("categoria")
+    .eq("activo", true);
+  if (error || !data) return {};
+
+  const counts: Record<string, number> = {};
+  for (const row of data) {
+    if (row.categoria) counts[row.categoria] = (counts[row.categoria] ?? 0) + 1;
+  }
+  return counts;
+}
+
 // ---------------------------------------------------------------------------
 // Métricas (Módulo E, F5.1)
 // ---------------------------------------------------------------------------

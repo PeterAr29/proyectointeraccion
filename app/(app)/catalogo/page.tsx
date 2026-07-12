@@ -6,7 +6,15 @@ import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorState } from "@/components/feedback/ErrorState";
 import { BookCard } from "@/components/biblioteca/BookCard";
 import { buttonVariants } from "@/components/ui/button";
-import { getCatalogFacets, listBooks, type Book } from "@/lib/services/books";
+import { AreaBreadcrumb, AreaHub } from "@/components/catalogo/AreaHub";
+import {
+  getAreaCounts,
+  getCatalogFacets,
+  listBooks,
+  type Book,
+} from "@/lib/services/books";
+import { getCurrentProfile } from "@/lib/services/users";
+import { areaForCarrera } from "@/lib/domain/areas";
 import {
   hasActiveFilters,
   parseCatalogFilters,
@@ -17,17 +25,56 @@ import { Pagination } from "./Pagination";
 
 export const metadata: Metadata = { title: "Catálogo" };
 
+function first(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 /**
- * Catálogo de libros: listado paginado con búsqueda y filtros.
- * Server Component que consume `lib/services/books` (única puerta a `books`) y
- * renderiza los cuatro estados: carga (via `loading.tsx`), vacío, error y datos.
+ * Catálogo de libros. Por defecto muestra un HUB de áreas académicas (el
+ * estudiante busca por necesidad, no por navegación libre). Al elegir un área,
+ * buscar o pedir "ver todo" (`?ver=todo`) pasa al listado paginado con filtros.
+ * Server Component que consume `lib/services/books` (única puerta a `books`).
  */
 export default async function CatalogoPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const filters = parseCatalogFilters(await searchParams);
+  const sp = await searchParams;
+  const filters = parseCatalogFilters(sp);
+  const verTodo = first(sp.ver) === "todo";
+  const showHub = !hasActiveFilters(filters) && !verTodo;
+
+  if (showHub) {
+    const [counts, profile] = await Promise.all([
+      getAreaCounts(),
+      getCurrentProfile(),
+    ]);
+    const userArea = areaForCarrera(profile?.carrera);
+
+    return (
+      <div className="mx-auto max-w-6xl">
+        <header className="mb-6 flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Catálogo</h1>
+            <p className="mt-1 text-muted-foreground">
+              Elige un área académica para encontrar tus libros más rápido, o
+              busca en todo el catálogo.
+            </p>
+          </div>
+          <Link
+            href="/catalogo?ver=todo"
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            Ver todo el catálogo →
+          </Link>
+        </header>
+
+        <AreaHub counts={counts} userArea={userArea} />
+      </div>
+    );
+  }
+
   const [result, facets] = await Promise.all([
     listBooks(filters),
     getCatalogFacets(),
@@ -35,11 +82,14 @@ export default async function CatalogoPage({
 
   return (
     <div className="mx-auto max-w-6xl">
+      <AreaBreadcrumb label={filters.categoria || undefined} />
       <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Catálogo</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {filters.categoria || "Catálogo"}
+        </h1>
         <p className="mt-1 text-muted-foreground">
-          Explora los libros de la biblioteca. Busca por título, autor o ISBN y
-          filtra por categoría, ubicación o disponibilidad.
+          Busca por título, autor o ISBN y filtra por área, ubicación o
+          disponibilidad.
         </p>
       </header>
 
@@ -82,7 +132,7 @@ function EmptyCatalog({ filtered }: { filtered: boolean }) {
             href="/catalogo"
             className={buttonVariants({ variant: "secondary" })}
           >
-            Ver todo el catálogo
+            Volver a las áreas
           </Link>
         </div>
       )}

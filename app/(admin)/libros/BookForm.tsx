@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { Book } from "@/lib/services/books";
 import { bookFormSchema, type BookFormInput } from "@/lib/validations/books";
+import { AREAS, AREA_LABELS, type AreaLabel } from "@/lib/domain/areas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,7 +51,11 @@ export function BookForm({ book }: { book?: Book }) {
       editorial: book?.editorial ?? "",
       anio: book?.anio ?? undefined,
       isbn: book?.isbn ?? "",
-      categoria: book?.categoria ?? "",
+      categoria: (AREA_LABELS as readonly string[]).includes(
+        book?.categoria ?? "",
+      )
+        ? (book?.categoria as AreaLabel)
+        : "",
       ubicacion: book?.ubicacion ?? "",
       descripcion: book?.descripcion ?? "",
       cantidad_total: book?.cantidad_total ?? 1,
@@ -143,8 +148,20 @@ export function BookForm({ book }: { book?: Book }) {
           <FieldError message={errors.isbn?.message} />
         </div>
         <div>
-          <Label htmlFor="categoria">Categoría</Label>
-          <Input id="categoria" {...register("categoria")} />
+          <Label htmlFor="categoria">Área</Label>
+          <select
+            id="categoria"
+            aria-invalid={Boolean(errors.categoria)}
+            className="h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground aria-[invalid=true]:border-destructive"
+            {...register("categoria")}
+          >
+            <option value="">Sin área</option>
+            {AREAS.map((area) => (
+              <option key={area.slug} value={area.label}>
+                {area.label}
+              </option>
+            ))}
+          </select>
           <FieldError message={errors.categoria?.message} />
         </div>
         <div>
