@@ -223,8 +223,8 @@
   - [x] `tests/e2e/catalog.spec.ts` alineado con el hub (`?ver=todo` para el listado,
         "Volver a las áreas" en el estado vacío)
   - [x] Locator del hub con `.first()` (el área de la carrera sale destacada y en la grilla)
-  - [ ] Job **e2e** verde en CI
-- Estado: 🔄 En curso
+  - [x] Job **e2e** verde en CI (run `29961604911`, `ci` + `e2e` en success)
+- Estado: ✅ Terminada (commit `80f1977`)
 
 ### T-024 · Vigilar el pausado automático de Supabase
 

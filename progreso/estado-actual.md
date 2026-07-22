@@ -7,7 +7,7 @@
 **Resuelto el 2026-07-22:**
 
 - ✅ **T-019 — `sharp` con 4 CVEs high** (commit `76e1793`): `overrides` a `sharp 0.35.3`. `npm audit --audit-level=high` vuelve a exit 0. _(Corrección: este paso de CI es `continue-on-error`, así que **nunca bloqueó** el pipeline; el arreglo vale igual, pero no era urgente por CI.)_
-- ✅ **T-025 — CI en rojo de verdad**: el job **e2e** llevaba fallando desde el 12-jul (`7ae69fa`) sin que nadie lo mirara. 2 specs del catálogo quedaron obsoletas con el hub de áreas; actualizadas.
+- ✅ **T-025 — CI en rojo de verdad**: el job **e2e** llevaba fallando desde el 12-jul (`7ae69fa`) sin que nadie lo mirara. 2 specs del catálogo quedaron obsoletas con el hub de áreas; actualizadas (commit `80f1977`). **CI verde entero** en el run `29961604911` (`ci` + `e2e`) — el primero en `main` desde el 11-jul.
 - ✅ **T-020 — regresión de `renew_loan`**: migración `20260722160000_renew_loan_restore_due_soon_marker.sql` **aplicada al remoto y verificada con rollback**.
 - ✅ **Supabase `bibliotec` reanudado**: estaba **`INACTIVE`** (pausado por 10 días de inactividad), con producción efectivamente caída. Restaurado a `ACTIVE_HEALTHY`, datos íntegros (7 perfiles, 15 libros, 11 préstamos).
 
