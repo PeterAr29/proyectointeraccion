@@ -191,9 +191,10 @@
   política de préstamo 2+1 y catálogo por áreas académicas. Dos migraciones aplicadas al remoto.
 - Estado: ✅ Terminada (registrada retroactivamente)
 
-### T-019 · Fix del gate `audit` en CI (`sharp`)
+### T-019 · Quitar los CVEs high de `sharp`
 
-- Depende de: — · _(era bloqueante: CI en rojo)_
+- Depende de: — · _(se creyó bloqueante por CI; **no lo era**: el paso de audit es
+  `continue-on-error: true`. El rojo real de CI era el e2e — ver T-025.)_
 - Criterios de aceptación:
   - [x] `npm audit --audit-level=high` en exit 0 (`overrides` a `sharp 0.35.3`)
   - [x] `npm run build` sigue verde (28/28) — además se verificó que el proyecto **no
@@ -212,6 +213,18 @@
         exacto, guardas BT101/BT100 intactos, datos sin tocar
   - [x] No se editó la migración ya aplicada
 - Estado: ✅ Terminada
+
+### T-025 · Arreglar el e2e del catálogo (CI en rojo desde el 12-jul)
+
+- Depende de: T-018 · **Este era el rojo real de CI**
+- El run de `7ae69fa` (12-jul) falló y nadie lo revisó: `main` llevó 10 días con el
+  job e2e en rojo. 2 specs quedaron obsoletas con el hub de áreas (la UI era correcta).
+- Criterios de aceptación:
+  - [x] `tests/e2e/catalog.spec.ts` alineado con el hub (`?ver=todo` para el listado,
+        "Volver a las áreas" en el estado vacío)
+  - [x] Locator del hub con `.first()` (el área de la carrera sale destacada y en la grilla)
+  - [ ] Job **e2e** verde en CI
+- Estado: 🔄 En curso
 
 ### T-024 · Vigilar el pausado automático de Supabase
 

@@ -1,8 +1,12 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * E2E del catálogo (F2.1). Usa el usuario semilla María (F1.2) y los 7 libros
+ * E2E del catálogo (F2.1). Usa el usuario semilla María (F1.2) y los libros
  * del seed. Requiere el proyecto Supabase remoto aplicado y `.env.local`.
+ *
+ * Desde la iteración del 2026-07-12, `/catalogo` sin filtros muestra el HUB de
+ * áreas académicas; el listado paginado se alcanza con `?ver=todo`, con una
+ * búsqueda o al elegir un área.
  */
 
 const CODIGO = "202100123";
@@ -16,15 +20,29 @@ async function login(page: import("@playwright/test").Page) {
   await expect(page).toHaveURL(/\/inicio/);
 }
 
-test("el catálogo lista los libros del seed", async ({ page }) => {
+test("el catálogo abre en el hub de áreas académicas", async ({ page }) => {
   await login(page);
   await page.goto("/catalogo");
 
   await expect(page.getByRole("heading", { name: "Catálogo" })).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Sistemas Operativos Modernos" }),
+    page.getByRole("heading", { name: "Explora por área" }),
   ).toBeVisible();
+  // El área de la carrera se destaca arriba y además está en la grilla, así que
+  // el nombre aparece más de una vez: basta con que la tarjeta exista.
+  await expect(
+    page.getByRole("link", { name: /Ingeniería y Tecnología/ }).first(),
+  ).toBeVisible();
+});
+
+test("«ver todo» lista el catálogo paginado", async ({ page }) => {
+  await login(page);
+  await page.goto("/catalogo?ver=todo");
+
+  // No se afirma un título concreto: el catálogo está paginado y qué libro cae
+  // en la primera página depende de los datos. Se comprueba que hay listado.
   await expect(page.getByText(/libros encontrados/)).toBeVisible();
+  await expect(page.getByRole("listitem").first()).toBeVisible();
 });
 
 test("la búsqueda por autor filtra los resultados", async ({ page }) => {
@@ -51,7 +69,7 @@ test("una búsqueda sin coincidencias muestra el estado vacío", async ({
 
   await expect(page.getByText("Sin resultados")).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Ver todo el catálogo" }),
+    page.getByRole("link", { name: "Volver a las áreas" }),
   ).toBeVisible();
 });
 

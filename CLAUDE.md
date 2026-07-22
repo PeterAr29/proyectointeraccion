@@ -253,7 +253,7 @@ Ver siempre `ROADMAP.md` y `progreso/estado-actual.md` para el estado más fresc
 
 **Fase activa actual:** ninguna — el plan de 6 fases / 17 subfases está **completo** (`v1.0.0`, en producción en Vercel).
 
-**Trabajo abierto (post-`v1.0.0`, auditoría del 2026-07-22):** T-019 fix del gate `audit` en CI (`sharp`) y T-020 fix de la regresión del aviso de vencimiento son **bloqueantes**; luego T-021 re-evaluación heurística, T-022 SUS real y T-023 alinear especificaciones. Contexto en `progreso/fase-7-ux.md`.
+**Trabajo abierto (post-`v1.0.0`, auditoría del 2026-07-22):** cerradas T-019 (CVEs de `sharp`), T-020 (regresión del aviso de vencimiento) y T-025 (e2e del catálogo, que tenía CI en rojo desde el 12-jul). Quedan **T-021** re-evaluación heurística → **T-022** SUS real → **T-023** alinear especificaciones, más **T-024** (vigilar el pausado automático de Supabase). Contexto en `progreso/fase-7-ux.md`.
 
 > ⚠️ **La política de préstamo vigente es 2 días con 1 ampliación de 1 día** (cambio del 2026-07-12). `docs/especificaciones.md` §7.2.2/§7.2.5 todavía describe la anterior.
 

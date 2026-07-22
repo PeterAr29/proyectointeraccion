@@ -90,9 +90,16 @@ ampliaciones en `lib/validations/books.test.ts` y `settings.test.ts`.
 > **Actualización 2026-07-22:** los pendientes 1 y 2 quedaron **resueltos** el mismo
 > día (ver §Resolución al final). Los pendientes 3 y 4 siguen abiertos.
 
-### Pendiente 1 — 🟠 CI en rojo: `sharp` con CVEs de libvips ✅ RESUELTO
+### Pendiente 1 — 🟠 `sharp` con CVEs de libvips ✅ RESUELTO
 
-`npm audit --audit-level=high` sale **en rojo** y con él **el gate `audit` de CI**:
+> **Corrección (2026-07-22):** este documento afirmaba primero que el fallo de
+> `npm audit` **rompía CI**. Es **falso**: el paso `Dependency audit (warning only)`
+> de `.github/workflows/ci.yml` tiene `continue-on-error: true`, así que nunca
+> bloqueó. Lo que sí llevaba **CI en rojo desde el 12-jul** era el job **e2e**
+> (ver Pendiente 5). El arreglo de `sharp` sigue valiendo —elimina 4 CVEs high
+> reales— pero no era urgente por CI.
+
+`npm audit --audit-level=high` salía en rojo (sin bloquear el pipeline):
 
 - **`sharp` < 0.35.0** ([GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj):
   CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591), entra como
@@ -139,6 +146,40 @@ login previo al rediseño, el inicio como accesos rápidos, el catálogo sin hub
 re-pasarlos sobre la UI actual antes de recolectar el SUS real — medir usabilidad y
 después cambiar las pantallas invalida la medición. Prioritario: **contraste AA del
 texto claro sobre el degradado azul→índigo** del sidebar/hero, que nunca se midió.
+
+### Pendiente 5 — 🟠 CI en rojo desde el 12-jul: el e2e del catálogo ✅ RESUELTO
+
+**Este era el rojo de verdad.** Detectado al hacer push el 2026-07-22: el run de CI
+del commit `7ae69fa` (12-jul, catálogo por áreas) **falló y nadie lo miró**; desde
+entonces `main` arrastraba el job **e2e** en rojo. Los runs "success" del 13 y el
+20-jul son de Dependabot sobre otras ramas, no de `main`.
+
+Fallaban 2 de 9 specs de `tests/e2e/catalog.spec.ts`, ambas por el rediseño:
+
+| Spec                                    | Por qué falla                                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `el catálogo lista los libros del seed` | `/catalogo` sin filtros ahora muestra el **hub de áreas**, no el listado de libros       |
+| `búsqueda sin coincidencias`            | el enlace del estado vacío pasó de **"Ver todo el catálogo"** a **"Volver a las áreas"** |
+
+La UI se comporta **como fue diseñada**; los tests eran los obsoletos. Actualizados:
+la primera spec se divide en "abre en el hub de áreas" + "«ver todo» lista los libros
+del seed" (`?ver=todo`), y la tercera busca el enlace nuevo. El locator del hub usa
+`.first()` porque el área de la carrera se pinta destacada **y** en la grilla.
+
+Al arreglarlos apareció un tercer desajuste: la spec del listado afirmaba un título
+concreto ("Sistemas Operativos Modernos"), pero con los libros `[demo]` que añadió el
+seed del 12-jul el catálogo pasó a 15 libros **paginados** y ese título ya no cae en
+la primera página. Ahora comprueba que hay listado (conteo + tarjetas), no un libro
+concreto.
+
+**Verificado en local contra el build de producción** (`CI=1`, como en el workflow):
+**9/10 pasan y 1 queda _flaky_** — "marcar y quitar un favorito" falla a veces en el
+primer intento y pasa al reintento (carrera entre el Server Action y el toast; ya
+existía). Datos del remoto intactos tras la corrida (3 favoritos, como antes).
+
+**Lección:** el rediseño del 12-jul no tocó los e2e y nadie revisó el run. Un cambio
+de entrada de una vista rompe sus specs aunque los unit sigan verdes; y afirmar un
+dato concreto del seed en un e2e lo vuelve frágil en cuanto crecen los datos.
 
 ### Pendiente 4 — `docs/especificaciones.md` sigue diciendo el plazo viejo
 

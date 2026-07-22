@@ -6,7 +6,8 @@
 
 **Resuelto el 2026-07-22:**
 
-- ✅ **T-019 — gate de `audit` en CI** (commit `76e1793`): `overrides` a `sharp 0.35.3`. `npm audit --audit-level=high` vuelve a exit 0.
+- ✅ **T-019 — `sharp` con 4 CVEs high** (commit `76e1793`): `overrides` a `sharp 0.35.3`. `npm audit --audit-level=high` vuelve a exit 0. _(Corrección: este paso de CI es `continue-on-error`, así que **nunca bloqueó** el pipeline; el arreglo vale igual, pero no era urgente por CI.)_
+- ✅ **T-025 — CI en rojo de verdad**: el job **e2e** llevaba fallando desde el 12-jul (`7ae69fa`) sin que nadie lo mirara. 2 specs del catálogo quedaron obsoletas con el hub de áreas; actualizadas.
 - ✅ **T-020 — regresión de `renew_loan`**: migración `20260722160000_renew_loan_restore_due_soon_marker.sql` **aplicada al remoto y verificada con rollback**.
 - ✅ **Supabase `bibliotec` reanudado**: estaba **`INACTIVE`** (pausado por 10 días de inactividad), con producción efectivamente caída. Restaurado a `ACTIVE_HEALTHY`, datos íntegros (7 perfiles, 15 libros, 11 préstamos).
 
@@ -348,11 +349,18 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - [x] ~~Deploy a producción~~ — **hecho**: `main` empujado, auto-deploy en Vercel
       verificado (headers/manifest/SW/íconos 200 sobre HTTPS). PWA instalable
       verificada en móvil por el usuario.
-- [x] ~~🟠 **(2026-07-22) CI en rojo — `sharp` <0.35.0 con CVEs de libvips**~~ —
-      **resuelto** (commit `76e1793`): `overrides` a `sharp 0.35.3`. `next@15.5.21` no
-      lo arreglaba (sigue pidiendo `sharp ^0.34.3`) y `npm audit fix --force` proponía
-      `next@9.3.3`. Riesgo nulo: el proyecto no importa `next/image` en ningún archivo.
+- [x] ~~🟠 **(2026-07-22) `sharp` <0.35.0 con CVEs de libvips**~~ — **resuelto**
+      (commit `76e1793`): `overrides` a `sharp 0.35.3`. `next@15.5.21` no lo arreglaba
+      (sigue pidiendo `sharp ^0.34.3`) y `npm audit fix --force` proponía `next@9.3.3`.
+      Riesgo nulo: el proyecto no importa `next/image` en ningún archivo.
       `npm audit --audit-level=high` vuelve a **exit 0**.
+      ⚠️ **Corrección:** se dijo que esto tenía CI en rojo. No era cierto — el paso
+      `Dependency audit (warning only)` es `continue-on-error: true` y nunca bloqueó.
+- [x] ~~🟠 **(2026-07-22) CI en rojo desde el 12-jul — job e2e**~~ — **resuelto**:
+      el run de `7ae69fa` falló el 12-jul y nadie lo revisó; `main` llevaba 10 días con
+      el e2e rojo. 2 specs de `tests/e2e/catalog.spec.ts` quedaron obsoletas al pasar
+      `/catalogo` al hub de áreas (listado ahora en `?ver=todo`; el enlace del estado
+      vacío es "Volver a las áreas"). Tests actualizados; la UI era correcta.
 - [x] ~~🟠 **(2026-07-22) Regresión: no se re-avisa el vencimiento tras ampliar**~~ —
       **resuelto**: migración `20260722160000_renew_loan_restore_due_soon_marker.sql`
       re-declara `renew_loan` conservando la política 2+1 y restaurando
@@ -401,6 +409,10 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - **Nueva (F6.2) — SW versionado a mano:** invalidar el caché del service worker
   requiere subir `CACHE` (`bibliotec-shell-v1`) en `public/sw.js` al cambiar assets
   críticos. Network-first en navegaciones evita HTML obsoleto estando online. Ver ADR-0002.
+- **Nueva (2026-07-22) — e2e de favoritos _flaky_:** "marcar y quitar un favorito"
+  falla a veces en el primer intento y pasa al reintento (carrera entre el Server
+  Action y la aparición del toast). En CI hay `retries: 2`, así que no rompe el
+  pipeline, pero conviene esperar por la persistencia y no por el toast.
 - **Nueva (12-jul) — `books.categoria` es lista controlada:** cualquier libro cargado
   con una categoría fuera de `AREA_LABELS` (`lib/domain/areas.ts`) queda huérfano del
   hub de áreas del catálogo. Si se amplía la taxonomía, hay que migrar los datos.
