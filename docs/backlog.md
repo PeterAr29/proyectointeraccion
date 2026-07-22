@@ -1,6 +1,6 @@
 # Backlog — BiblioTEC
 
-> Tareas mapeadas desde las subfases de `docs/guia_desarrollo.md`. Una tarea está **Disponible** solo si sus dependencias están Terminadas. Cada dev toma tareas disponibles de cualquier módulo no bloqueado, sin invadir un módulo que otro tiene *En progreso*.
+> Tareas mapeadas desde las subfases de `docs/guia_desarrollo.md`. Una tarea está **Disponible** solo si sus dependencias están Terminadas. Cada dev toma tareas disponibles de cualquier módulo no bloqueado, sin invadir un módulo que otro tiene _En progreso_.
 
 **Estados:** Disponible · En progreso · Review · Done
 
@@ -9,6 +9,7 @@
 ## Módulo A — Plataforma & Acceso (F1, integrador, secuencial)
 
 ### T-001 · [A] Setup & tooling
+
 - Depende de: —
 - Criterios de aceptación:
   - [ ] Next.js 15 + TS strict + Tailwind + shadcn arrancan en localhost:3000
@@ -18,6 +19,7 @@
 - Estado: Disponible
 
 ### T-002 · [A] Base de datos, RLS y seed
+
 - Depende de: T-001
 - Criterios de aceptación:
   - [ ] Migraciones de las 8 tablas con RLS activo y políticas por rol
@@ -27,6 +29,7 @@
 - Estado: Bloqueado por T-001
 
 ### T-003 · [A] Sistema de diseño (kitchen-sink)
+
 - Depende de: T-002
 - Criterios de aceptación:
   - [ ] StatusBadge, BookCover, Modal, Toast, EmptyState, ErrorState, Skeleton + diálogos globales
@@ -35,6 +38,7 @@
 - Estado: Bloqueado por T-002
 
 ### T-004 · [A] Acceso + shell + perfil
+
 - Depende de: T-003
 - Criterios de aceptación:
   - [ ] Login, registro, recuperar (Zod cliente+servidor); errores en diálogos globales
@@ -48,6 +52,7 @@
 ## Módulo B — Catálogo
 
 ### T-005 · [B] Listado, búsqueda y filtros
+
 - Depende de: T-004 (interfaz de sesión/servicios de A)
 - Criterios de aceptación:
   - [ ] `/catalogo` con listado paginado, búsqueda (título/autor/ISBN) y filtros
@@ -56,6 +61,7 @@
 - Estado: Bloqueado por T-004
 
 ### T-006 · [B] Detalle de libro + favoritos
+
 - Depende de: T-005
 - Criterios de aceptación:
   - [ ] `/catalogo/[id]` con detalle completo; id inválido → ErrorState
@@ -68,6 +74,7 @@
 ## Módulo C — Circulación
 
 ### T-007 · [C] Reservas y préstamos
+
 - Depende de: T-006 (frontera `books.ts`); puede arrancar contra mock de books
 - Criterios de aceptación:
   - [ ] Prestar si hay stock (decremento atómico); si no, reservar
@@ -77,6 +84,7 @@
 - Estado: Bloqueado por T-006
 
 ### T-008 · [C] Mis préstamos (renovar/devolver/vencidos)
+
 - Depende de: T-007
 - Criterios de aceptación:
   - [ ] `/mis-prestamos` con LoanTable; renovar (límite y multa pendiente), devolver (repone stock)
@@ -84,6 +92,7 @@
 - Estado: Bloqueado por T-007
 
 ### T-009 · [C] Historial
+
 - Depende de: T-008
 - Criterios de aceptación:
   - [ ] `/historial` con filtro por estado/fecha (solo lectura, RLS); tests
@@ -95,6 +104,7 @@
 ## Módulo D — Multas & Notificaciones
 
 ### T-010 · [D] Cálculo de multas
+
 - Depende de: T-009 (préstamos vencidos y dias_retraso)
 - Criterios de aceptación:
   - [ ] `fines.ts`: monto = dias_retraso × multa_diaria; estados pendiente/pagada
@@ -103,6 +113,7 @@
 - Estado: Bloqueado por T-009
 
 ### T-011 · [D] Motor de notificaciones + vista
+
 - Depende de: T-010
 - Criterios de aceptación:
   - [ ] Notifica reserva disponible, vencimiento y multa
@@ -115,12 +126,14 @@
 ## Módulo E — Administración
 
 ### T-012 · [E] Dashboard con KPIs
+
 - Depende de: T-011 (services de B/C/D listos)
 - Criterios de aceptación:
   - [ ] `/admin/dashboard` (solo bibliotecario) con KPIs y préstamos recientes vía services; tests de agregación
 - Estado: Bloqueado por T-011
 
 ### T-013 · [E] CRUD de libros y usuarios
+
 - Depende de: T-012
 - Criterios de aceptación:
   - [ ] CRUD de libros (portada en Storage) y usuarios (rol/activación, sin borrado duro con historial)
@@ -128,6 +141,7 @@
 - Estado: Bloqueado por T-012
 
 ### T-014 · [E] Préstamos, devoluciones y multas
+
 - Depende de: T-013
 - Criterios de aceptación:
   - [ ] Registro de devolución (repone stock) con cálculo de multa vía `fines.ts`; marcar multa pagada
@@ -135,6 +149,7 @@
 - Estado: Bloqueado por T-013
 
 ### T-015 · [E] Reportes y configuración
+
 - Depende de: T-014
 - Criterios de aceptación:
   - [ ] `/admin/reportes` (préstamos por periodo, más prestados, multas; export CSV)
@@ -147,6 +162,7 @@
 ## Fase 6 — Evaluación IHC & Producción
 
 ### T-016 · Evaluación de usabilidad (Nielsen + SUS)
+
 - Depende de: T-015
 - Criterios de aceptación:
   - [ ] `docs/evaluacion-usabilidad.md`: heurística de Nielsen, recorrido cognitivo, SUS (≥75)
@@ -154,11 +170,73 @@
 - Estado: Bloqueado por T-015
 
 ### T-017 · Endurecimiento y despliegue
+
 - Depende de: T-016
 - Criterios de aceptación:
   - [ ] Headers de seguridad + CORS + cookies seguras; e2e críticos verdes; `npm audit` limpio
   - [ ] Política de privacidad (Ley 29733); test de restore documentado; deploy a Vercel verificado; tag v1.0.0
 - Estado: Bloqueado por T-016
+
+---
+
+## Post-`v1.0.0` — trabajo abierto (auditoría del 2026-07-22)
+
+> Detectado al registrar retroactivamente la iteración de UX del 2026-07-12.
+> Contexto completo en `progreso/fase-7-ux.md`.
+
+### T-018 · Iteración de UX post-`v1.0.0` (A/B/C)
+
+- Depende de: T-017
+- Entregado el 2026-07-12 en 5 commits (`4a9a684`…`7ae69fa`): rediseño de login/inicio/shell,
+  política de préstamo 2+1 y catálogo por áreas académicas. Dos migraciones aplicadas al remoto.
+- Estado: ✅ Terminada (registrada retroactivamente)
+
+### T-019 · Fix del gate `audit` en CI (`sharp`)
+
+- Depende de: — · **Bloqueante: CI en rojo**
+- Criterios de aceptación:
+  - [ ] `npm audit --audit-level=high` en exit 0 (`overrides` a `sharp ^0.35.3`)
+  - [ ] `npm run build` sigue verde (sharp interviene en optimización de imágenes)
+  - [ ] `package-lock.json` comiteado; **sin** `npm audit fix --force` (propone `next@9.3.3`)
+- Estado: Pendiente
+
+### T-020 · Fix de la regresión del aviso de vencimiento (C/D)
+
+- Depende de: — · **Bloqueante: bug funcional en producción**
+- Criterios de aceptación:
+  - [ ] **Migración nueva** que re-declare `renew_loan` conservando la suma de 1 día
+        **y** restaurando `vencimiento_notificado_en = null` (perdido el 12-jul)
+  - [ ] Aplicada al remoto y verificada con rollback: ampliar un préstamo ya avisado
+        permite un nuevo aviso de "vencimiento próximo"
+  - [ ] No se edita la migración ya aplicada
+- Estado: Pendiente
+
+### T-021 · Re-evaluación heurística de la UI rediseñada
+
+- Depende de: T-018
+- Criterios de aceptación:
+  - [ ] Nielsen + recorrido cognitivo sobre login, inicio (tablero), catálogo por áreas y shell azul
+  - [ ] **Contraste AA verificado** en texto claro sobre el degradado azul→índigo
+  - [ ] `docs/evaluacion-usabilidad.md` actualizado a las pantallas actuales
+- Estado: Pendiente
+
+### T-022 · Recolección del SUS real
+
+- Depende de: T-021 (medir antes de re-evaluar invalidaría el resultado)
+- Criterios de aceptación:
+  - [ ] 5–8 participantes (≥1 bibliotecario/a) con el kit `docs/sus-kit/`
+  - [ ] Tabla real pegada en `docs/evaluacion-usabilidad.md` §4.3, sustituyendo el piloto simulado
+  - [ ] SUS ≥ 75 y ≥ 90 % de tareas críticas sin ayuda (si no, corregir severidad ≥3 y re-medir)
+  - [ ] CSV de respuestas **no comiteado** (Ley 29733)
+- Estado: Bloqueado por T-021
+
+### T-023 · Alinear especificaciones con la política de préstamo 2+1
+
+- Depende de: —
+- Criterios de aceptación:
+  - [ ] `docs/especificaciones.md` §7.2.2 y §7.2.5 describen préstamo de 2 días + 1 ampliación de 1 día
+  - [ ] Glosario y copy revisados ("renovación" → "ampliación")
+- Estado: Pendiente
 
 ---
 

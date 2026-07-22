@@ -12,29 +12,41 @@
 | D — Multas & Notificaciones | ✅ Completado (Fase 4) | integrador | 2026-07-10 |
 | E — Administración          | ✅ Completado (Fase 5) | integrador | 2026-07-11 |
 
+> **Nota (2026-07-22):** A, B y C recibieron cambios el **2026-07-12**, después de
+> darse por completados (rediseño visual, política de préstamo 2+1, catálogo por
+> áreas). Ver `progreso/fase-7-ux.md`.
+
 ## Tareas en curso (dentro de módulos)
 
-| Tarea                                         | Módulo | Dev        | Estado       |
-| --------------------------------------------- | ------ | ---------- | ------------ |
-| T-001 Setup & tooling (F1.1)                  | A      | integrador | ✅ Terminada |
-| T-002 Base de datos, RLS y seed (F1.2)        | A      | integrador | ✅ Terminada |
-| T-003 Sistema de diseño (F1.3)                | A      | integrador | ✅ Terminada |
-| T-004 Acceso + shell + perfil (F1.4)          | A      | integrador | ✅ Terminada |
-| T-005 Catálogo: listado/búsqueda (F2.1)       | B      | integrador | ✅ Terminada |
-| T-006 Catálogo: detalle + favoritos (F2.2)    | B      | integrador | ✅ Terminada |
-| T-007 Reservas y préstamos (F3.1)             | C      | integrador | ✅ Terminada |
-| T-008 Mis préstamos (F3.2)                    | C      | integrador | ✅ Terminada |
-| T-009 Historial (F3.3)                        | C      | integrador | ✅ Terminada |
-| T-010 Cálculo de multas (F4.1)                | D      | integrador | ✅ Terminada |
-| T-011 Notificaciones + vista (F4.2)           | D      | integrador | ✅ Terminada |
-| T-012 Dashboard con KPIs (F5.1)               | E      | integrador | ✅ Terminada |
-| T-013 CRUD libros y usuarios (F5.2)           | E      | integrador | ✅ Terminada |
-| T-014 Préstamos/devoluciones/multas (F5.3)    | E      | integrador | ✅ Terminada |
-| T-015 Reportes y configuración (F5.4)         | E      | integrador | ✅ Terminada |
-| T-016 Evaluación de usabilidad (F6.1)         | —      | integrador | ✅ Terminada |
-| T-017 Endurecimiento, PWA y despliegue (F6.2) | —      | integrador | ✅ Terminada |
+| Tarea                                           | Módulo | Dev        | Estado       |
+| ----------------------------------------------- | ------ | ---------- | ------------ |
+| T-001 Setup & tooling (F1.1)                    | A      | integrador | ✅ Terminada |
+| T-002 Base de datos, RLS y seed (F1.2)          | A      | integrador | ✅ Terminada |
+| T-003 Sistema de diseño (F1.3)                  | A      | integrador | ✅ Terminada |
+| T-004 Acceso + shell + perfil (F1.4)            | A      | integrador | ✅ Terminada |
+| T-005 Catálogo: listado/búsqueda (F2.1)         | B      | integrador | ✅ Terminada |
+| T-006 Catálogo: detalle + favoritos (F2.2)      | B      | integrador | ✅ Terminada |
+| T-007 Reservas y préstamos (F3.1)               | C      | integrador | ✅ Terminada |
+| T-008 Mis préstamos (F3.2)                      | C      | integrador | ✅ Terminada |
+| T-009 Historial (F3.3)                          | C      | integrador | ✅ Terminada |
+| T-010 Cálculo de multas (F4.1)                  | D      | integrador | ✅ Terminada |
+| T-011 Notificaciones + vista (F4.2)             | D      | integrador | ✅ Terminada |
+| T-012 Dashboard con KPIs (F5.1)                 | E      | integrador | ✅ Terminada |
+| T-013 CRUD libros y usuarios (F5.2)             | E      | integrador | ✅ Terminada |
+| T-014 Préstamos/devoluciones/multas (F5.3)      | E      | integrador | ✅ Terminada |
+| T-015 Reportes y configuración (F5.4)           | E      | integrador | ✅ Terminada |
+| T-016 Evaluación de usabilidad (F6.1)           | —      | integrador | ✅ Terminada |
+| T-017 Endurecimiento, PWA y despliegue (F6.2)   | —      | integrador | ✅ Terminada |
+| T-018 Iteración de UX post-`v1.0.0`             | A/B/C  | integrador | ✅ Terminada |
+| T-019 Fix gate `audit` en CI (`sharp`)          | —      | _libre_    | ⏳ Pendiente |
+| T-020 Fix regresión aviso de vencimiento        | C/D    | _libre_    | ⏳ Pendiente |
+| T-021 Re-evaluación heurística de la UI nueva   | —      | _libre_    | ⏳ Pendiente |
+| T-022 Recolección del SUS real (dep. T-021)     | —      | _libre_    | ⏳ Pendiente |
+| T-023 Alinear especificaciones con préstamo 2+1 | —      | _libre_    | ⏳ Pendiente |
 
-> Última tarea del proyecto (T-017) **terminada**. **Todas las tareas cerradas.** Ver `docs/backlog.md`.
+> Las 17 tareas del plan original están cerradas. **T-019 a T-023 son trabajo
+> abierto detectado en la auditoría del 2026-07-22** (ver `progreso/fase-7-ux.md`);
+> T-019 y T-020 son las bloqueantes. Ver `docs/backlog.md`.
 
 ## Log de reclamos (append-only, evita disputas)
 
@@ -56,6 +68,8 @@
 - 2026-07-11 — F5.2 (CRUD de libros y usuarios) **cerrada**. `/libros` y `/usuarios` (listar/crear/editar/baja lógica) bajo el layout `(admin)`. Libros: `books.activo` (el catálogo del estudiante oculta inactivos), portada a Storage (bucket `book-covers`, escritura solo bibliotecario), `books-admin.ts`. Usuarios: alta con cliente admin, edición de contacto+rol+activación, anti-autobloqueo del propio admin, `users-admin.ts` (correo/código de solo lectura). Guard `isCurrentUserLibrarian` revalida rol en cada action. **🔴 Fix de seguridad**: trigger `prevent_self_privilege_change` corrige una escalada de privilegios latente desde F1.2 (un estudiante podía auto-promocionarse a bibliotecario vía RLS directa). 117/117 unit; RLS/Storage/escalada verificados end-to-end con rollback (estudiante no escribe libros ni escala rol; bibliotecario sí; seed intacto); typecheck/lint/build/audit-high verdes. Siguiente: F5.3 (préstamos, devoluciones y multas).
 - 2026-07-11 — **Módulo E reclamado** por el dev integrador. F5.1 (Dashboard con KPIs) **cerrada** → **abre la Fase 5 (Administración)**. Nuevo route group `app/(admin)/` con `layout.tsx` que exige rol bibliotecario (deny-by-default; RLS = autorización real) y reusa el shell. `/dashboard` con 4 KPIs reales (libros/usuarios/préstamos activos/multas pendientes) + tabla de préstamos recientes, 4 estados. Agregador `lib/services/dashboard.ts` (compone services, no accede a tablas) + `buildRecentLoanRows` pura; conteos añadidos a `books.ts`/`users.ts`/`loans.ts`/`fines.ts` (cada uno única puerta a su tabla; el bibliotecario ve todo por `is_librarian()`); componentes `KpiCard`/`RecentLoansTable`; nav "Dashboard" activado. 101/101 unit; KPIs y RLS verificados end-to-end con rollback (bibliotecario 7/5/0/0, estudiante restringida a su perfil, join de recientes resuelve libro+usuario, seed intacto); typecheck/lint/build/audit-high verdes. Siguiente: F5.2 (CRUD de libros y usuarios).
 - 2026-07-10 — F4.2 (Motor de notificaciones + vista) **cerrada** → **Fase 4 (Multas & Notificaciones) COMPLETADA (hito M2)**. `lib/services/notifications.ts` (única puerta a `notifications`) genera los 3 tipos con cliente admin/service role: `multa_generada` (enganchado en `fines.syncFineForLoan`), `vencimiento_proximo` (préstamos que vencen en ≤3 días) y `reserva_disponible` (barrido que notifica al frente de la cola cuando el libro recupera stock). Idempotencia por marcadores (`vencimiento_notificado_en`/`notificada_disponible_en`; `renew_loan` re-declarada para reiniciar el de vencimiento). `/notificaciones` (4 estados) con marcar leída/todas (Server Actions, RLS); campana del Topbar = Link con badge de no-leídas (`getUnreadCount` en el layout servidor); nav activado. 96/96 unit; RLS de `notifications` verificada end-to-end contra el remoto con rollback (María ve la suya y la marca leída, Juan no la ve, seed intacto); typecheck/lint/build/audit-high verdes. **Módulo E (Administración) queda Disponible** (deps A,B,C,D listas). Siguiente sugerido: F5.1 (Dashboard con KPIs).
+
+- 2026-07-22 — **Auditoría de la iteración de UX del 2026-07-12** (registro retroactivo: los 5 commits de ese día no se habían anotado en ningún documento). Reconstruido en `progreso/fase-7-ux.md`: rediseño de login/inicio/shell (A), **política de préstamo 2 días + 1 ampliación de 1 día** (C, migración aplicada al remoto) y **catálogo por áreas académicas** con `books.categoria` como lista controlada y las 10 carreras en el registro (B, migración aplicada al remoto). Verificado sobre `7ae69fa`: typecheck/lint verdes, **145/145 unit**, build 28/28. **Dos hallazgos bloqueantes:** (1) 🟠 `npm audit --audit-level=high` **en rojo** por `sharp` <0.35.0 (CVEs de libvips, advisory posterior al cierre de F6.2; `next@15.5.21` no lo arregla y `audit fix --force` propone `next@9.3.3` — no ejecutarlo); (2) 🟠 **regresión**: la migración del 12-jul re-declaró `renew_loan` sobre la versión de F3.2 y perdió `vencimiento_notificado_en = null`, así que tras ampliar un préstamo ya no se re-avisa el vencimiento. Además, la evaluación IHC de F6.1 quedó desfasada del producto. Siguiente: T-019 y T-020.
 
 ## Reglas rápidas
 

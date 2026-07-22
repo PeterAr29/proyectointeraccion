@@ -29,6 +29,7 @@
 **Solución:** Una interfaz moderna, fácil de aprender, con curva de aprendizaje mínima, que cumple las heurísticas de Nielsen y organiza el catálogo, los préstamos y las multas en flujos claros con estados siempre visibles.
 
 **Funcionalidades principales:**
+
 1. Catálogo con búsqueda, filtros y detalle de libros
 2. Préstamos y reservas con validación de disponibilidad y fechas
 3. Renovaciones y devoluciones con cálculo automático de multas
@@ -53,6 +54,7 @@ Supabase (Postgres + RLS + Auth + Storage)
 ```
 
 **Reglas inviolables de arquitectura:**
+
 - Ningún componente de React accede a Supabase directamente. **Toda** lectura/escritura pasa por `lib/services/*.ts`.
 - La frontera entre módulos es SIEMPRE una función de servicio tipada, nunca acceso directo a las tablas de otro módulo.
 - La lógica de negocio (reglas de préstamo, cálculo de multas) vive en la capa de servicios, **no** en la UI.
@@ -63,17 +65,17 @@ Supabase (Postgres + RLS + Auth + Storage)
 
 ## 🛠️ Stack Tecnológico
 
-| Capa | Tecnologías |
-|------|-------------|
-| Framework | Next.js 15 (App Router), Server Components por defecto |
-| Lenguaje | TypeScript (strict). Prohibido `any`; usar `unknown` + narrowing |
-| Base de datos | PostgreSQL vía Supabase, RLS siempre activo |
-| Backend / Auth | Supabase (Auth, Postgres, Storage, Realtime) |
-| Estilos | Tailwind CSS + shadcn/ui |
-| Formularios | react-hook-form + Zod (Zod se reusa para validar en servidor) |
-| Iconos | lucide-react |
-| Deploy | Vercel |
-| Testing | Vitest (unit/integration) + Playwright (e2e) |
+| Capa           | Tecnologías                                                      |
+| -------------- | ---------------------------------------------------------------- |
+| Framework      | Next.js 15 (App Router), Server Components por defecto           |
+| Lenguaje       | TypeScript (strict). Prohibido `any`; usar `unknown` + narrowing |
+| Base de datos  | PostgreSQL vía Supabase, RLS siempre activo                      |
+| Backend / Auth | Supabase (Auth, Postgres, Storage, Realtime)                     |
+| Estilos        | Tailwind CSS + shadcn/ui                                         |
+| Formularios    | react-hook-form + Zod (Zod se reusa para validar en servidor)    |
+| Iconos         | lucide-react                                                     |
+| Deploy         | Vercel                                                           |
+| Testing        | Vitest (unit/integration) + Playwright (e2e)                     |
 
 ---
 
@@ -115,29 +117,29 @@ El andamiaje de código (`app/`, `components/`, `lib/`, `supabase/`, `tests/`) l
 
 ### docs/especificaciones.md
 
-| Tema | Sección |
-|------|---------|
-| Roles y usuarios | 2 |
-| Requisitos Funcionales | 3 |
-| Requisitos No Funcionales | 4 |
-| Seguridad (OWASP + ampliada) | 5 |
-| Restricciones y exclusiones | 6 |
-| Arquitectura y modelo de datos | 7 |
-| Especificaciones técnicas (stack, testing) | 8 |
-| Infraestructura y despliegue | 9 |
-| Evaluación IHC y validación | 10 |
-| Cumplimiento regulatorio (Ley 29733) | 11 |
+| Tema                                       | Sección |
+| ------------------------------------------ | ------- |
+| Roles y usuarios                           | 2       |
+| Requisitos Funcionales                     | 3       |
+| Requisitos No Funcionales                  | 4       |
+| Seguridad (OWASP + ampliada)               | 5       |
+| Restricciones y exclusiones                | 6       |
+| Arquitectura y modelo de datos             | 7       |
+| Especificaciones técnicas (stack, testing) | 8       |
+| Infraestructura y despliegue               | 9       |
+| Evaluación IHC y validación                | 10      |
+| Cumplimiento regulatorio (Ley 29733)       | 11      |
 
 ### docs/guia_desarrollo.md
 
-| Tema | Sección |
-|------|---------|
-| Mapa de fases y subfases | Inicio |
-| F1 Fundación & Acceso [A] | F1.1–F1.4 |
-| F2 Catálogo [B] | F2.1–F2.2 |
-| F3 Circulación [C] | F3.1–F3.3 |
+| Tema                           | Sección   |
+| ------------------------------ | --------- |
+| Mapa de fases y subfases       | Inicio    |
+| F1 Fundación & Acceso [A]      | F1.1–F1.4 |
+| F2 Catálogo [B]                | F2.1–F2.2 |
+| F3 Circulación [C]             | F3.1–F3.3 |
 | F4 Multas & Notificaciones [D] | F4.1–F4.2 |
-| F5 Administración [E] | F5.1–F5.4 |
+| F5 Administración [E]          | F5.1–F5.4 |
 | F6 Evaluación IHC & Producción | F6.1–F6.2 |
 
 ### Otros
@@ -236,11 +238,11 @@ SUPABASE_SERVICE_ROLE_KEY=...   # SOLO servidor, jamás en "use client"
 
 ## 📈 Métricas Objetivo
 
-| Métrica | Meta |
-|---------|------|
-| SUS (System Usability Scale) | ≥ 75 |
-| Cobertura de tests en lógica de negocio | ≥ 60% |
-| Tareas críticas completables sin ayuda | ≥ 90% de usuarios de prueba |
+| Métrica                                       | Meta                          |
+| --------------------------------------------- | ----------------------------- |
+| SUS (System Usability Scale)                  | ≥ 75                          |
+| Cobertura de tests en lógica de negocio       | ≥ 60%                         |
+| Tareas críticas completables sin ayuda        | ≥ 90% de usuarios de prueba   |
 | Cumplimiento heurísticas Nielsen en PRs de UI | 100% (criterio de aceptación) |
 
 ---
@@ -249,7 +251,11 @@ SUPABASE_SERVICE_ROLE_KEY=...   # SOLO servidor, jamás en "use client"
 
 Ver siempre `ROADMAP.md` y `progreso/estado-actual.md` para el estado más fresco.
 
-**Fase activa actual:** Por iniciar — **F1.1** (a cargo del dev integrador).
+**Fase activa actual:** ninguna — el plan de 6 fases / 17 subfases está **completo** (`v1.0.0`, en producción en Vercel).
+
+**Trabajo abierto (post-`v1.0.0`, auditoría del 2026-07-22):** T-019 fix del gate `audit` en CI (`sharp`) y T-020 fix de la regresión del aviso de vencimiento son **bloqueantes**; luego T-021 re-evaluación heurística, T-022 SUS real y T-023 alinear especificaciones. Contexto en `progreso/fase-7-ux.md`.
+
+> ⚠️ **La política de préstamo vigente es 2 días con 1 ampliación de 1 día** (cambio del 2026-07-12). `docs/especificaciones.md` §7.2.2/§7.2.5 todavía describe la anterior.
 
 ---
 
@@ -271,12 +277,12 @@ npx supabase db reset  # aplica migraciones + seed en local
 
 ## 👥 Convenciones de Trabajo
 
-> **Modo actual: SOLO (1 desarrollador).** El proyecto está preparado para incorporar a otra persona más adelante sin rediseñar nada. Las reglas marcadas *(al sumar dev)* se activan cuando entre un segundo desarrollador.
+> **Modo actual: SOLO (1 desarrollador).** El proyecto está preparado para incorporar a otra persona más adelante sin rediseñar nada. Las reglas marcadas _(al sumar dev)_ se activan cuando entre un segundo desarrollador.
 
 ### Modo solo (ahora)
 
 1. **Commits directos a `main` permitidos.** Ramas de feature (`modulo/tarea-corta`) son opcionales pero recomendadas para trabajos grandes.
-2. **Sin review obligatorio.** Regla con IA igualmente vigente: *"respondes por lo que tu Claude Code generó"* — si no puedes explicar una línea, no la dejes.
+2. **Sin review obligatorio.** Regla con IA igualmente vigente: _"respondes por lo que tu Claude Code generó"_ — si no puedes explicar una línea, no la dejes.
 3. **CI debe quedar en verde** (`.github/workflows/ci.yml`): lint, typecheck, tests, audit.
 4. **El tablero es tu mapa de avance:** actualiza `progreso/tablero-equipo.md` y `progreso/estado-actual.md` al cerrar cada subfase (aunque trabajes solo, es lo que preserva el contexto entre sesiones).
 5. **Commits pequeños y frecuentes** con Conventional Commits (scope = módulo): `feat(B): búsqueda de catálogo`.
@@ -290,10 +296,10 @@ npx supabase db reset  # aplica migraciones + seed en local
 
 ### Al sumar un segundo dev (activar estas reglas)
 
-- *(al sumar dev)* **Nadie hace push directo a `main`:** todo entra por Pull Request, y protege `main` en GitHub.
-- *(al sumar dev)* **Todo PR requiere ≥1 revisión humana**, PRs pequeños (< ~400 líneas), CI verde para mergear.
-- *(al sumar dev)* **Reclamar antes de codificar:** marca el módulo/tarea *En progreso* en el tablero antes de tocar código; un módulo *En progreso* no lo toma otro dev.
-- El onboarding es incremental: la persona clona, lee `CLAUDE.md` y `docs/equipo.md`, y reclama un módulo *Disponible*. No se regenera nada.
+- _(al sumar dev)_ **Nadie hace push directo a `main`:** todo entra por Pull Request, y protege `main` en GitHub.
+- _(al sumar dev)_ **Todo PR requiere ≥1 revisión humana**, PRs pequeños (< ~400 líneas), CI verde para mergear.
+- _(al sumar dev)_ **Reclamar antes de codificar:** marca el módulo/tarea _En progreso_ en el tablero antes de tocar código; un módulo _En progreso_ no lo toma otro dev.
+- El onboarding es incremental: la persona clona, lee `CLAUDE.md` y `docs/equipo.md`, y reclama un módulo _Disponible_. No se regenera nada.
 
 Handoff docs **por módulo**: `progreso/fase-{n}.{m}-{modulo}.md`.
 

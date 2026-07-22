@@ -1,8 +1,18 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-11 (cierre F6.2 — Endurecimiento, PWA y despliegue → **PROYECTO COMPLETO**)
-**Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última)
-**Próxima subfase:** — ninguna. **Las 6 fases (17/17 subfases) están completas.** Deploy en producción, PWA verificada en móvil, e2e en verde en CI y secretos configurados. **Único pendiente de entrega:** recolectar el **SUS real** con el kit `docs/sus-kit/`.
+**Última actualización:** 2026-07-22 (auditoría de la iteración de UX post-`v1.0.0`)
+**Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última del plan)
+**Después del cierre formal:** iteración de UX del **2026-07-12** (5 commits) — registrada retroactivamente en `progreso/fase-7-ux.md`.
+
+**Próximo trabajo (en este orden):**
+
+1. 🟠 **Arreglar el gate de `audit` en CI** — `sharp` <0.35.0 (CVEs de libvips) entra por `next`; el advisory se publicó tras el cierre de F6.2. Fix: `overrides` a `sharp ^0.35.3`. **`npm audit fix --force` propone `next@9.3.3`: no ejecutarlo.**
+2. 🟠 **Corregir la regresión de `renew_loan`** — la migración del 12-jul perdió `vencimiento_notificado_en = null`; tras ampliar un préstamo ya no se vuelve a avisar del vencimiento.
+3. **Re-pasar la evaluación heurística** sobre la UI rediseñada (el entregable IHC evalúa pantallas que ya no existen).
+4. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios).
+5. Alinear `docs/especificaciones.md` §7.2.2/§7.2.5 con la política de préstamo 2+1.
+
+Detalle de los cinco puntos en `progreso/fase-7-ux.md`.
 
 ## Progreso global
 
@@ -17,7 +27,28 @@
 
 ## Resumen de lo construido hasta ahora
 
-**F6.2 completada — cierra el proyecto (hito M4 / `v1.0.0`).** Endurecimiento,
+**Iteración de UX post-`v1.0.0` (2026-07-12, 5 commits, +1242/−139).** Trabajo
+posterior al cierre formal del plan, registrado retroactivamente el 2026-07-22 en
+`progreso/fase-7-ux.md`:
+
+- **🔄 Cambio de regla de negocio (C): préstamo de 2 días con 1 ampliación de 1 día.**
+  Migración `..._loan_two_day_policy.sql` (**aplicada al remoto**): `settings` a
+  `dias_prestamo=2` / `max_renovaciones=1` y `renew_loan` re-declarada para sumar
+  **exactamente 1 día**. **Sustituye la política de 7 días que describen las entradas
+  previas de este documento y `docs/especificaciones.md`.**
+- **Catálogo por áreas académicas (B).** `lib/domain/areas.ts` (5 áreas, mapa de las
+  10 carreras → área) + `AreaHub` como entrada a `/catalogo` con conteo por área,
+  migas de pan y destacado del área de la carrera del estudiante. `books.categoria`
+  pasa a **lista controlada**. Migración `..._catalog_areas.sql` + seed reclasificado.
+- **Rediseño visual (A).** Login a dos columnas con panel de marca; **Inicio como
+  tablero** con estadísticas reales por rol y "Próxima devolución" (presentación en
+  `components/inicio/InicioUI.tsx`, `loading.tsx` con skeletons); shell con sidebar en
+  degradado azul→índigo y topbar translúcida; el avatar del topbar es el botón Perfil.
+- **Verificado el 2026-07-22:** typecheck/lint verdes, **145/145 unit**, build 28/28.
+  **`audit --audit-level=high` en ROJO** (`sharp`, ver pendientes) y **una regresión
+  detectada** en el aviso de vencimiento tras ampliar (ver pendientes).
+
+**F6.2 completada — cierra el plan de fases (hito M4 / `v1.0.0`).** Endurecimiento,
 PWA instalable y preparación de producción, sin tocar lógica de negocio:
 
 - **Headers de seguridad** en `next.config.ts` para toda respuesta:
@@ -71,7 +102,9 @@ cálculo + piloto simulado 81.7 ≥ 75, **a reemplazar con datos reales**).
 - Nav "Reportes" y "Configuración" activados. `settings.updateCirculationSettings`.
 - **Verificado:** typecheck/lint/build/audit-high verdes; **137/137 unit**;
   end-to-end con rollback (bibliotecario edita config → préstamo nuevo toma el
-  nuevo plazo de 7 días; estudiante NO edita settings; seed intacto). Detalle en
+  nuevo plazo de 7 días — _valor de aquella prueba; la política vigente hoy es
+  **2 días + 1 ampliación**, ver la iteración del 12-jul_; estudiante NO edita
+  settings; seed intacto). Detalle en
   `fase-5.4-E.md`. **Hito de integración F5 verificado** (KPIs + CRUD +
   devolución con multa + config que afecta préstamos nuevos).
 
@@ -309,9 +342,27 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - [x] ~~Deploy a producción~~ — **hecho**: `main` empujado, auto-deploy en Vercel
       verificado (headers/manifest/SW/íconos 200 sobre HTTPS). PWA instalable
       verificada en móvil por el usuario.
-- [ ] **(F6.2) Entrega final — único pendiente:** recolectar el **SUS real** con el
-      kit `docs/sus-kit/` (5–8 usuarios) y pegar la tabla en
-      `docs/evaluacion-usabilidad.md` §4.3, sustituyendo el piloto simulado.
+- [ ] 🟠 **(2026-07-22) CI en rojo — `sharp` <0.35.0 con CVEs de libvips**
+      ([GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj)),
+      dependencia **opcional de `next` 15.5.20**. Rompe el gate
+      `npm audit --audit-level=high`. `next@15.5.21` **no** lo arregla (sigue pidiendo
+      `sharp ^0.34.3`) y `npm audit fix --force` propone **`next@9.3.3`**: no ejecutarlo.
+      Fix: `overrides` a `sharp ^0.35.3` + re-verificar el build.
+- [ ] 🟠 **(2026-07-22) Regresión: no se re-avisa el vencimiento tras ampliar.**
+      La migración `..._loan_two_day_policy.sql` re-declaró `renew_loan` sobre la
+      versión de F3.2 y perdió `vencimiento_notificado_en = null` (que añadió F4.2).
+      `syncOwnDueSoonNotifications` filtra por ese marcador, así que un préstamo ya
+      avisado no vuelve a avisar del nuevo plazo. Requiere **migración nueva** (no
+      editar la aplicada).
+- [ ] **Re-pasar la evaluación heurística** sobre la UI del 12-jul (login, inicio,
+      catálogo por áreas, sidebar azul). `docs/evaluacion-usabilidad.md` describe
+      pantallas que ya no existen. Medir **contraste AA** del texto claro sobre el
+      degradado azul→índigo, que nunca se verificó.
+- [ ] **Entrega final:** recolectar el **SUS real** con el kit `docs/sus-kit/`
+      (5–8 usuarios) y pegar la tabla en `docs/evaluacion-usabilidad.md` §4.3,
+      sustituyendo el piloto simulado. **Depende de la re-evaluación heurística**:
+      no tiene sentido medir y luego cambiar pantallas.
+- [ ] **Alinear `docs/especificaciones.md`** §7.2.2/§7.2.5 con la política 2+1.
 
 ## Deudas técnicas anotadas
 
@@ -339,5 +390,8 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - **Nueva (F6.2) — SW versionado a mano:** invalidar el caché del service worker
   requiere subir `CACHE` (`bibliotec-shell-v1`) en `public/sw.js` al cambiar assets
   críticos. Network-first en navegaciones evita HTML obsoleto estando online. Ver ADR-0002.
+- **Nueva (12-jul) — `books.categoria` es lista controlada:** cualquier libro cargado
+  con una categoría fuera de `AREA_LABELS` (`lib/domain/areas.ts`) queda huérfano del
+  hub de áreas del catálogo. Si se amplía la taxonomía, hay que migrar los datos.
 - 2 vulnerabilidades **moderate** en el `postcss` interno de next 15.5.20 (bajo el gate `high`); se resolverán al actualizar next.
 - **Nueva (F2.1):** vuln **low** en `@supabase/auth-js` (Insecure Path Routing, GHSA-8r88-6cj9-9fh5); se resuelve subiendo `@supabase/supabase-js` a ≥2.110. Bajo el gate `high`, no bloquea CI.
