@@ -193,22 +193,35 @@
 
 ### T-019 · Fix del gate `audit` en CI (`sharp`)
 
-- Depende de: — · **Bloqueante: CI en rojo**
+- Depende de: — · _(era bloqueante: CI en rojo)_
 - Criterios de aceptación:
-  - [ ] `npm audit --audit-level=high` en exit 0 (`overrides` a `sharp ^0.35.3`)
-  - [ ] `npm run build` sigue verde (sharp interviene en optimización de imágenes)
-  - [ ] `package-lock.json` comiteado; **sin** `npm audit fix --force` (propone `next@9.3.3`)
-- Estado: Pendiente
+  - [x] `npm audit --audit-level=high` en exit 0 (`overrides` a `sharp 0.35.3`)
+  - [x] `npm run build` sigue verde (28/28) — además se verificó que el proyecto **no
+        usa `next/image`**, así que sharp nunca se ejecuta
+  - [x] `package-lock.json` comiteado; **sin** `npm audit fix --force` (proponía `next@9.3.3`)
+- Estado: ✅ Terminada (commit `76e1793`)
 
 ### T-020 · Fix de la regresión del aviso de vencimiento (C/D)
 
-- Depende de: — · **Bloqueante: bug funcional en producción**
+- Depende de: — · _(era bloqueante: bug funcional en producción)_
 - Criterios de aceptación:
-  - [ ] **Migración nueva** que re-declare `renew_loan` conservando la suma de 1 día
-        **y** restaurando `vencimiento_notificado_en = null` (perdido el 12-jul)
-  - [ ] Aplicada al remoto y verificada con rollback: ampliar un préstamo ya avisado
-        permite un nuevo aviso de "vencimiento próximo"
-  - [ ] No se edita la migración ya aplicada
+  - [x] **Migración nueva** `20260722160000_renew_loan_restore_due_soon_marker.sql` que
+        re-declara `renew_loan` conservando la suma de 1 día **y** restaurando
+        `vencimiento_notificado_en = null`
+  - [x] Aplicada al remoto y verificada con rollback: marcador reiniciado, +1.000 día
+        exacto, guardas BT101/BT100 intactos, datos sin tocar
+  - [x] No se editó la migración ya aplicada
+- Estado: ✅ Terminada
+
+### T-024 · Vigilar el pausado automático de Supabase
+
+- Depende de: —
+- El 2026-07-22 se encontró el proyecto `bibliotec` en **`INACTIVE`** (pausado tras 10
+  días sin uso): producción caída de facto, aunque `/login` devolvía 200 por estar
+  prerenderizado. Restaurado a `ACTIVE_HEALTHY` con los datos íntegros.
+- Criterios de aceptación:
+  - [ ] Comprobar el estado del proyecto **antes de cada sesión del estudio SUS**
+  - [ ] Valorar si conviene un ping programado (o subir de plan) durante la recolección
 - Estado: Pendiente
 
 ### T-021 · Re-evaluación heurística de la UI rediseñada

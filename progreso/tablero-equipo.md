@@ -38,15 +38,16 @@
 | T-016 Evaluación de usabilidad (F6.1)           | —      | integrador | ✅ Terminada |
 | T-017 Endurecimiento, PWA y despliegue (F6.2)   | —      | integrador | ✅ Terminada |
 | T-018 Iteración de UX post-`v1.0.0`             | A/B/C  | integrador | ✅ Terminada |
-| T-019 Fix gate `audit` en CI (`sharp`)          | —      | _libre_    | ⏳ Pendiente |
-| T-020 Fix regresión aviso de vencimiento        | C/D    | _libre_    | ⏳ Pendiente |
+| T-019 Fix gate `audit` en CI (`sharp`)          | —      | integrador | ✅ Terminada |
+| T-020 Fix regresión aviso de vencimiento        | C/D    | integrador | ✅ Terminada |
 | T-021 Re-evaluación heurística de la UI nueva   | —      | _libre_    | ⏳ Pendiente |
 | T-022 Recolección del SUS real (dep. T-021)     | —      | _libre_    | ⏳ Pendiente |
 | T-023 Alinear especificaciones con préstamo 2+1 | —      | _libre_    | ⏳ Pendiente |
 
-> Las 17 tareas del plan original están cerradas. **T-019 a T-023 son trabajo
-> abierto detectado en la auditoría del 2026-07-22** (ver `progreso/fase-7-ux.md`);
-> T-019 y T-020 son las bloqueantes. Ver `docs/backlog.md`.
+> Las 17 tareas del plan original están cerradas. **T-019 a T-023 salieron de la
+> auditoría del 2026-07-22** (ver `progreso/fase-7-ux.md`): las dos bloqueantes
+> (T-019, T-020) están **resueltas**; quedan T-021 → T-022 → T-023.
+> Ver `docs/backlog.md`.
 
 ## Log de reclamos (append-only, evita disputas)
 
@@ -70,6 +71,8 @@
 - 2026-07-10 — F4.2 (Motor de notificaciones + vista) **cerrada** → **Fase 4 (Multas & Notificaciones) COMPLETADA (hito M2)**. `lib/services/notifications.ts` (única puerta a `notifications`) genera los 3 tipos con cliente admin/service role: `multa_generada` (enganchado en `fines.syncFineForLoan`), `vencimiento_proximo` (préstamos que vencen en ≤3 días) y `reserva_disponible` (barrido que notifica al frente de la cola cuando el libro recupera stock). Idempotencia por marcadores (`vencimiento_notificado_en`/`notificada_disponible_en`; `renew_loan` re-declarada para reiniciar el de vencimiento). `/notificaciones` (4 estados) con marcar leída/todas (Server Actions, RLS); campana del Topbar = Link con badge de no-leídas (`getUnreadCount` en el layout servidor); nav activado. 96/96 unit; RLS de `notifications` verificada end-to-end contra el remoto con rollback (María ve la suya y la marca leída, Juan no la ve, seed intacto); typecheck/lint/build/audit-high verdes. **Módulo E (Administración) queda Disponible** (deps A,B,C,D listas). Siguiente sugerido: F5.1 (Dashboard con KPIs).
 
 - 2026-07-22 — **Auditoría de la iteración de UX del 2026-07-12** (registro retroactivo: los 5 commits de ese día no se habían anotado en ningún documento). Reconstruido en `progreso/fase-7-ux.md`: rediseño de login/inicio/shell (A), **política de préstamo 2 días + 1 ampliación de 1 día** (C, migración aplicada al remoto) y **catálogo por áreas académicas** con `books.categoria` como lista controlada y las 10 carreras en el registro (B, migración aplicada al remoto). Verificado sobre `7ae69fa`: typecheck/lint verdes, **145/145 unit**, build 28/28. **Dos hallazgos bloqueantes:** (1) 🟠 `npm audit --audit-level=high` **en rojo** por `sharp` <0.35.0 (CVEs de libvips, advisory posterior al cierre de F6.2; `next@15.5.21` no lo arregla y `audit fix --force` propone `next@9.3.3` — no ejecutarlo); (2) 🟠 **regresión**: la migración del 12-jul re-declaró `renew_loan` sobre la versión de F3.2 y perdió `vencimiento_notificado_en = null`, así que tras ampliar un préstamo ya no se re-avisa el vencimiento. Además, la evaluación IHC de F6.1 quedó desfasada del producto. Siguiente: T-019 y T-020.
+
+- 2026-07-22 — **T-019 y T-020 cerradas** (las dos bloqueantes de la auditoría). T-019: `overrides` a `sharp 0.35.3` (`76e1793`) devuelve `npm audit --audit-level=high` a exit 0; se comprobó antes que el proyecto no usa `next/image`, así que sharp nunca se ejecuta. T-020: migración `20260722160000_renew_loan_restore_due_soon_marker.sql` **aplicada al remoto y verificada con rollback** (marcador reiniciado, +1.000 día exacto, BT101/BT100 intactos, datos sin tocar). **Hallazgo colateral:** el proyecto Supabase estaba **`INACTIVE`** (pausado tras 10 días de inactividad) y producción estaba caída de facto pese a que `/login` devolvía 200 por estar prerenderizado; restaurado a `ACTIVE_HEALTHY` con los datos íntegros. **Se volverá a pausar tras ~7 días sin uso: comprobarlo antes de cada sesión del SUS.** Siguiente: T-021 (re-evaluación heurística).
 
 ## Reglas rápidas
 

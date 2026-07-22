@@ -4,15 +4,21 @@
 **Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última del plan)
 **Después del cierre formal:** iteración de UX del **2026-07-12** (5 commits) — registrada retroactivamente en `progreso/fase-7-ux.md`.
 
+**Resuelto el 2026-07-22:**
+
+- ✅ **T-019 — gate de `audit` en CI** (commit `76e1793`): `overrides` a `sharp 0.35.3`. `npm audit --audit-level=high` vuelve a exit 0.
+- ✅ **T-020 — regresión de `renew_loan`**: migración `20260722160000_renew_loan_restore_due_soon_marker.sql` **aplicada al remoto y verificada con rollback**.
+- ✅ **Supabase `bibliotec` reanudado**: estaba **`INACTIVE`** (pausado por 10 días de inactividad), con producción efectivamente caída. Restaurado a `ACTIVE_HEALTHY`, datos íntegros (7 perfiles, 15 libros, 11 préstamos).
+
 **Próximo trabajo (en este orden):**
 
-1. 🟠 **Arreglar el gate de `audit` en CI** — `sharp` <0.35.0 (CVEs de libvips) entra por `next`; el advisory se publicó tras el cierre de F6.2. Fix: `overrides` a `sharp ^0.35.3`. **`npm audit fix --force` propone `next@9.3.3`: no ejecutarlo.**
-2. 🟠 **Corregir la regresión de `renew_loan`** — la migración del 12-jul perdió `vencimiento_notificado_en = null`; tras ampliar un préstamo ya no se vuelve a avisar del vencimiento.
-3. **Re-pasar la evaluación heurística** sobre la UI rediseñada (el entregable IHC evalúa pantallas que ya no existen).
-4. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios).
-5. Alinear `docs/especificaciones.md` §7.2.2/§7.2.5 con la política de préstamo 2+1.
+1. **Re-pasar la evaluación heurística** sobre la UI rediseñada (el entregable IHC evalúa pantallas que ya no existen) — T-021.
+2. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios) — T-022. Depende de T-021.
+3. Alinear `docs/especificaciones.md` §7.2.2/§7.2.5 con la política de préstamo 2+1 — T-023.
 
-Detalle de los cinco puntos en `progreso/fase-7-ux.md`.
+Detalle en `progreso/fase-7-ux.md`.
+
+> ⚠️ **El plan gratuito de Supabase pausa el proyecto tras ~7 días sin actividad**, y con él cae producción (el HTML prerenderizado sigue devolviendo 200, así que la caída no se nota desde fuera). Verificar que está `ACTIVE_HEALTHY` **antes** de cada sesión del estudio SUS.
 
 ## Progreso global
 
@@ -342,18 +348,23 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - [x] ~~Deploy a producción~~ — **hecho**: `main` empujado, auto-deploy en Vercel
       verificado (headers/manifest/SW/íconos 200 sobre HTTPS). PWA instalable
       verificada en móvil por el usuario.
-- [ ] 🟠 **(2026-07-22) CI en rojo — `sharp` <0.35.0 con CVEs de libvips**
-      ([GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj)),
-      dependencia **opcional de `next` 15.5.20**. Rompe el gate
-      `npm audit --audit-level=high`. `next@15.5.21` **no** lo arregla (sigue pidiendo
-      `sharp ^0.34.3`) y `npm audit fix --force` propone **`next@9.3.3`**: no ejecutarlo.
-      Fix: `overrides` a `sharp ^0.35.3` + re-verificar el build.
-- [ ] 🟠 **(2026-07-22) Regresión: no se re-avisa el vencimiento tras ampliar.**
-      La migración `..._loan_two_day_policy.sql` re-declaró `renew_loan` sobre la
-      versión de F3.2 y perdió `vencimiento_notificado_en = null` (que añadió F4.2).
-      `syncOwnDueSoonNotifications` filtra por ese marcador, así que un préstamo ya
-      avisado no vuelve a avisar del nuevo plazo. Requiere **migración nueva** (no
-      editar la aplicada).
+- [x] ~~🟠 **(2026-07-22) CI en rojo — `sharp` <0.35.0 con CVEs de libvips**~~ —
+      **resuelto** (commit `76e1793`): `overrides` a `sharp 0.35.3`. `next@15.5.21` no
+      lo arreglaba (sigue pidiendo `sharp ^0.34.3`) y `npm audit fix --force` proponía
+      `next@9.3.3`. Riesgo nulo: el proyecto no importa `next/image` en ningún archivo.
+      `npm audit --audit-level=high` vuelve a **exit 0**.
+- [x] ~~🟠 **(2026-07-22) Regresión: no se re-avisa el vencimiento tras ampliar**~~ —
+      **resuelto**: migración `20260722160000_renew_loan_restore_due_soon_marker.sql`
+      re-declara `renew_loan` conservando la política 2+1 y restaurando
+      `vencimiento_notificado_en = null`. **Aplicada al remoto y verificada con
+      rollback**: marcador reiniciado, +1.000 día exacto, guardas BT101/BT100 intactos,
+      datos sin tocar.
+- [x] ~~**(2026-07-22) Proyecto Supabase `INACTIVE`**~~ — **resuelto**: estaba pausado
+      tras 10 días de inactividad, con producción caída de facto (el HTML
+      prerenderizado seguía dando 200, así que no se notaba desde fuera). Restaurado a
+      `ACTIVE_HEALTHY`; datos íntegros (7 perfiles, 15 libros, 11 préstamos).
+      **Se volverá a pausar** tras ~7 días sin uso: comprobarlo antes de cada sesión
+      del estudio SUS.
 - [ ] **Re-pasar la evaluación heurística** sobre la UI del 12-jul (login, inicio,
       catálogo por áreas, sidebar azul). `docs/evaluacion-usabilidad.md` describe
       pantallas que ya no existen. Medir **contraste AA** del texto claro sobre el

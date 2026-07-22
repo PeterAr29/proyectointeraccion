@@ -85,9 +85,12 @@ progreso; **`docs/especificaciones.md` sigue pendiente** (ver §Pendientes).
 Tests nuevos que aportó este trabajo: `lib/domain/areas.test.ts` (46 líneas) y
 ampliaciones en `lib/validations/books.test.ts` y `settings.test.ts`.
 
-## ⚠️ Pendientes abiertos (detectados al auditar, NO corregidos aquí)
+## ⚠️ Pendientes detectados al auditar
 
-### Pendiente 1 — 🟠 CI en rojo: `sharp` con CVEs de libvips
+> **Actualización 2026-07-22:** los pendientes 1 y 2 quedaron **resueltos** el mismo
+> día (ver §Resolución al final). Los pendientes 3 y 4 siguen abiertos.
+
+### Pendiente 1 — 🟠 CI en rojo: `sharp` con CVEs de libvips ✅ RESUELTO
 
 `npm audit --audit-level=high` sale **en rojo** y con él **el gate `audit` de CI**:
 
@@ -107,7 +110,7 @@ ampliaciones en `lib/validations/books.test.ts` y `settings.test.ts`.
 - Las otras 3 (2 low + 1 moderate: `postcss` interno de next, `@supabase/auth-js`)
   siguen bajo el gate `high` y no bloquean.
 
-### Pendiente 2 — 🟠 Regresión funcional: se perdió el reinicio del aviso de vencimiento
+### Pendiente 2 — 🟠 Regresión funcional: se perdió el reinicio del aviso de vencimiento ✅ RESUELTO
 
 La migración `20260712120000_loan_two_day_policy.sql` re-declaró `renew_loan` con
 `create or replace` **partiendo de la versión de F3.2, no de la de F4.2** — y con eso
@@ -142,11 +145,59 @@ texto claro sobre el degradado azul→índigo** del sidebar/hero, que nunca se m
 §7.2.2 y §7.2.5 describen la política de préstamo anterior. Es el documento de
 requisitos del curso; conviene alinearlo con la política 2+1 realmente implementada.
 
+## Resolución de los pendientes 1 y 2 (2026-07-22)
+
+### El proyecto Supabase estaba pausado
+
+Al ir a aplicar la corrección se descubrió que el proyecto `bibliotec` estaba en
+estado **`INACTIVE`**: Supabase lo pausó tras 10 días sin actividad (última: 12-jul).
+**Producción estaba caída de facto** — `/login` seguía devolviendo HTTP 200 porque
+Next lo sirve prerenderizado, pero cualquier llamada a Supabase Auth moría por
+timeout. La caída no se ve desde fuera, que es lo que la hace peligrosa.
+
+Restaurado a **`ACTIVE_HEALTHY`** con los datos íntegros: 7 perfiles, 7 usuarios de
+auth, 15 libros, 11 préstamos, 1 reserva, 3 favoritos. La restauración pasa por
+`COMING_UP` → `RESTORING` → `ACTIVE_HEALTHY`; **durante `COMING_UP` la BD acepta
+conexiones pero `public` está vacío**, así que no se debe aplicar DDL hasta ver
+`ACTIVE_HEALTHY` (se esperó a propósito).
+
+> ⚠️ **Volverá a pausarse** tras ~7 días sin uso. Comprobar el estado antes de cada
+> sesión del estudio SUS, o los participantes se encontrarán un login que no entra.
+
+### Pendiente 1 — `overrides` a `sharp 0.35.3` (commit `76e1793`)
+
+Antes de aplicarlo se comprobó que **el proyecto no importa `next/image` en ningún
+archivo** ni configura `images` en `next.config.ts` → sharp nunca se ejecuta y el
+override no puede romper nada. Versión pinneada, como el resto de dependencias.
+
+Resultado: `npm audit --audit-level=high` en **exit 0** (quedan 2 low + 2 moderate,
+bajo el gate), `sharp@0.35.3 overridden`, **145/145 unit**, build **28/28**.
+
+### Pendiente 2 — migración `20260722160000_renew_loan_restore_due_soon_marker.sql`
+
+Regresión **confirmada viva en el remoto** antes de tocar nada
+(`reinicia_marcador: false`, `suma_un_dia: true`). La migración re-declara
+`renew_loan` conservando íntegra la política 2+1 y devolviendo el reinicio del
+marcador. Aplicada al remoto y **verificada con rollback** actuando como el dueño del
+préstamo (`set local request.jwt.claims`, RLS real):
+
+| Comprobación                     | Resultado                             |
+| -------------------------------- | ------------------------------------- |
+| Marcador reiniciado tras ampliar | ✅ `vencimiento_notificado_en null`   |
+| Días sumados al plazo            | ✅ **1.000** exacto                   |
+| `renovaciones`                   | ✅ 0 → 1                              |
+| Segunda ampliación bloqueada     | ✅ **BT101**                          |
+| Ampliar préstamo ajeno bloqueado | ✅ **BT100**                          |
+| Datos tras el rollback           | ✅ intactos (11 préstamos, 15 libros) |
+
 ## Notas para quien siga
 
 - Las **2 migraciones del 12-jul ya están aplicadas al remoto** `bibliotec`; no
   re-aplicarlas. Cualquier corrección va en una migración nueva.
+- **Lección de la regresión:** `create or replace function` re-declara la función
+  entera. Antes de re-declarar una RPC hay que partir de la **última** versión
+  aplicada, no de la que aparezca primero al buscar. Conviene comprobar con
+  `pg_get_functiondef` que la definición final conserva todo lo acumulado.
 - `books.categoria` es ahora una **lista controlada** (`AREA_LABELS`): cualquier
   libro cargado con una categoría fuera de la lista queda huérfano del hub de áreas.
-- El orden sensato de trabajo es: Pendiente 1 y 2 (bloquean CI / son bug real) →
-  Pendiente 3 (re-evaluación heurística) → SUS real → Pendiente 4.
+- Orden restante: Pendiente 3 (re-evaluación heurística) → SUS real → Pendiente 4.
