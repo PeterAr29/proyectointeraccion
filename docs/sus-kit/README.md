@@ -8,11 +8,12 @@
 
 ## Contenido del kit
 
-| Archivo                    | Para qué sirve                                                                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `cuestionario-sus.md`      | El cuestionario que responde cada participante (10 ítems) + hoja del observador (4 tareas críticas). Imprímelo o cópialo a un Google Form. |
-| `respuestas-plantilla.csv` | Plantilla donde vacías las respuestas de todos los participantes.                                                                          |
-| `calcular-sus.mjs`         | Calculadora: lee el CSV y te da el puntaje SUS por persona, el promedio, el grado y el % de tareas completadas. Sin dependencias.          |
+| Archivo                    | Para qué sirve                                                                                                                                                         |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cuestionario-sus.md`      | El cuestionario que responde cada participante (10 ítems) + hoja del observador (4 tareas críticas). Imprímelo o cópialo a un Google Form.                             |
+| `respuestas-plantilla.csv` | Plantilla donde vacías las respuestas de todos los participantes.                                                                                                      |
+| `calcular-sus.mjs`         | Calculadora: lee el CSV y te da el puntaje SUS por persona, el promedio, el grado y el % de tareas completadas. Sin dependencias.                                      |
+| `preparar-datos.sql`       | Deja una cuenta de prueba en estado listo (2 préstamos activos sin ampliar, sin multa) y garantiza un libro sin stock para T4. Córrelo **antes de cada participante**. |
 
 ## Cómo correr el estudio (paso a paso)
 
@@ -35,7 +36,8 @@
 - Ten cuentas de prueba listas (usuario/contraseña) para cada rol. **No** uses la
   cuenta personal real de nadie.
 - **Prepara los datos para que las 4 tareas sean posibles** (si no, no se pueden
-  intentar):
+  intentar). **Atajo:** corre `preparar-datos.sql` (edita el correo de la cuenta de
+  prueba) y deja todo listo de una vez. Lo que garantiza cada tarea:
   - **T2 (ampliar)** y **T3 (devolver):** la cuenta de estudiante debe tener **1–2
     préstamos activos**, y el de T2 **sin haber usado aún su ampliación** (política
     2 días + 1 ampliación de 1 día; si ya se amplió, "Ampliar" saldrá deshabilitado).
@@ -43,6 +45,9 @@
   - **T4 (reservar):** debe existir al menos **un libro con 0 ejemplares
     disponibles**, para que aparezca "Reservar" en vez de "Prestar".
   - **T1 (buscar+prestar):** basta con que haya libros con stock (los hay en el seed).
+  - ⚠️ Cada sesión "consume" los préstamos de la cuenta al ampliar/devolver: **vuelve a
+    correr `preparar-datos.sql` antes de cada participante** (o usa una cuenta por
+    persona cambiando el correo dentro del script).
 
 ### 3. Sesión con cada participante (~15 min)
 
