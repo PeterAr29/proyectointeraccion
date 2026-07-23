@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
+import { FormSection } from "@/components/forms/FormSection";
 import { useToast } from "@/components/feedback/Toast";
 import { adminCreateUserAction, adminUpdateUserAction } from "./actions";
 
@@ -89,82 +90,92 @@ export function UserCreateForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      noValidate
-      className="flex flex-col gap-4"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
       {formError && <FormAlert>{formError}</FormAlert>}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <Label htmlFor="nombre">Nombre completo</Label>
-          <Input
-            id="nombre"
-            aria-invalid={Boolean(errors.nombre)}
-            {...register("nombre")}
-          />
-          <FieldError message={errors.nombre?.message} />
-        </div>
-        <div>
-          <Label htmlFor="codigo">Código universitario</Label>
-          <Input
-            id="codigo"
-            aria-invalid={Boolean(errors.codigo)}
-            {...register("codigo")}
-          />
-          <FieldError message={errors.codigo?.message} />
-        </div>
-        <div>
-          <Label htmlFor="correo">Correo institucional</Label>
-          <Input
-            id="correo"
-            type="email"
-            aria-invalid={Boolean(errors.correo)}
-            {...register("correo")}
-          />
-          <FieldError message={errors.correo?.message} />
-        </div>
-        <div>
-          <Label htmlFor="carrera">Carrera</Label>
-          <CarreraSelect id="carrera" {...register("carrera")} />
-          <FieldError message={errors.carrera?.message} />
-        </div>
-        <div>
-          <Label htmlFor="telefono">Teléfono</Label>
-          <Input
-            id="telefono"
-            type="tel"
-            aria-invalid={Boolean(errors.telefono)}
-            {...register("telefono")}
-          />
-          <FieldError message={errors.telefono?.message} />
-        </div>
-        <div>
-          <Label htmlFor="rol">Rol</Label>
-          <RolSelect id="rol" {...register("rol")} />
-          <FieldError message={errors.rol?.message} />
-        </div>
-        <div>
-          <Label htmlFor="password">Contraseña inicial</Label>
-          <Input
-            id="password"
-            type="password"
-            aria-invalid={Boolean(errors.password)}
-            {...register("password")}
-          />
-          <FieldError message={errors.password?.message} />
-        </div>
+
+      <div className="divide-y rounded-2xl border bg-card p-5 shadow-sm sm:p-6">
+        <FormSection title="Datos personales">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Label htmlFor="nombre">Nombre completo</Label>
+              <Input
+                id="nombre"
+                aria-invalid={Boolean(errors.nombre)}
+                {...register("nombre")}
+              />
+              <FieldError message={errors.nombre?.message} />
+            </div>
+            <div>
+              <Label htmlFor="codigo">Código universitario</Label>
+              <Input
+                id="codigo"
+                aria-invalid={Boolean(errors.codigo)}
+                {...register("codigo")}
+              />
+              <FieldError message={errors.codigo?.message} />
+            </div>
+            <div>
+              <Label htmlFor="correo">Correo institucional</Label>
+              <Input
+                id="correo"
+                type="email"
+                aria-invalid={Boolean(errors.correo)}
+                {...register("correo")}
+              />
+              <FieldError message={errors.correo?.message} />
+            </div>
+            <div>
+              <Label htmlFor="carrera">Carrera</Label>
+              <CarreraSelect id="carrera" {...register("carrera")} />
+              <FieldError message={errors.carrera?.message} />
+            </div>
+            <div>
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input
+                id="telefono"
+                type="tel"
+                aria-invalid={Boolean(errors.telefono)}
+                {...register("telefono")}
+              />
+              <FieldError message={errors.telefono?.message} />
+            </div>
+          </div>
+        </FormSection>
+
+        <FormSection
+          title="Acceso"
+          hint="Con estas credenciales la persona podrá iniciar sesión."
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="rol">Rol</Label>
+              <RolSelect id="rol" {...register("rol")} />
+              <FieldError message={errors.rol?.message} />
+            </div>
+            <div>
+              <Label htmlFor="password">Contraseña inicial</Label>
+              <Input
+                id="password"
+                type="password"
+                aria-invalid={Boolean(errors.password)}
+                {...register("password")}
+              />
+              <FieldError message={errors.password?.message} />
+            </div>
+          </div>
+        </FormSection>
       </div>
-      <div className="flex gap-2">
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creando…" : "Crear usuario"}
-        </Button>
+
+      <div className="flex justify-end gap-2">
         <Button
           type="button"
           variant="secondary"
           onClick={() => router.push("/usuarios")}
         >
           Cancelar
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Creando…" : "Crear usuario"}
         </Button>
       </div>
     </form>
@@ -204,75 +215,98 @@ export function UserEditForm({ user }: { user: Profile }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      noValidate
-      className="flex flex-col gap-4"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
       {formError && <FormAlert>{formError}</FormAlert>}
 
-      <dl className="grid gap-1 rounded-md border bg-muted/30 p-3 text-sm">
-        <div className="flex justify-between gap-3">
-          <dt className="text-muted-foreground">Código universitario</dt>
-          <dd className="font-medium">{user.codigo_universitario}</dd>
-        </div>
-        <div className="flex justify-between gap-3">
-          <dt className="text-muted-foreground">Correo</dt>
-          <dd className="font-medium">{user.correo}</dd>
-        </div>
-      </dl>
+      <div className="divide-y rounded-2xl border bg-card p-5 shadow-sm sm:p-6">
+        <FormSection
+          title="Identidad"
+          hint="El código y el correo no se editan."
+        >
+          <dl className="grid gap-3 rounded-xl bg-muted/40 p-4 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="text-xs font-medium uppercase text-muted-foreground">
+                Código universitario
+              </dt>
+              <dd className="mt-0.5 font-medium">
+                {user.codigo_universitario}
+              </dd>
+            </div>
+            <div className="min-w-0">
+              <dt className="text-xs font-medium uppercase text-muted-foreground">
+                Correo
+              </dt>
+              <dd className="mt-0.5 truncate font-medium">{user.correo}</dd>
+            </div>
+          </dl>
+        </FormSection>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <Label htmlFor="nombre">Nombre completo</Label>
-          <Input
-            id="nombre"
-            aria-invalid={Boolean(errors.nombre)}
-            {...register("nombre")}
-          />
-          <FieldError message={errors.nombre?.message} />
-        </div>
-        <div>
-          <Label htmlFor="carrera">Carrera</Label>
-          <CarreraSelect
-            id="carrera"
-            defaultValue={user.carrera ?? ""}
-            {...register("carrera")}
-          />
-          <FieldError message={errors.carrera?.message} />
-        </div>
-        <div>
-          <Label htmlFor="telefono">Teléfono</Label>
-          <Input
-            id="telefono"
-            type="tel"
-            aria-invalid={Boolean(errors.telefono)}
-            {...register("telefono")}
-          />
-          <FieldError message={errors.telefono?.message} />
-        </div>
-        <div>
-          <Label htmlFor="rol">Rol</Label>
-          <RolSelect id="rol" defaultValue={user.rol} {...register("rol")} />
-          <FieldError message={errors.rol?.message} />
-        </div>
+        <FormSection title="Datos personales">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Label htmlFor="nombre">Nombre completo</Label>
+              <Input
+                id="nombre"
+                aria-invalid={Boolean(errors.nombre)}
+                {...register("nombre")}
+              />
+              <FieldError message={errors.nombre?.message} />
+            </div>
+            <div>
+              <Label htmlFor="carrera">Carrera</Label>
+              <CarreraSelect
+                id="carrera"
+                defaultValue={user.carrera ?? ""}
+                {...register("carrera")}
+              />
+              <FieldError message={errors.carrera?.message} />
+            </div>
+            <div>
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input
+                id="telefono"
+                type="tel"
+                aria-invalid={Boolean(errors.telefono)}
+                {...register("telefono")}
+              />
+              <FieldError message={errors.telefono?.message} />
+            </div>
+          </div>
+        </FormSection>
+
+        <FormSection title="Acceso y estado">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="rol">Rol</Label>
+              <RolSelect
+                id="rol"
+                defaultValue={user.rol}
+                {...register("rol")}
+              />
+              <FieldError message={errors.rol?.message} />
+            </div>
+          </div>
+          <label className="mt-4 flex items-center gap-2.5 rounded-lg border bg-secondary/40 px-3 py-2.5 text-sm">
+            <input
+              type="checkbox"
+              className="h-4 w-4 accent-primary"
+              {...register("activo")}
+            />
+            Cuenta activa (puede iniciar sesión)
+          </label>
+        </FormSection>
       </div>
 
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" className="h-4 w-4" {...register("activo")} />
-        Cuenta activa (puede iniciar sesión)
-      </label>
-
-      <div className="flex gap-2">
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Guardando…" : "Guardar cambios"}
-        </Button>
+      <div className="flex justify-end gap-2">
         <Button
           type="button"
           variant="secondary"
           onClick={() => router.push("/usuarios")}
         >
           Cancelar
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Guardando…" : "Guardar cambios"}
         </Button>
       </div>
     </form>
