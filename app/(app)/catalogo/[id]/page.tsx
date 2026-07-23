@@ -55,7 +55,7 @@ export default async function BookDetailPage({
           <BookCover
             title={book.titulo}
             coverUrl={book.portada_url}
-            showTitle={!book.portada_url}
+            isbn={book.isbn}
           />
         </div>
 

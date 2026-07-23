@@ -1,10 +1,17 @@
+"use client";
+
+import { useState } from "react";
+
 import { cn } from "@/lib/utils/cn";
 
 /**
  * Portada de libro del sistema de diseño.
- * Si el libro tiene `coverUrl` la muestra; si no, dibuja un marcador con
- * gradiente derivado de forma estable del título/seed (paleta del prototipo).
- * Relación de aspecto 2:3 (proporción de un libro).
+ *
+ * Prioridad de imagen: (1) `coverUrl` real (Supabase Storage, subida por admin);
+ * (2) carátula de OpenLibrary derivada del `isbn`; (3) marcador con gradiente
+ * estable derivado del título (paleta del prototipo). El gradiente se dibuja
+ * SIEMPRE de fondo: se ve mientras la imagen carga y queda como respaldo si la
+ * imagen no existe o falla (`onError`). Relación de aspecto 2:3.
  */
 
 // Paletas [inicio, fin] del prototipo (design/): 10 combinaciones sobrias.
@@ -30,11 +37,24 @@ function gradientIndex(seed: string): number {
   return Math.abs(hash) % GRADIENTS.length;
 }
 
+/**
+ * URL de la carátula de OpenLibrary por ISBN. `default=false` hace que devuelva
+ * 404 (y por tanto dispare `onError` → respaldo) cuando el libro no tiene
+ * portada, en vez de una imagen en blanco. Se limpia el ISBN a dígitos/X.
+ */
+function openLibraryCover(isbn: string): string | null {
+  const clean = isbn.replace(/[^0-9Xx]/g, "");
+  if (clean.length !== 10 && clean.length !== 13) return null;
+  return `https://covers.openlibrary.org/b/isbn/${clean}-L.jpg?default=false`;
+}
+
 export interface BookCoverProps {
-  /** Título del libro; se usa como semilla del gradiente y como texto del marcador. */
+  /** Título del libro; semilla del gradiente y texto del marcador. */
   title: string;
-  /** URL de portada real (opcional); si existe, tiene prioridad sobre el marcador. */
+  /** URL de portada real (Storage); si existe, tiene prioridad. */
   coverUrl?: string | null;
+  /** ISBN para intentar la carátula de OpenLibrary si no hay `coverUrl`. */
+  isbn?: string | null;
   /** Semilla alternativa para el gradiente (por defecto, el título). */
   seed?: string;
   /** Muestra el título sobre el marcador de gradiente. Por defecto, true. */
@@ -45,38 +65,48 @@ export interface BookCoverProps {
 export function BookCover({
   title,
   coverUrl,
+  isbn,
   seed,
   showTitle = true,
   className,
 }: BookCoverProps) {
-  const base = cn(
-    "relative aspect-[2/3] w-full overflow-hidden rounded-md shadow-sm",
-    className,
-  );
+  const [errored, setErrored] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  if (coverUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element -- portadas externas de Supabase Storage; next/image se evalúa en F2.
-      <img
-        src={coverUrl}
-        alt={`Portada de ${title}`}
-        className={cn(base, "object-cover")}
-      />
-    );
-  }
+  const src = coverUrl ?? (isbn ? openLibraryCover(isbn) : null);
+  const showImg = Boolean(src) && !errored;
 
   const [from, to] = GRADIENTS[gradientIndex(seed ?? title)]!;
+  // Cuando hay imagen visible es la portada la que da el nombre accesible (alt);
+  // si solo se ve el gradiente, el propio contenedor actúa de imagen etiquetada.
+  const a11y = showImg
+    ? {}
+    : ({ role: "img", "aria-label": `Portada de ${title}` } as const);
+
   return (
     <div
-      className={cn(base, "flex flex-col justify-end p-2.5")}
+      className={cn(
+        "relative flex aspect-[2/3] w-full flex-col justify-end overflow-hidden rounded-md p-2.5 shadow-sm",
+        className,
+      )}
       style={{ background: `linear-gradient(140deg, ${from}, ${to})` }}
-      role="img"
-      aria-label={`Portada de ${title}`}
+      {...a11y}
     >
-      {showTitle && (
-        <span className="line-clamp-3 text-sm font-bold leading-tight text-white">
+      {showTitle && !loaded && (
+        <span className="line-clamp-3 text-sm font-bold leading-tight text-white drop-shadow-sm">
           {title}
         </span>
+      )}
+      {showImg && src && (
+        // eslint-disable-next-line @next/next/no-img-element -- portadas externas (Storage/OpenLibrary); next/image no aporta aquí y complica la CSP.
+        <img
+          src={src}
+          alt={`Portada de ${title}`}
+          loading="lazy"
+          onError={() => setErrored(true)}
+          onLoad={() => setLoaded(true)}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       )}
     </div>
   );

@@ -10,6 +10,11 @@ import type { NextConfig } from "next";
  *   páginas; queda anotado como deuda técnica (upgrade a CSP con nonce).
  * - connect/img-src abren Supabase (API REST + Storage de portadas + Realtime por
  *   WebSocket). El wildcard *.supabase.co cubre el subdominio del proyecto.
+ * - img-src también permite las carátulas de OpenLibrary por ISBN
+ *   (covers.openlibrary.org), que redirige a los servidores de imágenes de
+ *   Internet Archive (*.us.archive.org); ambos hosts se listan para que la
+ *   imagen final del redirect también cargue. Solo imágenes: el resto sigue
+ *   cerrado (script/object/frame-ancestors).
  * - worker-src 'self' y manifest-src 'self' habilitan el service worker y el
  *   manifest de la PWA (F6.2), servidos desde el mismo origen.
  * - frame-ancestors 'none' + object-src 'none' + base-uri 'self' cierran
@@ -19,7 +24,7 @@ const CSP_DIRECTIVES = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.supabase.co",
+  "img-src 'self' data: blob: https://*.supabase.co https://covers.openlibrary.org https://*.us.archive.org",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
   "worker-src 'self'",

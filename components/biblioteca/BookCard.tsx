@@ -14,7 +14,7 @@ import type { Book } from "@/lib/services/books";
 export interface BookCardProps {
   book: Pick<
     Book,
-    "id" | "titulo" | "autor" | "portada_url" | "cantidad_disponible"
+    "id" | "titulo" | "autor" | "portada_url" | "cantidad_disponible" | "isbn"
   >;
   href?: string;
 }
@@ -29,6 +29,7 @@ export function BookCard({ book, href }: BookCardProps) {
         <BookCover
           title={book.titulo}
           coverUrl={book.portada_url}
+          isbn={book.isbn}
           className="w-full"
         />
         <StatusBadge
