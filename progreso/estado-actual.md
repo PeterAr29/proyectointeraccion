@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-22 (auditoría de la iteración de UX post-`v1.0.0`)
+**Última actualización:** 2026-07-23 (T-021 — re-evaluación heurística de la UI rediseñada)
 **Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última del plan)
 **Después del cierre formal:** iteración de UX del **2026-07-12** (5 commits) — registrada retroactivamente en `progreso/fase-7-ux.md`.
 
@@ -11,13 +11,24 @@
 - ✅ **T-020 — regresión de `renew_loan`**: migración `20260722160000_renew_loan_restore_due_soon_marker.sql` **aplicada al remoto y verificada con rollback**.
 - ✅ **Supabase `bibliotec` reanudado**: estaba **`INACTIVE`** (pausado por 10 días de inactividad), con producción efectivamente caída. Restaurado a `ACTIVE_HEALTHY`, datos íntegros (7 perfiles, 15 libros, 11 préstamos).
 
+**Resuelto el 2026-07-23:**
+
+- ✅ **T-021 — re-evaluación heurística** sobre la UI rediseñada del 12-jul.
+  `docs/evaluacion-usabilidad.md` re-pasado (login 2 columnas, Inicio-tablero,
+  catálogo por áreas, shell azul) + **primera medición de contraste AA**. Hallazgo
+  crítico **R1** (texto con opacidad `/70`–`/75` sobre `#1D4ED8` en 4.10–4.48:1, bajo
+  AA) **corregido en el acto** (commit `abbc94f`: `/85` → 5.30:1). Quedan 3 hallazgos
+  sev ≤ 2 en backlog: **R2** (badge de urgencia oculto en móvil), **R3** (terminología
+  "Renovar"/"Ampliar" mixta), **R4** (login perdió la aclaración de rol).
+
 **Próximo trabajo (en este orden):**
 
-1. **Re-pasar la evaluación heurística** sobre la UI rediseñada (el entregable IHC evalúa pantallas que ya no existen) — T-021.
-2. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios) — T-022. Depende de T-021.
-3. Alinear `docs/especificaciones.md` §7.2.2/§7.2.5 con la política de préstamo 2+1 — T-023.
+1. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios) — T-022.
+   Ahora **desbloqueado** (T-021 cerrado). Verificar Supabase `ACTIVE_HEALTHY` antes.
+2. Alinear `docs/especificaciones.md` §7.2.2/§7.2.5 con la política de préstamo 2+1 — T-023.
+3. (Backlog UX) R2/R3/R4 de la re-evaluación — sev ≤ 2, no bloquean la entrega.
 
-Detalle en `progreso/fase-7-ux.md`.
+Detalle en `progreso/fase-7-ux.md` y `docs/evaluacion-usabilidad.md` §8.
 
 > ⚠️ **El plan gratuito de Supabase pausa el proyecto tras ~7 días sin actividad**, y con él cae producción (el HTML prerenderizado sigue devolviendo 200, así que la caída no se nota desde fuera). Verificar que está `ACTIVE_HEALTHY` **antes** de cada sesión del estudio SUS.
 

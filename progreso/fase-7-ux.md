@@ -138,7 +138,7 @@ mayor que antes.
 `update` de esta versión (suma de 1 día) **más** `vencimiento_notificado_en = null`.
 Aplicar al remoto y verificar con rollback. **No editar la migración ya aplicada.**
 
-### Pendiente 3 — la evaluación IHC quedó desfasada del producto
+### Pendiente 3 — la evaluación IHC quedó desfasada del producto ✅ RESUELTO (T-021, 2026-07-23)
 
 `docs/evaluacion-usabilidad.md` (F6.1) evaluó pantallas que **ya no existen**: el
 login previo al rediseño, el inicio como accesos rápidos, el catálogo sin hub de
@@ -146,6 +146,16 @@ login previo al rediseño, el inicio como accesos rápidos, el catálogo sin hub
 re-pasarlos sobre la UI actual antes de recolectar el SUS real — medir usabilidad y
 después cambiar las pantallas invalida la medición. Prioritario: **contraste AA del
 texto claro sobre el degradado azul→índigo** del sidebar/hero, que nunca se midió.
+
+**Resuelto:** `docs/evaluacion-usabilidad.md` re-pasado sobre la UI actual (§2.1
+login 2 columnas, §2.2 catálogo por áreas, §2.3 circulación 2+1, §2.8 Inicio-tablero
+nuevo, §2.7 transversal), recorrido cognitivo actualizado (§3.1 hub, §3.2 ampliación
+2+1) y **§8** con el resumen de la re-evaluación. El **contraste AA se midió por
+primera vez** (peor caso `#1D4ED8`): 4 textos con opacidad `/70`–`/75` estaban en
+4.10–4.48:1 (bajo AA 4.5:1); **corregidos a `/85` → 5.30:1** (commit `abbc94f`,
+T-021). Quedan abiertos, sev ≤ 2: **R2** (badge de urgencia oculto en móvil),
+**R3** (nombre "Renovar"/"Ampliar" mixto), **R4** (login sin aclaración de rol) — no
+bloquean el SUS. **T-022 (SUS real) desbloqueado.**
 
 ### Pendiente 5 — 🟠 CI en rojo desde el 12-jul: el e2e del catálogo ✅ RESUELTO
 
@@ -241,4 +251,5 @@ préstamo (`set local request.jwt.claims`, RLS real):
   `pg_get_functiondef` que la definición final conserva todo lo acumulado.
 - `books.categoria` es ahora una **lista controlada** (`AREA_LABELS`): cualquier
   libro cargado con una categoría fuera de la lista queda huérfano del hub de áreas.
-- Orden restante: Pendiente 3 (re-evaluación heurística) → SUS real → Pendiente 4.
+- Orden restante: ~~Pendiente 3 (re-evaluación heurística)~~ ✅ → **SUS real (T-022)**
+  → Pendiente 4 (alinear especificaciones, T-023). Backlog UX menor: R2/R3/R4.
