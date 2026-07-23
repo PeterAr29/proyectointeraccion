@@ -33,10 +33,10 @@ export function LoanTable({
 }: LoanTableProps) {
   const withPendingFine = new Set(pendingFineLoanIds);
   return (
-    <div className="overflow-x-auto rounded-lg border">
+    <div className="overflow-x-auto rounded-xl border shadow-sm">
       <table className="w-full min-w-[640px] text-sm">
         <thead>
-          <tr className="border-b bg-muted/40 text-left text-xs uppercase text-muted-foreground">
+          <tr className="border-b bg-secondary/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <th className="px-4 py-3 font-semibold">Libro</th>
             <th className="px-4 py-3 font-semibold">Estado</th>
             <th className="px-4 py-3 font-semibold">Devolución</th>
@@ -58,7 +58,10 @@ export function LoanTable({
               withPendingFine.has(loan.id),
             );
             return (
-              <tr key={loan.id} className="border-b last:border-b-0">
+              <tr
+                key={loan.id}
+                className="border-b transition-colors last:border-b-0 hover:bg-muted/40"
+              >
                 <td className="px-4 py-3">
                   {book ? (
                     <Link

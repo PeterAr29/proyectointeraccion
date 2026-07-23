@@ -10,10 +10,10 @@ import { formatDate } from "@/lib/utils/dates";
  */
 export function RecentLoansTable({ rows }: { rows: RecentLoanRow[] }) {
   return (
-    <div className="overflow-x-auto rounded-lg border">
+    <div className="overflow-x-auto rounded-xl border shadow-sm">
       <table className="w-full min-w-[640px] text-sm">
         <thead>
-          <tr className="border-b bg-muted/40 text-left text-xs uppercase text-muted-foreground">
+          <tr className="border-b bg-secondary/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <th className="px-4 py-3 font-semibold">Libro</th>
             <th className="px-4 py-3 font-semibold">Usuario</th>
             <th className="px-4 py-3 font-semibold">Prestado</th>
@@ -23,7 +23,10 @@ export function RecentLoansTable({ rows }: { rows: RecentLoanRow[] }) {
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.id} className="border-b last:border-b-0">
+            <tr
+              key={row.id}
+              className="border-b transition-colors last:border-b-0 hover:bg-muted/40"
+            >
               <td className="px-4 py-3 font-medium text-foreground">
                 {row.bookTitle}
               </td>

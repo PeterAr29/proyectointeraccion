@@ -61,11 +61,15 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     <form
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      className="flex flex-col gap-4"
+      className="grid gap-4 sm:grid-cols-2"
     >
-      {formError && <FormAlert>{formError}</FormAlert>}
+      {formError && (
+        <div className="sm:col-span-2">
+          <FormAlert>{formError}</FormAlert>
+        </div>
+      )}
 
-      <div>
+      <div className="sm:col-span-2">
         <Label htmlFor="nombre">Nombre completo</Label>
         <Input
           id="nombre"
@@ -94,17 +98,6 @@ export function ProfileForm({ profile }: { profile: Profile }) {
       </div>
 
       <div>
-        <Label htmlFor="correo">Correo institucional</Label>
-        <Input
-          id="correo"
-          type="email"
-          aria-invalid={Boolean(errors.correo)}
-          {...register("correo")}
-        />
-        <FieldError message={errors.correo?.message} />
-      </div>
-
-      <div>
         <Label htmlFor="telefono">Teléfono</Label>
         <Input
           id="telefono"
@@ -116,7 +109,18 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <FieldError message={errors.telefono?.message} />
       </div>
 
-      <div>
+      <div className="sm:col-span-2">
+        <Label htmlFor="correo">Correo institucional</Label>
+        <Input
+          id="correo"
+          type="email"
+          aria-invalid={Boolean(errors.correo)}
+          {...register("correo")}
+        />
+        <FieldError message={errors.correo?.message} />
+      </div>
+
+      <div className="mt-1 flex justify-end border-t pt-4 sm:col-span-2">
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Guardando…" : "Guardar cambios"}
         </Button>
