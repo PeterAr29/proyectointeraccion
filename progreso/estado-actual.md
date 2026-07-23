@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-23 (T-021 — re-evaluación heurística de la UI rediseñada)
+**Última actualización:** 2026-07-23 (T-021 re-evaluación heurística + T-023 especificaciones alineadas a 2+1)
 **Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última del plan)
 **Después del cierre formal:** iteración de UX del **2026-07-12** (5 commits) — registrada retroactivamente en `progreso/fase-7-ux.md`.
 
@@ -22,12 +22,17 @@
   recupera la aclaración de rol). Queda **C4** en backlog (sev 2: validar categorías
   fuera de `AREA_LABELS`). Verificado: typecheck/lint limpios, **145/145 unit**.
 
+- ✅ **T-023 — `docs/especificaciones.md` alineado a la política 2+1**: RF-C02
+  (`dias_prestamo` por defecto 2), RF-C04 (ampliar hasta 1 vez, +1 día), §7.2
+  settings (`dias_prestamo` 2 / `max_renovaciones` 1) y regla de negocio 5. Nota de
+  actualización en la cabecera. CLAUDE.md ⚠️ actualizada (ya no dice "pendiente").
+
 **Próximo trabajo (en este orden):**
 
 1. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios) — T-022.
    Ahora **desbloqueado** (T-021 cerrado). Verificar Supabase `ACTIVE_HEALTHY` antes.
-2. Alinear `docs/especificaciones.md` §7.2.2/§7.2.5 con la política de préstamo 2+1 — T-023.
-3. (Backlog UX) **C4** — validar que ningún libro tenga `categoria` fuera de `AREA_LABELS`. Sev 2, no bloquea la entrega.
+   Requiere usuarios reales; yo puedo preparar el kit y procesar el CSV.
+2. (Backlog UX) **C4** — validar que ningún libro tenga `categoria` fuera de `AREA_LABELS`. Sev 2, no bloquea la entrega.
 
 Detalle en `progreso/fase-7-ux.md` y `docs/evaluacion-usabilidad.md` §8.
 

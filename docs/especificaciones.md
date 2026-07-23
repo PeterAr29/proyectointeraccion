@@ -1,6 +1,8 @@
 # Especificaciones Técnicas — BiblioTEC
 
 > Contrato técnico del proyecto. Define QUÉ se construye y bajo qué reglas. La guía de desarrollo (`guia_desarrollo.md`) define CÓMO y en qué orden.
+>
+> _Última actualización: 2026-07-23 — política de préstamo alineada a **2 días + 1 ampliación de 1 día** (T-023). Ver §3.3 (RF-C02/C04) y §7.2._
 
 ## 1. INTRODUCCIÓN Y PROPÓSITO
 
@@ -50,9 +52,9 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 ### 3.3 Módulo C — Circulación
 
 - **RF-C01.** El usuario solicita un préstamo si `cantidad_disponible > 0`; si no, se le ofrece reservar.
-- **RF-C02.** El sistema calcula la fecha de devolución estimada (`dias_prestamo`, por defecto 14).
+- **RF-C02.** El sistema calcula la fecha de devolución estimada (`dias_prestamo`, por defecto **2** — política 2+1 vigente desde 2026-07-12, ver §7.2).
 - **RF-C03.** El usuario reserva un libro no disponible y queda en cola.
-- **RF-C04.** El usuario renueva un préstamo hasta `max_renovaciones` veces, nunca si está vencido con multa pendiente.
+- **RF-C04.** El usuario **amplía** un préstamo hasta `max_renovaciones` veces (hoy **1**), sumando **1 día** cada vez; nunca si tiene multa pendiente. La UI y el dominio usan "ampliar"; la columna `max_renovaciones` conserva su nombre.
 - **RF-C05.** El usuario devuelve un libro; el sistema actualiza disponibilidad y estado.
 - **RF-C06.** El usuario ve sus préstamos activos y su historial completo.
 
@@ -200,7 +202,7 @@ Tablas principales (todas con RLS activo):
 - **fines** — id, loan_id, user_id, dias_retraso, monto, estado (`pendiente`|`pagada`)
 - **notifications** — id, user_id, tipo, mensaje, leida, created_at
 - **favorites** — user_id, book_id (PK compuesta)
-- **settings** — dias_prestamo (14), multa_diaria (1.00), max_renovaciones (2)
+- **settings** — dias_prestamo (**2**), multa_diaria (1.00), max_renovaciones (**1**) — política de préstamo **2 días + 1 ampliación de 1 día**, vigente desde 2026-07-12
 
 **Reglas de negocio (en la capa de servicios, no en la UI):**
 
@@ -208,7 +210,7 @@ Tablas principales (todas con RLS activo):
 2. La fecha de devolución no puede ser anterior a hoy.
 3. Un préstamo pasa a `vencido` cuando `fecha_devolucion_estimada < hoy` y no hay devolución real.
 4. Multa = `dias_retraso × multa_diaria` (soles).
-5. Renovación máxima `max_renovaciones` veces; nunca si está vencido con multa pendiente.
+5. **Ampliación** máxima `max_renovaciones` veces (hoy 1); cada una suma **1 día** partiendo de `max(fecha_devolucion_estimada, hoy)`, y reinicia el aviso de vencimiento; nunca con multa pendiente.
 6. Reservar genera notificación cuando el libro pasa a disponible.
 7. El estudiante nunca lee/escribe datos de otro usuario (RLS).
 
