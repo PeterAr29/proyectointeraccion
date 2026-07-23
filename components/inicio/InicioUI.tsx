@@ -62,7 +62,7 @@ export function Hero({
       />
 
       <div className="relative max-w-2xl">
-        <p className="text-sm font-medium text-primary-foreground/70 first-letter:uppercase">
+        <p className="text-sm font-medium text-primary-foreground/85 first-letter:uppercase">
           {fecha}
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-3">

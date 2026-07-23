@@ -56,7 +56,7 @@ export function SidebarNav({
               "flex items-center gap-3 rounded-md border-l-[3px] px-3 py-2.5 text-sm font-medium transition-colors",
               active
                 ? "border-white bg-white/15 text-white shadow-sm"
-                : "border-transparent text-primary-foreground/75 hover:bg-white/10 hover:text-white",
+                : "border-transparent text-primary-foreground/85 hover:bg-white/10 hover:text-white",
             )}
           >
             <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />

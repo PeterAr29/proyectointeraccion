@@ -58,7 +58,7 @@ export default function AuthLayout({
           </ul>
         </div>
 
-        <p className="relative text-xs text-primary-foreground/70">
+        <p className="relative text-xs text-primary-foreground/85">
           © {new Date().getFullYear()} BiblioTEC · Biblioteca universitaria
         </p>
       </aside>
@@ -111,7 +111,7 @@ function Feature({
       </span>
       <div>
         <p className="font-semibold">{title}</p>
-        <p className="text-sm text-primary-foreground/75">{text}</p>
+        <p className="text-sm text-primary-foreground/85">{text}</p>
       </div>
     </li>
   );
