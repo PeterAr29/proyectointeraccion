@@ -99,16 +99,64 @@ values
    null, 2, 0),                                                                                                -- [demo] sin stock (para reservas)
   ('b0000000-0000-0000-0000-000000000005', 'Sistemas Operativos Modernos', 'A. Tanenbaum', 'Pearson', 2023, '9780133591620', 'Ingeniería y Tecnología', 'Estantería 4 – Fila A',
    null, 4, 4),                                                                                                -- [demo] cantidades
-  ('b0000000-0000-0000-0000-000000000006', 'Programación en Java', null, null, null, null, 'Ingeniería y Tecnología', null,
-   null, 3, 3),                                                                                                -- autor no dado por el contexto -> NULL; [demo] cantidades
-  ('b0000000-0000-0000-0000-000000000007', 'Estructuras de Datos', null, null, null, null, 'Ingeniería y Tecnología', null,
-   null, 3, 2);                                                                                                -- autor no dado -> NULL; [demo] cantidades
+  ('b0000000-0000-0000-0000-000000000006', 'Effective Java', 'Joshua Bloch', 'Addison-Wesley', 2018, '9780134685991', 'Ingeniería y Tecnología', 'Estantería A',
+   'Buenas prácticas y patrones idiomáticos para programar en Java.', 3, 3),
+  ('b0000000-0000-0000-0000-000000000007', 'Data Structures and Algorithms in Java', 'Michael T. Goodrich, Roberto Tamassia, Michael H. Goldwasser', 'Wiley', 2014, '9781118771334', 'Ingeniería y Tecnología', 'Estantería A',
+   'Estructuras de datos y algoritmos implementados en Java.', 3, 2);
 
--- 'Programación en Java' y 'Estructuras de Datos': el contexto no da autor.
--- autor es NOT NULL en el esquema, así que se registra el placeholder mínimo
--- 'Autor desconocido' (dato faltante explícito, no inventado).
-update public.books set autor = 'Autor desconocido'
-where id in ('b0000000-0000-0000-0000-000000000006', 'b0000000-0000-0000-0000-000000000007');
+-- --------------------------------------------------------------------------
+-- 3b) Catálogo real por áreas (ISBN con carátula verificada en OpenLibrary).
+--     La migración `..._catalog_areas.sql` corre antes del seed e inserta los
+--     libros [demo] a1..a8; aquí se eliminan y se reemplazan por libros reales
+--     que cubren las 5 áreas académicas. `books.categoria` es lista controlada
+--     (lib/domain/areas.ts); todos los títulos/autores/ISBN son originales.
+-- --------------------------------------------------------------------------
+delete from public.books where id in (
+  'b0000000-0000-0000-0000-0000000000a1','b0000000-0000-0000-0000-0000000000a2',
+  'b0000000-0000-0000-0000-0000000000a3','b0000000-0000-0000-0000-0000000000a4',
+  'b0000000-0000-0000-0000-0000000000a5','b0000000-0000-0000-0000-0000000000a6',
+  'b0000000-0000-0000-0000-0000000000a7','b0000000-0000-0000-0000-0000000000a8'
+);
+
+insert into public.books (id, titulo, autor, editorial, anio, isbn, categoria, ubicacion, descripcion, cantidad_total, cantidad_disponible)
+values
+  -- Ingeniería y Tecnología (Estantería A)
+  ('b0000000-0000-0000-0000-000000000101','Clean Code','Robert C. Martin','Prentice Hall',2008,'9780132350884','Ingeniería y Tecnología','Estantería A','Guía práctica para escribir código limpio, legible y mantenible.',4,4),
+  ('b0000000-0000-0000-0000-000000000102','The Pragmatic Programmer','Andrew Hunt, David Thomas','Addison-Wesley',1999,'9780201616224','Ingeniería y Tecnología','Estantería A','Principios y hábitos para convertirse en un programador pragmático.',3,3),
+  ('b0000000-0000-0000-0000-000000000103','Design Patterns','Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides','Addison-Wesley',1994,'9780201633610','Ingeniería y Tecnología','Estantería A','Los 23 patrones de diseño clásicos de la programación orientada a objetos.',3,3),
+  ('b0000000-0000-0000-0000-000000000104','The C Programming Language','Brian W. Kernighan, Dennis M. Ritchie','Prentice Hall',1988,'9780131103627','Ingeniería y Tecnología','Estantería A','La referencia definitiva del lenguaje C, escrita por sus creadores.',4,4),
+  ('b0000000-0000-0000-0000-000000000105','Structure and Interpretation of Computer Programs','Harold Abelson, Gerald Jay Sussman','MIT Press',1996,'9780262011532','Ingeniería y Tecnología','Estantería A','Fundamentos de la programación y la abstracción computacional (MIT).',3,3),
+  ('b0000000-0000-0000-0000-000000000106','Compilers: Principles, Techniques, and Tools','Alfred V. Aho, Monica S. Lam, Ravi Sethi, Jeffrey D. Ullman','Addison-Wesley',2006,'9780321486813','Ingeniería y Tecnología','Estantería A','El «libro del dragón»: teoría y práctica de la construcción de compiladores.',3,3),
+  ('b0000000-0000-0000-0000-000000000107','Operating System Concepts','Abraham Silberschatz, Peter B. Galvin, Greg Gagne','Wiley',2012,'9781118063330','Ingeniería y Tecnología','Estantería A','Conceptos fundamentales de los sistemas operativos modernos.',4,4),
+  ('b0000000-0000-0000-0000-000000000108','Computer Organization and Design','David A. Patterson, John L. Hennessy','Morgan Kaufmann',2016,'9780134494166','Ingeniería y Tecnología','Estantería A','La interfaz hardware/software: arquitectura de computadores desde cero.',3,3),
+  -- Ciencias Agrarias (Estantería B)
+  ('b0000000-0000-0000-0000-000000000201','The Nature and Properties of Soils','Nyle C. Brady, Ray R. Weil','Pearson',2016,'9780133254488','Ciencias Agrarias','Estantería B','Texto de referencia mundial sobre la ciencia y el manejo de los suelos.',4,4),
+  ('b0000000-0000-0000-0000-000000000202','Plant Physiology and Development','Lincoln Taiz, Eduardo Zeiger, Ian Max Møller, Angus Murphy','Sinauer',2018,'9781605353531','Ciencias Agrarias','Estantería B','Fisiología y desarrollo de las plantas, base de la producción agrícola.',3,3),
+  ('b0000000-0000-0000-0000-000000000203','Campbell Biology','Jane B. Reece, Lisa A. Urry, Michael L. Cain','Pearson',2013,'9780321775658','Ciencias Agrarias','Estantería B','El texto de biología general más usado en el mundo universitario.',4,4),
+  ('b0000000-0000-0000-0000-000000000204','Chemistry: The Central Science','Theodore E. Brown, H. Eugene LeMay, Bruce E. Bursten','Pearson',2017,'9780134580999','Ciencias Agrarias','Estantería B','Química general con enfoque conceptual, base para las ciencias agrarias.',4,4),
+  ('b0000000-0000-0000-0000-000000000205','Biochemistry','Lubert Stryer','W. H. Freeman',null,'9780716710073','Ciencias Agrarias','Estantería B','Bioquímica clásica: estructura y función de las biomoléculas.',3,3),
+  -- Ciencias de la Salud (Estantería C)
+  ('b0000000-0000-0000-0000-000000000301','Gray''s Anatomy for Students','Richard L. Drake, A. Wayne Vogl, Adam W. M. Mitchell','Elsevier',2019,'9780323393041','Ciencias de la Salud','Estantería C','Anatomía humana orientada a la clínica, ampliamente ilustrada.',4,4),
+  ('b0000000-0000-0000-0000-000000000302','Fundamentals of Nursing','Patricia A. Potter, Anne Griffin Perry','Elsevier',2020,'9780323677721','Ciencias de la Salud','Estantería C','Bases teóricas y prácticas del cuidado de enfermería.',5,5),
+  ('b0000000-0000-0000-0000-000000000303','Guyton and Hall Textbook of Medical Physiology','John E. Hall','Elsevier',2015,'9781455770052','Ciencias de la Salud','Estantería C','El texto de fisiología médica de referencia a nivel mundial.',3,3),
+  ('b0000000-0000-0000-0000-000000000304','Robbins Basic Pathology','Vinay Kumar, Abul K. Abbas, Jon C. Aster','Elsevier',2017,'9780323353175','Ciencias de la Salud','Estantería C','Fundamentos de patología: mecanismos de la enfermedad.',3,3),
+  ('b0000000-0000-0000-0000-000000000305','Human Anatomy & Physiology','Elaine N. Marieb, Katja Hoehn','Pearson',2018,'9780321927040','Ciencias de la Salud','Estantería C','Anatomía y fisiología humana integradas para ciencias de la salud.',4,4),
+  ('b0000000-0000-0000-0000-000000000306','Brunner & Suddarth''s Textbook of Medical-Surgical Nursing','Janice L. Hinkle, Kerry H. Cheever','Wolters Kluwer',2017,'9781496344380','Ciencias de la Salud','Estantería C','Enfermería médico-quirúrgica: cuidado del paciente adulto.',3,3),
+  -- Ciencias Empresariales (Estantería D)
+  ('b0000000-0000-0000-0000-000000000401','Principles of Marketing','Philip Kotler, Gary Armstrong','Pearson',2015,'9780133795028','Ciencias Empresariales','Estantería D','Fundamentos del marketing y la creación de valor para el cliente.',4,4),
+  ('b0000000-0000-0000-0000-000000000402','Principles of Economics','N. Gregory Mankiw','Cengage',2016,'9781305585126','Ciencias Empresariales','Estantería D','Introducción clara a la microeconomía y la macroeconomía.',4,4),
+  ('b0000000-0000-0000-0000-000000000403','Management','Stephen P. Robbins, Mary Coulter','Pearson',2017,'9780134527604','Ciencias Empresariales','Estantería D','Teoría y práctica de la administración de organizaciones.',3,3),
+  ('b0000000-0000-0000-0000-000000000404','Corporate Finance','Stephen A. Ross, Randolph W. Westerfield, Jeffrey Jaffe','McGraw-Hill',2015,'9780077861759','Ciencias Empresariales','Estantería D','Decisiones de inversión y financiamiento en la empresa.',3,3),
+  ('b0000000-0000-0000-0000-000000000405','Horngren''s Financial Accounting','Tracie Miller-Nobles, Brenda Mattison, Ella Mae Matsumura','Pearson',2017,'9780134475585','Ciencias Empresariales','Estantería D','Contabilidad financiera: registro y análisis de la información contable.',3,3),
+  ('b0000000-0000-0000-0000-000000000406','Marketing','Dhruv Grewal, Michael Levy','McGraw-Hill',2016,'9780078029233','Ciencias Empresariales','Estantería D','Enfoque práctico y actual del marketing basado en valor.',3,3),
+  ('b0000000-0000-0000-0000-000000000407','Managerial Accounting','Ray H. Garrison, Eric W. Noreen, Peter C. Brewer','McGraw-Hill',2017,'9781259578540','Ciencias Empresariales','Estantería D','Contabilidad gerencial para la toma de decisiones.',3,3),
+  -- Ciencias Sociales (Estantería E)
+  ('b0000000-0000-0000-0000-000000000501','The Practice of Social Research','Earl R. Babbie','Cengage',2015,'9781305104945','Ciencias Sociales','Estantería E','Manual clásico de métodos de investigación en ciencias sociales.',4,4),
+  ('b0000000-0000-0000-0000-000000000502','Sociology','John J. Macionis','Pearson',2016,'9780133753271','Ciencias Sociales','Estantería E','Introducción integral a la sociología y el análisis de la sociedad.',4,4),
+  ('b0000000-0000-0000-0000-000000000503','Psychology','David G. Myers, C. Nathan DeWall','Worth Publishers',2018,'9781319050634','Ciencias Sociales','Estantería E','Introducción a la psicología científica y el comportamiento humano.',3,3),
+  ('b0000000-0000-0000-0000-000000000504','Social Psychology','David G. Myers, Jean M. Twenge','McGraw-Hill',2016,'9780078035296','Ciencias Sociales','Estantería E','Cómo pensamos, influimos y nos relacionamos con los demás.',3,3),
+  ('b0000000-0000-0000-0000-000000000505','Social Research Methods','Alan Bryman','Oxford University Press',2016,'9780199689453','Ciencias Sociales','Estantería E','Métodos cuantitativos y cualitativos de investigación social.',3,3),
+  ('b0000000-0000-0000-0000-000000000506','The Social Work Skills Workbook','Barry R. Cournoyer','Cengage',2016,'9781452258065','Ciencias Sociales','Estantería E','Competencias y habilidades esenciales para la práctica del trabajo social.',3,3);
 
 -- --------------------------------------------------------------------------
 -- 4) [demo] Un préstamo activo y un favorito de María, para poder demostrar
