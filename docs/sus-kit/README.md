@@ -25,10 +25,24 @@
 
 ### 2. Prepara el entorno
 
+- ⚠️ **Verifica que Supabase esté `ACTIVE_HEALTHY` antes de cada sesión.** El plan
+  gratuito **pausa el proyecto tras ~7 días sin actividad** y entonces el login queda
+  colgado (la app sigue devolviendo la página, pero cualquier acción contra Supabase
+  agota el tiempo). Un proyecto pausado arruina la sesión sin avisar. Reactívalo desde
+  el panel de Supabase y espera a `ACTIVE_HEALTHY`.
 - Da acceso a la app en producción: **https://proyectointeraccion.vercel.app**
   (mejor desde el **móvil**, ya que es PWA e instalable).
 - Ten cuentas de prueba listas (usuario/contraseña) para cada rol. **No** uses la
   cuenta personal real de nadie.
+- **Prepara los datos para que las 4 tareas sean posibles** (si no, no se pueden
+  intentar):
+  - **T2 (ampliar)** y **T3 (devolver):** la cuenta de estudiante debe tener **1–2
+    préstamos activos**, y el de T2 **sin haber usado aún su ampliación** (política
+    2 días + 1 ampliación de 1 día; si ya se amplió, "Ampliar" saldrá deshabilitado).
+    Tampoco debe tener multa pendiente (bloquea la ampliación).
+  - **T4 (reservar):** debe existir al menos **un libro con 0 ejemplares
+    disponibles**, para que aparezca "Reservar" en vez de "Prestar".
+  - **T1 (buscar+prestar):** basta con que haya libros con stock (los hay en el seed).
 
 ### 3. Sesión con cada participante (~15 min)
 

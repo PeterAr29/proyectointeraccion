@@ -16,7 +16,7 @@ ayuda**. Piensa en voz alta mientras lo haces.
 | #   | Tarea                                                              | ¿Completada sin ayuda? | Notas del observador |
 | --- | ------------------------------------------------------------------ | ---------------------- | -------------------- |
 | T1  | **Buscar** un libro y **prestarlo** (o reservarlo si no hay stock) | ☐ Sí ☐ No              |                      |
-| T2  | **Renovar** uno de tus préstamos activos                           | ☐ Sí ☐ No              |                      |
+| T2  | **Ampliar** uno de tus préstamos activos (1 día más)               | ☐ Sí ☐ No              |                      |
 | T3  | **Devolver** un libro prestado                                     | ☐ Sí ☐ No              |                      |
 | T4  | **Reservar** un libro que no tiene ejemplares disponibles          | ☐ Sí ☐ No              |                      |
 
