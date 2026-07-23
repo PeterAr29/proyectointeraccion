@@ -100,7 +100,7 @@ export function NotificationList({ items }: { items: Notification[] }) {
         </Button>
       </div>
 
-      <ul className="divide-y rounded-lg border bg-card">
+      <ul className="divide-y overflow-hidden rounded-2xl border bg-card shadow-sm">
         {items.map((notification) => {
           const meta = TYPE_META[notification.tipo];
           const Icon = meta.icon;
@@ -109,13 +109,15 @@ export function NotificationList({ items }: { items: Notification[] }) {
             <li
               key={notification.id}
               className={cn(
-                "flex items-start gap-3 px-4 py-3",
-                unread && "bg-primary-soft/40",
+                "flex items-start gap-3 border-l-4 px-4 py-3.5 transition-colors",
+                unread
+                  ? "border-l-primary bg-primary-soft/40"
+                  : "border-l-transparent hover:bg-muted/30",
               )}
             >
               <span
                 className={cn(
-                  "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+                  "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-black/5",
                   meta.className,
                 )}
               >

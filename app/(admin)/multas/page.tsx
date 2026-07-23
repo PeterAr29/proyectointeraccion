@@ -5,6 +5,7 @@ import { ReceiptText } from "lucide-react";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorState } from "@/components/feedback/ErrorState";
 import { cn } from "@/lib/utils/cn";
+import { formatCurrency } from "@/lib/utils/currency";
 import { getProfilesByIds } from "@/lib/services/users";
 import { getLoansWithBooksByIds } from "@/lib/services/loans-admin";
 import { buildAdminFineRows, listAllFines } from "@/lib/services/fines-admin";
@@ -38,6 +39,8 @@ export default async function MultasPage({
   const fines = await listAllFines();
 
   let rows = null as ReturnType<typeof buildAdminFineRows> | null;
+  let pendingCount = 0;
+  let pendingTotal = 0;
   if (fines !== null) {
     const loanIds = [...new Set(fines.map((f) => f.loan_id))];
     const userIds = [...new Set(fines.map((f) => f.user_id))];
@@ -46,6 +49,9 @@ export default async function MultasPage({
       getProfilesByIds(userIds),
     ]);
     const all = buildAdminFineRows(fines, loans, profiles);
+    const pendientes = all.filter((r) => r.estado === "pendiente");
+    pendingCount = pendientes.length;
+    pendingTotal = pendientes.reduce((sum, r) => sum + r.monto, 0);
     rows = filtro === "todas" ? all : all.filter((r) => r.estado === filtro);
   }
 
@@ -57,6 +63,27 @@ export default async function MultasPage({
           Multas por retraso de todos los usuarios. Registra los pagos.
         </p>
       </header>
+
+      {rows !== null && (
+        <div className="mb-6 flex flex-wrap gap-4">
+          <div className="flex-1 rounded-2xl border bg-card p-4 shadow-sm sm:max-w-[200px]">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Multas pendientes
+            </p>
+            <p className="mt-1 text-2xl font-bold tracking-tight">
+              {pendingCount}
+            </p>
+          </div>
+          <div className="flex-1 rounded-2xl border bg-card p-4 shadow-sm sm:max-w-[200px]">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Monto por cobrar
+            </p>
+            <p className="mt-1 text-2xl font-bold tracking-tight text-destructive">
+              {formatCurrency(pendingTotal)}
+            </p>
+          </div>
+        </div>
+      )}
 
       <nav
         className="mb-4 flex flex-wrap gap-2"
