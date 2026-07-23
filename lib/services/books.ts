@@ -221,6 +221,28 @@ export async function getAreaCounts(): Promise<Record<string, number>> {
   return counts;
 }
 
+/**
+ * Libros recomendados para una portada personalizada (Inicio y hub del
+ * catálogo). Si se pasa un `categoria` (el área de la carrera del estudiante),
+ * recomienda dentro de ella; sin área, recomienda de todo el catálogo. Prioriza
+ * los que tienen ejemplares disponibles y limita el resultado. Sección
+ * secundaria: ante error de BD devuelve `[]` (la UI simplemente la oculta).
+ */
+export async function listRecommendedBooks(
+  categoria: string | null,
+  limit = 4,
+): Promise<Book[]> {
+  const supabase = await createClient();
+  let query = supabase.from("books").select("*").eq("activo", true);
+  if (categoria) query = query.eq("categoria", categoria);
+  const { data, error } = await query
+    .order("cantidad_disponible", { ascending: false }) // disponibles primero
+    .order("titulo", { ascending: true })
+    .limit(limit);
+  if (error) return [];
+  return data ?? [];
+}
+
 // ---------------------------------------------------------------------------
 // Métricas (Módulo E, F5.1)
 // ---------------------------------------------------------------------------

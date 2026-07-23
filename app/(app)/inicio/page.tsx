@@ -14,16 +14,15 @@ import {
   effectiveLoanStatus,
   listOwnLoansWithBooks,
 } from "@/lib/services/loans";
-import { listFavorites } from "@/lib/services/books";
+import { listFavorites, listRecommendedBooks } from "@/lib/services/books";
 import { getUnreadCount } from "@/lib/services/notifications";
 import { getDashboardData } from "@/lib/services/dashboard";
+import { areaForCarrera } from "@/lib/domain/areas";
 import {
   DueSoon,
   Hero,
-  LIBRARIAN_LINKS,
-  QuickAccess,
+  RecommendedStrip,
   StatCard,
-  STUDENT_LINKS,
 } from "@/components/inicio/InicioUI";
 
 export const metadata: Metadata = { title: "Inicio" };
@@ -42,16 +41,22 @@ export default async function InicioPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <Hero nombre={nombreCorto} esBibliotecario={esBibliotecario} />
-      {esBibliotecario ? <LibrarianBoard /> : <StudentBoard />}
+      {esBibliotecario ? (
+        <LibrarianBoard />
+      ) : (
+        <StudentBoard carrera={profile?.carrera ?? null} />
+      )}
     </div>
   );
 }
 
-async function StudentBoard() {
-  const [loans, favorites, unread] = await Promise.all([
+async function StudentBoard({ carrera }: { carrera: string | null }) {
+  const area = areaForCarrera(carrera);
+  const [loans, favorites, unread, recommended] = await Promise.all([
     listOwnLoansWithBooks(),
     listFavorites(),
     getUnreadCount(),
+    listRecommendedBooks(area, 4),
   ]);
 
   const abiertos = loans ?? [];
@@ -103,7 +108,7 @@ async function StudentBoard() {
 
       {proximo && <DueSoon item={proximo} />}
 
-      <QuickAccess links={STUDENT_LINKS} />
+      <RecommendedStrip books={recommended} carrera={carrera} />
     </>
   );
 }
@@ -143,8 +148,6 @@ async function LibrarianBoard() {
           label="Multas pendientes"
         />
       </div>
-
-      <QuickAccess links={LIBRARIAN_LINKS} />
     </>
   );
 }

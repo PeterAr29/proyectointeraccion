@@ -11,6 +11,7 @@ import {
   getAreaCounts,
   getCatalogFacets,
   listBooks,
+  listRecommendedBooks,
   type Book,
 } from "@/lib/services/books";
 import { getCurrentProfile } from "@/lib/services/users";
@@ -51,6 +52,7 @@ export default async function CatalogoPage({
       getCurrentProfile(),
     ]);
     const userArea = areaForCarrera(profile?.carrera);
+    const recommended = await listRecommendedBooks(userArea, 4);
 
     return (
       <div className="mx-auto max-w-6xl">
@@ -70,7 +72,12 @@ export default async function CatalogoPage({
           </Link>
         </header>
 
-        <AreaHub counts={counts} userArea={userArea} />
+        <AreaHub
+          counts={counts}
+          userArea={userArea}
+          recommendedBooks={recommended}
+          carrera={profile?.carrera ?? null}
+        />
       </div>
     );
   }

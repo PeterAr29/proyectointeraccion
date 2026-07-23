@@ -1,18 +1,14 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  BarChart3,
-  BookMarked,
   BookOpen,
   CalendarClock,
-  Clock,
-  Heart,
-  LayoutGrid,
-  LibraryBig,
-  Users,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 
+import { BookCard } from "@/components/biblioteca/BookCard";
+import type { Book } from "@/lib/services/books";
 import type { LoanWithBook } from "@/lib/services/loans";
 import { daysBetween, formatDate } from "@/lib/utils/dates";
 
@@ -190,105 +186,48 @@ export function DueSoon({ item }: { item: LoanWithBook }) {
 }
 
 // ---------------------------------------------------------------------------
-// Accesos rápidos
+// Recomendados para ti (estudiante)
 // ---------------------------------------------------------------------------
 
-export interface QuickLink {
-  href: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-}
+export function RecommendedStrip({
+  books,
+  carrera,
+}: {
+  books: Book[];
+  carrera: string | null;
+}) {
+  if (books.length === 0) return null;
 
-export function QuickAccess({ links }: { links: QuickLink[] }) {
   return (
-    <div>
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        Accesos rápidos
-      </h2>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {links.map((link) => (
-          <QuickCard key={link.href} link={link} />
+    <section aria-labelledby="recomendados">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h2
+          id="recomendados"
+          className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
+        >
+          <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
+          Recomendados para ti
+          {carrera && (
+            <span className="hidden font-medium normal-case text-muted-foreground/80 sm:inline">
+              · {carrera}
+            </span>
+          )}
+        </h2>
+        <Link
+          href="/catalogo"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+        >
+          Ver catálogo
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      </div>
+      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {books.map((book) => (
+          <li key={book.id}>
+            <BookCard book={book} href={`/catalogo/${book.id}`} />
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
-
-function QuickCard({ link }: { link: QuickLink }) {
-  const Icon = link.icon;
-  return (
-    <Link
-      href={link.href}
-      className="group flex items-center gap-4 rounded-2xl border bg-card p-5 transition-colors hover:border-primary hover:bg-primary-soft"
-    >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-        <Icon className="h-5 w-5" aria-hidden="true" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="font-semibold">{link.title}</p>
-        <p className="truncate text-sm text-muted-foreground">
-          {link.description}
-        </p>
-      </div>
-      <ArrowRight
-        className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
-        aria-hidden="true"
-      />
-    </Link>
-  );
-}
-
-export const STUDENT_LINKS: QuickLink[] = [
-  {
-    href: "/catalogo",
-    title: "Explorar el catálogo",
-    description: "Busca libros por título, autor o ISBN.",
-    icon: BookOpen,
-  },
-  {
-    href: "/mis-prestamos",
-    title: "Mis préstamos",
-    description: "Renueva o devuelve tus libros a tiempo.",
-    icon: BookMarked,
-  },
-  {
-    href: "/favoritos",
-    title: "Favoritos",
-    description: "Los libros que guardaste para después.",
-    icon: Heart,
-  },
-  {
-    href: "/historial",
-    title: "Historial",
-    description: "Revisa tus préstamos anteriores.",
-    icon: Clock,
-  },
-];
-
-export const LIBRARIAN_LINKS: QuickLink[] = [
-  {
-    href: "/dashboard",
-    title: "Dashboard",
-    description: "Indicadores clave de la biblioteca.",
-    icon: LayoutGrid,
-  },
-  {
-    href: "/libros",
-    title: "Gestión de libros",
-    description: "Crea, edita y da de baja el catálogo.",
-    icon: LibraryBig,
-  },
-  {
-    href: "/usuarios",
-    title: "Usuarios",
-    description: "Administra las cuentas de la comunidad.",
-    icon: Users,
-  },
-  {
-    href: "/reportes",
-    title: "Reportes",
-    description: "Préstamos, libros y multas en cifras.",
-    icon: BarChart3,
-  },
-];

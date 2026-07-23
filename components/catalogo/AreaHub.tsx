@@ -5,6 +5,7 @@ import {
   HeartPulse,
   Layers,
   Search,
+  Sparkles,
   Sprout,
   Users2,
   Wrench,
@@ -12,6 +13,8 @@ import {
 } from "lucide-react";
 
 import { AREAS, type AreaLabel } from "@/lib/domain/areas";
+import { BookCard } from "@/components/biblioteca/BookCard";
+import type { Book } from "@/lib/services/books";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -65,11 +68,20 @@ export interface AreaHubProps {
   counts: Record<string, number>;
   /** Área de la carrera del estudiante, si se conoce (para destacarla). */
   userArea: AreaLabel | null;
+  /** Libros recomendados (por el área de la carrera), mostrados al entrar. */
+  recommendedBooks: Book[];
+  /** Nombre de la carrera del estudiante, para el subtítulo de recomendados. */
+  carrera: string | null;
 }
 
-export function AreaHub({ counts, userArea }: AreaHubProps) {
+export function AreaHub({
+  counts,
+  userArea,
+  recommendedBooks,
+  carrera,
+}: AreaHubProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Buscador global (recae en el listado con ?q=) */}
       <form method="get" action="/catalogo">
         <label htmlFor="q" className="sr-only">
@@ -97,13 +109,39 @@ export function AreaHub({ counts, userArea }: AreaHubProps) {
         </div>
       </form>
 
-      {/* Área de la carrera del estudiante */}
-      {userArea && (
-        <section>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Tu área
-          </h2>
-          <FeaturedArea label={userArea} count={counts[userArea] ?? 0} />
+      {/* Recomendados por la carrera del estudiante (lo primero al entrar) */}
+      {recommendedBooks.length > 0 && (
+        <section aria-labelledby="recomendados-catalogo">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <h2
+              id="recomendados-catalogo"
+              className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
+            >
+              <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
+              Recomendados para ti
+              {carrera && (
+                <span className="hidden font-medium normal-case text-muted-foreground/80 sm:inline">
+                  · {carrera}
+                </span>
+              )}
+            </h2>
+            {userArea && (
+              <Link
+                href={areaHref(userArea)}
+                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+              >
+                Ver más de tu área
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            )}
+          </div>
+          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {recommendedBooks.map((book) => (
+              <li key={book.id}>
+                <BookCard book={book} href={`/catalogo/${book.id}`} />
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 
@@ -119,6 +157,7 @@ export function AreaHub({ counts, userArea }: AreaHubProps) {
               label={area.label}
               descripcion={area.descripcion}
               count={counts[area.label] ?? 0}
+              highlight={area.label === userArea}
             />
           ))}
         </div>
@@ -127,51 +166,25 @@ export function AreaHub({ counts, userArea }: AreaHubProps) {
   );
 }
 
-function FeaturedArea({ label, count }: { label: AreaLabel; count: number }) {
-  const style = AREA_STYLE[label];
-  const Icon = style.icon;
-  return (
-    <Link
-      href={areaHref(label)}
-      className="group flex items-center gap-4 rounded-2xl border bg-gradient-to-br from-primary-soft to-card p-5 shadow-sm transition-colors hover:border-primary"
-    >
-      <span
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${style.chip}`}
-      >
-        <Icon className="h-6 w-6" aria-hidden="true" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="font-semibold">{label}</p>
-        <p className="text-sm text-muted-foreground">
-          Recomendado según tu carrera · {librosLabel(count)}
-        </p>
-      </div>
-      <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
-        Ver libros
-        <ArrowRight
-          className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
-          aria-hidden="true"
-        />
-      </span>
-    </Link>
-  );
-}
-
 function AreaCard({
   label,
   descripcion,
   count,
+  highlight,
 }: {
   label: AreaLabel;
   descripcion: string;
   count: number;
+  highlight: boolean;
 }) {
   const style = AREA_STYLE[label];
   const Icon = style.icon;
   return (
     <Link
       href={areaHref(label)}
-      className={`group flex flex-col gap-3 rounded-2xl border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${style.ring}`}
+      className={`group flex flex-col gap-3 rounded-2xl border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+        highlight ? "border-primary ring-1 ring-primary/30" : style.ring
+      }`}
     >
       <div className="flex items-center justify-between">
         <span
@@ -179,16 +192,22 @@ function AreaCard({
         >
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
-        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-          {librosLabel(count)}
-        </span>
+        {highlight ? (
+          <span className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
+            Tu área
+          </span>
+        ) : (
+          <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+            {librosLabel(count)}
+          </span>
+        )}
       </div>
       <div>
         <p className="font-semibold">{label}</p>
         <p className="text-sm text-muted-foreground">{descripcion}</p>
       </div>
       <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-primary">
-        Ver libros
+        {highlight ? `Ver libros · ${librosLabel(count)}` : "Ver libros"}
         <ArrowRight
           className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
           aria-hidden="true"
