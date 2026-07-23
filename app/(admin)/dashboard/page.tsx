@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   const { kpis, recentLoans } = await getDashboardData();
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div>
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Panel de control</h1>
         <p className="mt-1 text-muted-foreground">

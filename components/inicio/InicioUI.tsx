@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  ArrowUpRight,
   BookOpen,
   CalendarClock,
   Sparkles,
@@ -116,18 +117,22 @@ export function StatCard({
   return (
     <Link
       href={href}
-      className="group flex flex-col gap-3 rounded-2xl border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5"
+      className="group flex flex-col gap-3 rounded-2xl border bg-card p-5 shadow-sm ring-1 ring-black/[0.02] transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
     >
-      <span
-        className={`flex h-10 w-10 items-center justify-center rounded-xl ${TONES[tone]}`}
-      >
-        <Icon className="h-5 w-5" aria-hidden="true" />
-      </span>
+      <div className="flex items-center justify-between">
+        <span
+          className={`flex h-11 w-11 items-center justify-center rounded-xl ${TONES[tone]}`}
+        >
+          <Icon className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <ArrowUpRight
+          className="h-4 w-4 text-transparent transition-colors group-hover:text-primary"
+          aria-hidden="true"
+        />
+      </div>
       <div>
-        <p className="text-2xl font-bold tracking-tight sm:text-3xl">
-          {value ?? "—"}
-        </p>
-        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-3xl font-bold tracking-tight">{value ?? "—"}</p>
+        <p className="mt-0.5 text-sm text-muted-foreground">{label}</p>
       </div>
     </Link>
   );
@@ -221,7 +226,7 @@ export function RecommendedStrip({
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
-      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {books.map((book) => (
           <li key={book.id}>
             <BookCard book={book} href={`/catalogo/${book.id}`} />

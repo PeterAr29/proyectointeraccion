@@ -17,7 +17,7 @@ export default async function ReportesPage() {
   const data = await getReportData();
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Reportes</h1>
         <p className="mt-1 text-muted-foreground">

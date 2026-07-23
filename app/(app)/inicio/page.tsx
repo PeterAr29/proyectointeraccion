@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
+  ArrowRight,
   BookMarked,
   Bell,
+  CalendarCheck,
   CalendarClock,
+  Compass,
   Heart,
   LibraryBig,
   ReceiptText,
@@ -18,6 +22,9 @@ import { listFavorites, listRecommendedBooks } from "@/lib/services/books";
 import { getUnreadCount } from "@/lib/services/notifications";
 import { getDashboardData } from "@/lib/services/dashboard";
 import { areaForCarrera } from "@/lib/domain/areas";
+import { EmptyState } from "@/components/feedback/EmptyState";
+import { ErrorState } from "@/components/feedback/ErrorState";
+import { RecentLoansTable } from "@/components/biblioteca/RecentLoansTable";
 import {
   DueSoon,
   Hero,
@@ -29,9 +36,9 @@ export const metadata: Metadata = { title: "Inicio" };
 
 /**
  * Pantalla de inicio del shell: tablero personalizado con cabecera de
- * bienvenida, un resumen con datos reales (préstamos, favoritos, avisos) y
- * accesos rápidos. Server Component que compone `lib/services/*` (RLS acota los
- * datos). La presentación vive en `components/inicio/InicioUI`.
+ * bienvenida y un resumen con datos reales por rol. Server Component que compone
+ * `lib/services/*` (RLS acota los datos). La presentación vive en
+ * `components/inicio/InicioUI`.
  */
 export default async function InicioPage() {
   const profile = await getCurrentProfile();
@@ -39,7 +46,7 @@ export default async function InicioPage() {
   const nombreCorto = profile?.nombre.split(" ")[0] ?? "";
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8">
+    <div className="space-y-6">
       <Hero nombre={nombreCorto} esBibliotecario={esBibliotecario} />
       {esBibliotecario ? (
         <LibrarianBoard />
@@ -56,7 +63,7 @@ async function StudentBoard({ carrera }: { carrera: string | null }) {
     listOwnLoansWithBooks(),
     listFavorites(),
     getUnreadCount(),
-    listRecommendedBooks(area, 4),
+    listRecommendedBooks(area, 6),
   ]);
 
   const abiertos = loans ?? [];
@@ -74,7 +81,7 @@ async function StudentBoard({ carrera }: { carrera: string | null }) {
   )[0];
 
   return (
-    <>
+    <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           href="/mis-prestamos"
@@ -106,18 +113,59 @@ async function StudentBoard({ carrera }: { carrera: string | null }) {
         />
       </div>
 
-      {proximo && <DueSoon item={proximo} />}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          {recommended.length > 0 ? (
+            <RecommendedStrip books={recommended} carrera={carrera} />
+          ) : (
+            <div className="rounded-2xl border bg-card p-8 text-center shadow-sm">
+              <Compass
+                className="mx-auto mb-3 h-8 w-8 text-primary"
+                aria-hidden="true"
+              />
+              <p className="font-semibold">Descubre tu próxima lectura</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Explora el catálogo por áreas académicas.
+              </p>
+              <Link
+                href="/catalogo"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                Ir al catálogo
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          )}
+        </div>
 
-      <RecommendedStrip books={recommended} carrera={carrera} />
-    </>
+        <aside className="space-y-4">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Tus préstamos
+          </h2>
+          {proximo ? (
+            <DueSoon item={proximo} />
+          ) : (
+            <div className="flex flex-col items-center rounded-2xl border border-dashed bg-card/50 p-6 text-center">
+              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-muted-foreground ring-1 ring-inset ring-border">
+                <CalendarCheck className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <p className="text-sm font-semibold">Nada por devolver</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                No tienes préstamos activos ahora mismo.
+              </p>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
   );
 }
 
 async function LibrarianBoard() {
-  const { kpis } = await getDashboardData();
+  const { kpis, recentLoans } = await getDashboardData();
 
   return (
-    <>
+    <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           href="/libros"
@@ -148,6 +196,32 @@ async function LibrarianBoard() {
           label="Multas pendientes"
         />
       </div>
-    </>
+
+      <section aria-label="Préstamos recientes" className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold tracking-tight">
+            Préstamos recientes
+          </h2>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          >
+            Ver panel completo
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+        {recentLoans === null ? (
+          <ErrorState message="No pudimos cargar los préstamos recientes. Inténtalo de nuevo en unos segundos." />
+        ) : recentLoans.length === 0 ? (
+          <EmptyState
+            icon={BookMarked}
+            title="Aún no hay préstamos"
+            message="Cuando los estudiantes empiecen a prestar libros, los más recientes aparecerán aquí."
+          />
+        ) : (
+          <RecentLoansTable rows={recentLoans} />
+        )}
+      </section>
+    </div>
   );
 }

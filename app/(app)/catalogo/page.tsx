@@ -55,7 +55,7 @@ export default async function CatalogoPage({
     const recommended = await listRecommendedBooks(userArea, 4);
 
     return (
-      <div className="mx-auto max-w-6xl">
+      <div>
         <header className="mb-6 flex flex-wrap items-end justify-between gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Catálogo</h1>
@@ -88,7 +88,7 @@ export default async function CatalogoPage({
   ]);
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div>
       <AreaBreadcrumb label={filters.categoria || undefined} />
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">
@@ -165,7 +165,7 @@ function CatalogResults({
       <p className="mb-4 text-sm text-muted-foreground">
         {total} {total === 1 ? "libro encontrado" : "libros encontrados"}
       </p>
-      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {books.map((book) => (
           <li key={book.id}>
             <BookCard book={book} href={`/catalogo/${book.id}`} />

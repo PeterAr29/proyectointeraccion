@@ -33,7 +33,7 @@ export default async function MisPrestamosPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Mis préstamos</h1>
         <p className="mt-1 text-muted-foreground">

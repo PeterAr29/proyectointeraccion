@@ -3,7 +3,7 @@ import { Skeleton, TableRowSkeleton } from "@/components/feedback/Skeleton";
 /** Estado "cargando" del listado de libros (F5.2). */
 export default function LibrosLoading() {
   return (
-    <div className="mx-auto max-w-6xl">
+    <div>
       <header className="mb-6 flex items-center justify-between">
         <div className="space-y-2">
           <Skeleton className="h-7 w-32" />

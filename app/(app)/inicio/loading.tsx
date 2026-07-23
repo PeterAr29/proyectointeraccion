@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/feedback/Skeleton";
  */
 export default function InicioLoading() {
   return (
-    <div className="mx-auto max-w-5xl space-y-8">
+    <div className="space-y-6">
       <Skeleton className="h-52 rounded-3xl sm:h-56" />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -16,13 +16,13 @@ export default function InicioLoading() {
         ))}
       </div>
 
-      <div>
-        <Skeleton className="mb-4 h-4 w-32" />
-        <div className="grid gap-4 sm:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-20 rounded-2xl" />
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} className="h-64 rounded-2xl" />
           ))}
         </div>
+        <Skeleton className="h-32 rounded-2xl" />
       </div>
     </div>
   );
