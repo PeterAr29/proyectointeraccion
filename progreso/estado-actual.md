@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-23 (T-021 re-evaluación heurística + T-023 especificaciones alineadas a 2+1)
+**Última actualización:** 2026-07-23 (verificación de producción + cierre de C4)
 **Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última del plan)
 **Después del cierre formal:** iteración de UX del **2026-07-12** (5 commits) — registrada retroactivamente en `progreso/fase-7-ux.md`.
 
@@ -27,12 +27,27 @@
   settings (`dias_prestamo` 2 / `max_renovaciones` 1) y regla de negocio 5. Nota de
   actualización en la cabecera. CLAUDE.md ⚠️ actualizada (ya no dice "pendiente").
 
-**Próximo trabajo (en este orden):**
+**Verificación de producción (2026-07-23):** ✅ Supabase `bibliotec`
+(`umjelnabjdvrsfnqoszt`) **`ACTIVE_HEALTHY`**; app Vercel `/inicio` responde (sirve
+login, middleware OK); datos íntegros (7 perfiles, 15 libros/15 activos, 11 préstamos,
+0 multas pendientes). Advisors de seguridad: 9 WARN, **ninguno crítico** — todos
+conocidos/aceptados salvo el nuevo del bucket público (ver deudas técnicas). Todo
+listo para agendar el estudio SUS.
+
+**✅ C4 cerrado (2026-07-23).** Verificado en el remoto: las 15 categorías caen
+**exactamente** dentro de `AREA_LABELS` (Ing. y Tecnología ×7, Agrarias/Salud/
+Empresariales/Sociales ×2 c/u); **cero libros huérfanos**. La ruta de escritura ya lo
+garantiza: `bookFormSchema` restringe `categoria` a `z.enum(AREA_LABELS)` (test en
+`lib/validations/books.test.ts`), revalidado en servidor. Sin cambio de código. (No hay
+`CHECK` a nivel de BD, pero toda escritura pasa por servicios + Zod, donde el proyecto
+coloca la garantía.)
+
+**Próximo trabajo:**
 
 1. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios) — T-022.
-   Ahora **desbloqueado** (T-021 cerrado). Verificar Supabase `ACTIVE_HEALTHY` antes.
-   Requiere usuarios reales; yo puedo preparar el kit y procesar el CSV.
-2. (Backlog UX) **C4** — validar que ningún libro tenga `categoria` fuera de `AREA_LABELS`. Sev 2, no bloquea la entrega.
+   **Desbloqueado** (T-021 cerrado) y producción verificada. Verificar Supabase
+   `ACTIVE_HEALTHY` antes de cada sesión. Requiere usuarios reales; yo preparo el kit
+   y proceso el CSV.
 
 Detalle en `progreso/fase-7-ux.md` y `docs/evaluacion-usabilidad.md` §8.
 
@@ -390,15 +405,20 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
       `ACTIVE_HEALTHY`; datos íntegros (7 perfiles, 15 libros, 11 préstamos).
       **Se volverá a pausar** tras ~7 días sin uso: comprobarlo antes de cada sesión
       del estudio SUS.
-- [ ] **Re-pasar la evaluación heurística** sobre la UI del 12-jul (login, inicio,
-      catálogo por áreas, sidebar azul). `docs/evaluacion-usabilidad.md` describe
-      pantallas que ya no existen. Medir **contraste AA** del texto claro sobre el
-      degradado azul→índigo, que nunca se verificó.
+- [x] ~~**Re-pasar la evaluación heurística** sobre la UI del 12-jul~~ — **hecho
+      (T-021, 2026-07-23)**: `docs/evaluacion-usabilidad.md` re-pasado sobre la UI
+      rediseñada + primera medición de contraste AA (texto claro sobre el degradado
+      azul→índigo). 5 hallazgos, 4 corregidos (R1 contraste, R2 badge móvil, R3
+      terminología, R4 login); queda C4 (cerrado el 2026-07-23, ver arriba).
 - [ ] **Entrega final:** recolectar el **SUS real** con el kit `docs/sus-kit/`
       (5–8 usuarios) y pegar la tabla en `docs/evaluacion-usabilidad.md` §4.3,
-      sustituyendo el piloto simulado. **Depende de la re-evaluación heurística**:
-      no tiene sentido medir y luego cambiar pantallas.
-- [ ] **Alinear `docs/especificaciones.md`** §7.2.2/§7.2.5 con la política 2+1.
+      sustituyendo el piloto simulado. **Desbloqueado** (la re-evaluación heurística de
+      la que dependía ya está hecha — T-021). Único pendiente para la entrega. Requiere
+      usuarios reales.
+- [x] ~~**Alinear `docs/especificaciones.md`** §7.2.2/§7.2.5 con la política 2+1~~ —
+      **hecho (T-023, 2026-07-23)**: RF-C02 (`dias_prestamo`=2), RF-C04 (ampliar 1 vez
+      +1 día), §7.2 settings (`dias_prestamo` 2 / `max_renovaciones` 1) y regla de
+      negocio 5.
 
 ## Deudas técnicas anotadas
 
@@ -438,5 +458,16 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
 - **Nueva (12-jul) — `books.categoria` es lista controlada:** cualquier libro cargado
   con una categoría fuera de `AREA_LABELS` (`lib/domain/areas.ts`) queda huérfano del
   hub de áreas del catálogo. Si se amplía la taxonomía, hay que migrar los datos.
+  _(2026-07-23, C4) Verificado: los 15 libros del remoto están dentro de la lista y el
+  form admin (`bookFormSchema` con `z.enum(AREA_LABELS)`) impide reintroducir una fuera._
+  Sin `CHECK` en BD: una inserción por SQL directo/seed aún podría desviar; endurecerlo
+  con una restricción a nivel de tabla es opcional (toda escritura de la app pasa por Zod).
+- **Nueva (2026-07-23) — bucket público `book-covers` permite listar (🟡 bajo):** el
+  advisor de seguridad de Supabase (`public_bucket_allows_listing`) marca que la policy
+  `book_covers_read` tiene un SELECT amplio sobre `storage.objects`, así que un cliente
+  puede **enumerar** todas las portadas del bucket. Riesgo bajo (solo imágenes de portada,
+  sin PII), pero para servir por URL no hace falta el listado. Endurecer: acotar la policy
+  a lectura por objeto. Remediación:
+  https://supabase.com/docs/guides/database/database-linter?lint=0025_public_bucket_allows_listing
 - 2 vulnerabilidades **moderate** en el `postcss` interno de next 15.5.20 (bajo el gate `high`); se resolverán al actualizar next.
 - **Nueva (F2.1):** vuln **low** en `@supabase/auth-js` (Insecure Path Routing, GHSA-8r88-6cj9-9fh5); se resuelve subiendo `@supabase/supabase-js` a ≥2.110. Bajo el gate `high`, no bloquea CI.
