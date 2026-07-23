@@ -21,10 +21,12 @@ export function Skeleton({
 /** Skeleton con la forma de una BookCard (portada + dos líneas de texto). */
 export function BookCardSkeleton() {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-card p-3">
-      <Skeleton className="aspect-[2/3] w-full" />
-      <Skeleton className="h-4 w-3/4" />
-      <Skeleton className="h-3 w-1/2" />
+    <div className="flex flex-col gap-3 rounded-2xl border bg-card p-2.5 shadow-sm">
+      <Skeleton className="aspect-[2/3] w-full rounded-xl" />
+      <div className="space-y-2 px-1 pb-1">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+      </div>
     </div>
   );
 }

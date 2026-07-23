@@ -27,12 +27,13 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
-      <Icon
-        className="mb-4 h-16 w-16 text-muted-foreground/40"
-        strokeWidth={1.5}
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed bg-card/50 px-5 py-16 text-center">
+      <div
+        className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-muted-foreground ring-1 ring-inset ring-border"
         aria-hidden="true"
-      />
+      >
+        <Icon className="h-8 w-8" strokeWidth={1.75} />
+      </div>
       <p className="text-lg font-bold text-foreground">{title}</p>
       {message && (
         <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">

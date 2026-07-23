@@ -41,12 +41,13 @@ const STATUS_MAP: Record<BadgeStatus, { label: string; tone: BadgeTone }> = {
 };
 
 // Colores suaves con texto oscuro: contraste AA sobre el fondo del pill.
+// El ring de igual matiz define el borde del pill sobre fondos claros.
 const TONE_CLASSES: Record<BadgeTone, string> = {
-  success: "bg-green-100 text-green-800",
-  warning: "bg-amber-100 text-amber-800",
-  danger: "bg-red-100 text-red-800",
-  info: "bg-blue-100 text-blue-800",
-  neutral: "bg-slate-100 text-slate-700",
+  success: "bg-green-100 text-green-800 ring-green-600/20",
+  warning: "bg-amber-100 text-amber-800 ring-amber-600/20",
+  danger: "bg-red-100 text-red-800 ring-red-600/20",
+  info: "bg-blue-100 text-blue-800 ring-blue-600/20",
+  neutral: "bg-slate-100 text-slate-700 ring-slate-500/20",
 };
 
 export interface StatusBadgeProps {
@@ -71,11 +72,15 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset",
         TONE_CLASSES[resolvedTone],
         className,
       )}
     >
+      <span
+        aria-hidden="true"
+        className="h-1.5 w-1.5 rounded-full bg-current opacity-75"
+      />
       {resolvedLabel}
     </span>
   );

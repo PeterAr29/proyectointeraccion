@@ -25,13 +25,14 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="flex flex-col items-center justify-center px-5 py-16 text-center"
+      className="flex flex-col items-center justify-center rounded-2xl border border-destructive/20 bg-destructive/5 px-5 py-16 text-center"
     >
-      <AlertTriangle
-        className="mb-4 h-16 w-16 text-destructive/70"
-        strokeWidth={1.5}
+      <div
+        className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive ring-1 ring-inset ring-destructive/20"
         aria-hidden="true"
-      />
+      >
+        <AlertTriangle className="h-8 w-8" strokeWidth={1.75} />
+      </div>
       <p className="text-lg font-bold text-foreground">{title}</p>
       <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">{message}</p>
       {onRetry && (

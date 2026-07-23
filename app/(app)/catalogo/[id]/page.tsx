@@ -51,11 +51,12 @@ export default async function BookDetailPage({
       <BackLink />
 
       <div className="grid gap-8 sm:grid-cols-[220px_1fr]">
-        <div className="mx-auto w-full max-w-[220px] sm:mx-0">
+        <div className="mx-auto w-full max-w-[220px] overflow-hidden rounded-xl shadow-md ring-1 ring-black/5 sm:mx-0">
           <BookCover
             title={book.titulo}
             coverUrl={book.portada_url}
             isbn={book.isbn}
+            className="rounded-none shadow-none"
           />
         </div>
 
@@ -87,7 +88,7 @@ export default async function BookDetailPage({
       </div>
 
       {book.descripcion && (
-        <section className="mt-8 rounded-lg border bg-card p-5">
+        <section className="mt-8 rounded-2xl border bg-card p-5 shadow-sm">
           <h2 className="mb-2 text-lg font-bold">Descripción</h2>
           <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
             {book.descripcion}

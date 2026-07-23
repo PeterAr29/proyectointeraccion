@@ -8,16 +8,18 @@ import { cn } from "@/lib/utils/cn";
  * warning, ghost, link. Foco visible AA heredado de globals.css.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+        primary:
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md",
         secondary:
-          "border border-input bg-card text-foreground hover:bg-secondary",
+          "border border-input bg-card text-foreground shadow-sm hover:border-primary/40 hover:bg-secondary",
         danger:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        warning: "bg-warning text-warning-foreground hover:bg-warning/90",
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 hover:shadow-md",
+        warning:
+          "bg-warning text-warning-foreground shadow-sm hover:bg-warning/90 hover:shadow-md",
         ghost: "bg-primary-soft text-primary hover:bg-primary-soft/70",
         link: "text-primary underline-offset-4 hover:underline",
       },
