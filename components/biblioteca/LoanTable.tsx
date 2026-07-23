@@ -40,7 +40,7 @@ export function LoanTable({
             <th className="px-4 py-3 font-semibold">Libro</th>
             <th className="px-4 py-3 font-semibold">Estado</th>
             <th className="px-4 py-3 font-semibold">Devolución</th>
-            <th className="px-4 py-3 font-semibold">Renovaciones</th>
+            <th className="px-4 py-3 font-semibold">Ampliaciones</th>
             {withActions && (
               <th className="px-4 py-3 text-right font-semibold">Acciones</th>
             )}

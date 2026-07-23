@@ -153,9 +153,10 @@ nuevo, §2.7 transversal), recorrido cognitivo actualizado (§3.1 hub, §3.2 amp
 2+1) y **§8** con el resumen de la re-evaluación. El **contraste AA se midió por
 primera vez** (peor caso `#1D4ED8`): 4 textos con opacidad `/70`–`/75` estaban en
 4.10–4.48:1 (bajo AA 4.5:1); **corregidos a `/85` → 5.30:1** (commit `abbc94f`,
-T-021). Quedan abiertos, sev ≤ 2: **R2** (badge de urgencia oculto en móvil),
-**R3** (nombre "Renovar"/"Ampliar" mixto), **R4** (login sin aclaración de rol) — no
-bloquean el SUS. **T-022 (SUS real) desbloqueado.**
+T-021). **R2** (badge de urgencia ahora visible en móvil), **R3** (término unificado a
+"Ampliar") y **R4** (login recupera la aclaración de rol) también se corrigieron en la
+pasada. Queda solo **C4** en backlog (sev 2: validar categorías fuera de
+`AREA_LABELS`), sin impacto en los flujos. **T-022 (SUS real) desbloqueado.**
 
 ### Pendiente 5 — 🟠 CI en rojo desde el 12-jul: el e2e del catálogo ✅ RESUELTO
 
@@ -252,4 +253,4 @@ préstamo (`set local request.jwt.claims`, RLS real):
 - `books.categoria` es ahora una **lista controlada** (`AREA_LABELS`): cualquier
   libro cargado con una categoría fuera de la lista queda huérfano del hub de áreas.
 - Orden restante: ~~Pendiente 3 (re-evaluación heurística)~~ ✅ → **SUS real (T-022)**
-  → Pendiente 4 (alinear especificaciones, T-023). Backlog UX menor: R2/R3/R4.
+  → Pendiente 4 (alinear especificaciones, T-023). Backlog UX menor: C4.

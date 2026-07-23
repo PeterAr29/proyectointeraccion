@@ -32,16 +32,16 @@ type View = "closed" | "confirm-renew" | "confirm-return" | "success-renew";
 
 const RENEW_BLOCK_HINT: Record<RenewBlockReason, string> = {
   returned: "Este préstamo ya fue devuelto.",
-  "limit-reached": "Alcanzaste el máximo de renovaciones permitidas.",
-  "pending-fine": "No puedes renovar con una multa pendiente.",
+  "limit-reached": "Alcanzaste el máximo de ampliaciones permitidas.",
+  "pending-fine": "No puedes ampliar con una multa pendiente.",
 };
 
 const RENEW_ERRORS: Record<RenewFailureReason, string> = {
-  "not-renewable": "Este préstamo ya no puede renovarse.",
-  "limit-reached": "Alcanzaste el máximo de renovaciones permitidas.",
-  "pending-fine": "No puedes renovar con una multa pendiente.",
+  "not-renewable": "Este préstamo ya no puede ampliarse.",
+  "limit-reached": "Alcanzaste el máximo de ampliaciones permitidas.",
+  "pending-fine": "No puedes ampliar con una multa pendiente.",
   "no-session": "Tu sesión expiró. Inicia sesión nuevamente.",
-  error: "No se pudo renovar el préstamo. Inténtalo de nuevo.",
+  error: "No se pudo ampliar el préstamo. Inténtalo de nuevo.",
 };
 
 const RETURN_ERRORS: Record<ReturnFailureReason, string> = {
@@ -102,10 +102,10 @@ export function LoanRowActions({
         onClick={() => setView("confirm-renew")}
         disabled={pending || !renewable}
         title={renewHint}
-        aria-label={`Renovar «${titulo}»`}
+        aria-label={`Ampliar «${titulo}»`}
       >
         <RefreshCw aria-hidden="true" />
-        Renovar
+        Ampliar
       </Button>
       <Button
         variant="primary"
@@ -142,7 +142,7 @@ export function LoanRowActions({
         open={view === "success-renew"}
         onClose={close}
         variant="success"
-        title="¡Préstamo renovado!"
+        title="¡Préstamo ampliado!"
         message={`Nueva fecha de devolución de «${titulo}»: ${formatDate(newDueDate)}.`}
       />
     </div>

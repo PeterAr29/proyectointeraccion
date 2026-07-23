@@ -177,12 +177,12 @@ export function DueSoon({ item }: { item: LoanWithBook }) {
         </p>
       </div>
       <span
-        className={`hidden shrink-0 rounded-full px-3 py-1 text-xs font-semibold sm:inline ${badge.cls}`}
+        className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${badge.cls}`}
       >
         {badge.text}
       </span>
       <ArrowRight
-        className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+        className="hidden h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary sm:block"
         aria-hidden="true"
       />
     </Link>

@@ -15,18 +15,19 @@
 
 - ✅ **T-021 — re-evaluación heurística** sobre la UI rediseñada del 12-jul.
   `docs/evaluacion-usabilidad.md` re-pasado (login 2 columnas, Inicio-tablero,
-  catálogo por áreas, shell azul) + **primera medición de contraste AA**. Hallazgo
-  crítico **R1** (texto con opacidad `/70`–`/75` sobre `#1D4ED8` en 4.10–4.48:1, bajo
-  AA) **corregido en el acto** (commit `abbc94f`: `/85` → 5.30:1). Quedan 3 hallazgos
-  sev ≤ 2 en backlog: **R2** (badge de urgencia oculto en móvil), **R3** (terminología
-  "Renovar"/"Ampliar" mixta), **R4** (login perdió la aclaración de rol).
+  catálogo por áreas, shell azul) + **primera medición de contraste AA**. Cinco
+  hallazgos; **cuatro corregidos**: **R1** (contraste `/70`–`/75` sobre `#1D4ED8`
+  4.10–4.48:1 → `/85` 5.30:1, commit `abbc94f`), **R2** (badge de urgencia ahora
+  visible en móvil), **R3** (terminología unificada a "Ampliar"), **R4** (login
+  recupera la aclaración de rol). Queda **C4** en backlog (sev 2: validar categorías
+  fuera de `AREA_LABELS`). Verificado: typecheck/lint limpios, **145/145 unit**.
 
 **Próximo trabajo (en este orden):**
 
 1. **Recolectar el SUS real** con el kit `docs/sus-kit/` (5–8 usuarios) — T-022.
    Ahora **desbloqueado** (T-021 cerrado). Verificar Supabase `ACTIVE_HEALTHY` antes.
 2. Alinear `docs/especificaciones.md` §7.2.2/§7.2.5 con la política de préstamo 2+1 — T-023.
-3. (Backlog UX) R2/R3/R4 de la re-evaluación — sev ≤ 2, no bloquean la entrega.
+3. (Backlog UX) **C4** — validar que ningún libro tenga `categoria` fuera de `AREA_LABELS`. Sev 2, no bloquea la entrega.
 
 Detalle en `progreso/fase-7-ux.md` y `docs/evaluacion-usabilidad.md` §8.
 

@@ -78,7 +78,7 @@ neutral al rol.
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | A1  | El texto "Accede con tu código universitario" sugería que solo los estudiantes inician sesión; el personal de biblioteca no sabía dónde entrar.                           | H2, H10    | 3         | ✅ Corregido (F6.1) — ⚠️ **regresión parcial en el rediseño**, ver **R4**: se eliminó la aclaración explícita para el personal. |
 | A2  | El enlace de recuperación depende de SMTP no configurado en el MVP (el correo no se envía).                                                                               | H1         | 2         | Pendiente (config de correo, F6.2/producción).                                                                                  |
-| R4  | El rediseño quitó la aclaración de que el login es el mismo para estudiantes y personal. El copy ya no es _engañoso_ (era el problema de A1), pero se perdió el refuerzo. | H2, H10    | 1         | Abierto — restaurar una línea neutral bajo el campo de código (p. ej. "El mismo acceso para estudiantes y personal").           |
+| R4  | El rediseño quitó la aclaración de que el login es el mismo para estudiantes y personal. El copy ya no es _engañoso_ (era el problema de A1), pero se perdió el refuerzo. | H2, H10    | 1         | ✅ Corregido (T-021): línea neutral "El mismo acceso para estudiantes y personal de biblioteca" bajo el campo de código.        |
 
 ### 2.2 Catálogo (`/catalogo`) y detalle (`/catalogo/[id]`) _(re-evaluado 07-23)_
 
@@ -126,10 +126,10 @@ reinicia el aviso de vencimiento (regresión corregida el 22-jul, ver
 
 **Hallazgos**
 
-| #   | Hallazgo                                                                                                                                                                             | Heurística        | Severidad | Estado                                                                                           |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | --------- | ------------------------------------------------------------------------------------------------ |
-| M1  | El tooltip que explica por qué la acción está deshabilitada solo aparece al pasar el cursor (no accesible por teclado/lectores).                                                     | H6, accesibilidad | 2         | Pendiente (exponer el motivo como texto o `aria-describedby`, backlog).                          |
-| R3  | Terminología inconsistente tras el cambio 2+1: el botón dice **"Renovar"** (y su `aria-label`), pero el diálogo de confirmación y la configuración dicen **"Ampliar"/"ampliación"**. | H4                | 2         | Abierto — unificar a un solo término (recomendado **"Ampliar"**, coherente con la política 2+1). |
+| #   | Hallazgo                                                                                                                                                                             | Heurística        | Severidad | Estado                                                                                              |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| M1  | El tooltip que explica por qué la acción está deshabilitada solo aparece al pasar el cursor (no accesible por teclado/lectores).                                                     | H6, accesibilidad | 2         | Pendiente (exponer el motivo como texto o `aria-describedby`, backlog).                             |
+| R3  | Terminología inconsistente tras el cambio 2+1: el botón dice **"Renovar"** (y su `aria-label`), pero el diálogo de confirmación y la configuración dicen **"Ampliar"/"ampliación"**. | H4                | 2         | ✅ Corregido (T-021): unificado a **"Ampliar"** (botón, `aria-label`, columna, mensajes y diálogo). |
 
 ### 2.4 Notificaciones (`/notificaciones`)
 
@@ -208,9 +208,9 @@ destacado **"Próxima devolución"** con urgencia por color, más los accesos r�
 
 **Hallazgos**
 
-| #   | Hallazgo                                                                                                                                                                                                                                                                                                    | Heurística | Severidad | Estado                                                                                      |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------- | ------------------------------------------------------------------------------------------- |
-| R2  | En "Próxima devolución", el badge de urgencia (`Vence hoy` / `Faltan N días`) está oculto en móvil (`hidden … sm:inline`). Con la política 2+1 el margen es de horas, así que perder la señal de urgencia en el celular —el dispositivo objetivo (PWA)— es justo donde más importa. La fecha sí se muestra. | H1         | 2         | Abierto — mostrar el badge también en móvil (quitar `hidden`, o reubicarlo bajo el título). |
+| #   | Hallazgo                                                                                                                                                                                                                                                                                                    | Heurística | Severidad | Estado                                                                                 |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------- | -------------------------------------------------------------------------------------- |
+| R2  | En "Próxima devolución", el badge de urgencia (`Vence hoy` / `Faltan N días`) está oculto en móvil (`hidden … sm:inline`). Con la política 2+1 el margen es de horas, así que perder la señal de urgencia en el celular —el dispositivo objetivo (PWA)— es justo donde más importa. La fecha sí se muestra. | H1         | 2         | ✅ Corregido (T-021): el badge se muestra en móvil; el arrow decorativo se oculta ahí. |
 
 ---
 
@@ -360,19 +360,19 @@ foco.
 | #   | Hallazgo                                                                   | Severidad | Corrección                                                                            |
 | --- | -------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------- |
 | R1  | Texto con opacidad reducida sobre el degradado azul por debajo de AA 4.5:1 | 3         | Opacidades `/70`–`/75` → `/85` (4.10–4.48:1 → **5.30:1**), commit `abbc94f`. Solo UX. |
+| R2  | Badge de urgencia de "Próxima devolución" oculto en móvil                  | 2         | El badge se muestra también en móvil; el arrow decorativo se oculta ahí (`sm:block`). |
+| R3  | Terminología "Renovar"/"Ampliar" inconsistente                             | 2         | Unificado a **"Ampliar"** (botón, `aria-label`, columna "Ampliaciones", mensajes).    |
+| R4  | Login sin aclaración de rol tras el rediseño                               | 1         | Línea neutral "El mismo acceso para estudiantes y personal de biblioteca".            |
 
 ## 6. Hallazgos abiertos (priorizados para el backlog)
 
 **Del rediseño (re-evaluación 07-23):**
 
-- **R2 (sev. 2):** mostrar el badge de urgencia de "Próxima devolución" también en
-  móvil (hoy `hidden … sm:inline`); con la política 2+1 y la PWA móvil es donde más
-  importa.
-- **R3 (sev. 2):** unificar el término "Renovar"/"Ampliar" (recomendado "Ampliar").
 - **C4 (sev. 2):** validar que ningún libro tenga `categoria` fuera de `AREA_LABELS`
-  (quedaría huérfano del hub de áreas).
-- **R4 (sev. 1):** restaurar en el login una línea neutral de que el acceso es el
-  mismo para estudiantes y personal.
+  (quedaría huérfano del hub de áreas). El formulario del bibliotecario ya restringe a
+  lista controlada; falta un chequeo de datos migrados.
+
+> **R1, R2, R3 y R4 se corrigieron en la propia re-evaluación (T-021)** — ver §5.1.
 
 **Previos (F6.1):**
 
@@ -391,12 +391,14 @@ vista, la confirmación en toda acción destructiva, la prevención de errores
 diseño consistente cubren bien las heurísticas de Nielsen. La evaluación de F6.1
 detectó cuatro hallazgos de severidad ≥ 2 de accesibilidad/comprensión,
 **corregidos en F6.1**. La **re-evaluación del 2026-07-23** sobre la UI rediseñada
-del 12-jul añadió un hallazgo de accesibilidad de severidad 3 (**R1**, contraste
-sobre el degradado) que se **corrigió en el acto**, y tres hallazgos de severidad
-≤ 2 (R2, R3, R4) que quedan en el backlog. El SUS objetivo (≥ 75) es alcanzable
-según el piloto simulado; **queda pendiente recolectar datos reales** de usuarios de
-prueba sobre esta UI para la entrega final. Los hallazgos abiertos son de severidad
-≤ 2 y no bloquean la publicación.
+del 12-jul añadió cinco hallazgos, **cuatro de ellos corregidos en la misma pasada**:
+el de accesibilidad de severidad 3 (**R1**, contraste sobre el degradado) y tres de
+severidad ≤ 2 (**R2** badge de urgencia en móvil, **R3** término "Ampliar" unificado,
+**R4** aclaración de rol en el login). Queda abierto un único hallazgo de severidad 2
+(**C4**, validar categorías fuera de áreas), sin impacto en los flujos críticos. El
+SUS objetivo (≥ 75) es alcanzable según el piloto simulado; **queda pendiente
+recolectar datos reales** de usuarios de prueba sobre esta UI para la entrega final.
+Los hallazgos abiertos son de severidad ≤ 2 y no bloquean la publicación.
 
 ---
 
@@ -410,11 +412,11 @@ degradado.
 | #   | Pantalla / componente               | Heurística         | Severidad | Estado                          |
 | --- | ----------------------------------- | ------------------ | --------- | ------------------------------- |
 | R1  | Texto sobre el degradado azul       | Accesibilidad (H4) | 3         | ✅ Corregido (commit `abbc94f`) |
-| R2  | Inicio · "Próxima devolución"       | H1                 | 2         | Abierto                         |
-| R3  | Circulación · "Renovar/Ampliar"     | H4                 | 2         | Abierto                         |
-| C4  | Catálogo · categoría fuera de áreas | H5                 | 2         | Abierto                         |
+| R2  | Inicio · "Próxima devolución"       | H1                 | 2         | ✅ Corregido (T-021)            |
+| R3  | Circulación · "Renovar/Ampliar"     | H4                 | 2         | ✅ Corregido (T-021)            |
+| C4  | Catálogo · categoría fuera de áreas | H5                 | 2         | Abierto (backlog)               |
 | C3  | Catálogo · paso extra del hub       | H7                 | 1         | Aceptado (decisión de diseño)   |
-| R4  | Login · aclaración de rol           | H2, H10            | 1         | Abierto                         |
+| R4  | Login · aclaración de rol           | H2, H10            | 1         | ✅ Corregido (T-021)            |
 
 **Método del contraste (R1):** ratio WCAG 2.1 calculado con el peor caso del
 degradado (extremo claro `#1D4ED8` = `hsl(224 76% 48%)`), componiendo el texto blanco
@@ -423,6 +425,11 @@ afectados: fecha del hero (`/70`, 4.10:1), nav inactivo del sidebar (`/75`, 4.48
 features del panel de login (`/75`, 4.48:1) y © del panel (`/70`, 4.10:1). Todos
 subidos a `/85` (**5.30:1**). El texto blanco pleno (6.70:1) y los botones ya cumplían;
 los ítems deshabilitados están exentos (WCAG 1.4.3).
+
+**Cierre de la re-evaluación:** de los cinco hallazgos, **R1–R4 quedaron corregidos**
+(ver §5.1); solo **C4** sigue en backlog (severidad 2, sin impacto en los flujos).
+Verificado tras las correcciones: typecheck/lint limpios y **145/145 unit**. Con la UI
+ya pulida, el siguiente paso es el **SUS real** (T-022, kit `docs/sus-kit/`).
 
 **Siguiente:** recolectar el **SUS real** (§4.3) sobre esta UI con el kit
 `docs/sus-kit/` (T-022). Verificar antes que Supabase esté `ACTIVE_HEALTHY`.

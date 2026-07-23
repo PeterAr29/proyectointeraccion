@@ -54,9 +54,13 @@ export function LoginForm() {
           aria-invalid={Boolean(errors.codigo)}
           {...register("codigo")}
         />
-        {errors.codigo && (
+        {errors.codigo ? (
           <p className="mt-1 text-xs text-destructive">
             {errors.codigo.message}
+          </p>
+        ) : (
+          <p className="mt-1 text-xs text-muted-foreground">
+            El mismo acceso para estudiantes y personal de biblioteca.
           </p>
         )}
       </div>
