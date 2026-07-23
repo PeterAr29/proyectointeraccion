@@ -417,6 +417,11 @@ Aún **no hay** componentes de dominio, sistema de diseño ni auth funcional (F1
   con service role) que barra a todos los usuarios. Realtime de la campana
   opcional (hoy se refresca en SSR/navegación). Ver `fase-4.2-D.md`.
 - `next lint` deprecado (se elimina en Next 16): migrar a ESLint CLI antes de subir de major.
+- **Nueva (2026-07-23) — Node 20 deprecado en GitHub Actions:** `actions/checkout@v4`
+  y `actions/setup-node@v4` apuntan a Node 20 y los runners ya los fuerzan a Node 24
+  (anotación en cada run de CI). No rompe nada hoy; subir a `actions/checkout@v5` y
+  `actions/setup-node@v5` cuando se toque `.github/workflows/ci.yml` (archivo de la
+  lista "no tocar sin avisar").
 - **Nueva (F6.2) — CSP con `'unsafe-inline'`:** `script-src`/`style-src` permiten
   inline porque Next.js (App Router) inyecta scripts de hidratación y estilos sin
   nonce. El resto de la CSP es estricta (connect/img/frame-ancestors/object-src
