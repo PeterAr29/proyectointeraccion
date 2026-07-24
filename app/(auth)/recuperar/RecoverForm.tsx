@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IdCard } from "lucide-react";
 
 import { recoverSchema, type RecoverInput } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
@@ -73,13 +74,20 @@ export function RecoverForm() {
 
       <div>
         <Label htmlFor="codigo">Código universitario</Label>
-        <Input
-          id="codigo"
-          placeholder="Ej: 202100123"
-          aria-invalid={Boolean(errors.codigo)}
-          aria-describedby={errors.codigo ? "codigo-error" : undefined}
-          {...register("codigo")}
-        />
+        <div className="relative">
+          <IdCard
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            id="codigo"
+            placeholder="Ej: 202100123"
+            className="pl-9"
+            aria-invalid={Boolean(errors.codigo)}
+            aria-describedby={errors.codigo ? "codigo-error" : undefined}
+            {...register("codigo")}
+          />
+        </div>
         <FieldError id="codigo-error" message={errors.codigo?.message} />
       </div>
 
