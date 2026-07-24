@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Heart, Search } from "lucide-react";
+import { Check, Heart, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { OwlLogo } from "@/components/brand/OwlLogo";
 import { StatusBadge } from "@/components/biblioteca/StatusBadge";
 import { BookCover } from "@/components/biblioteca/BookCover";
 import {
@@ -56,10 +57,57 @@ export default function KitchenSinkPage() {
       </header>
 
       <div className="flex flex-col gap-8">
+        <Section title="Marca">
+          <div className="flex flex-wrap items-center gap-6">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <OwlLogo className="h-7 w-7" title="Logo de BiblioTEC" />
+            </span>
+            <div className="flex items-center gap-2 text-primary">
+              <OwlLogo className="h-6 w-6" />
+              <span className="text-xl font-bold tracking-tight text-foreground">
+                BiblioTEC
+              </span>
+            </div>
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <OwlLogo className="h-4 w-4" />
+              <OwlLogo className="h-6 w-6" />
+              <OwlLogo className="h-9 w-9" />
+              <span className="text-sm">
+                Búho de la sabiduría, posado sobre un libro
+              </span>
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Paleta académica de acento">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            <Swatch name="Azul (principal)" className="bg-primary" />
+            <Swatch name="Dorado (sabiduría)" className="bg-gold" />
+            <Swatch name="Verde bosque" className="bg-forest" />
+            <Swatch name="Burdeos" className="bg-burgundy" />
+            <Swatch name="Teal" className="bg-teal" />
+            <Swatch name="Ámbar (aviso)" className="bg-warning" />
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Pill className="bg-gold-soft text-gold">Dorado suave</Pill>
+            <Pill className="bg-forest-soft text-forest">Verde suave</Pill>
+            <Pill className="bg-burgundy-soft text-burgundy">
+              Burdeos suave
+            </Pill>
+            <Pill className="bg-teal-soft text-teal">Teal suave</Pill>
+          </div>
+        </Section>
+
         <Section title="Botones">
           <div className="flex flex-wrap items-center gap-3">
             <Button variant="primary">Primario</Button>
             <Button variant="secondary">Secundario</Button>
+            <Button variant="success">
+              <Check /> Confirmar
+            </Button>
+            <Button variant="gold">
+              <Sparkles /> Destacado
+            </Button>
             <Button variant="danger">Peligro</Button>
             <Button variant="warning">Advertencia</Button>
             <Button variant="ghost">Ghost</Button>
@@ -123,6 +171,31 @@ export default function KitchenSinkPage() {
         </Section>
       </div>
     </main>
+  );
+}
+
+function Swatch({ name, className }: { name: string; className: string }) {
+  return (
+    <div>
+      <div className={`h-16 w-full rounded-lg shadow-sm ${className}`} />
+      <p className="mt-1.5 text-xs font-medium text-muted-foreground">{name}</p>
+    </div>
+  );
+}
+
+function Pill({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className: string;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${className}`}
+    >
+      {children}
+    </span>
   );
 }
 

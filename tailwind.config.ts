@@ -68,6 +68,27 @@ const config: Config = {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        // Paleta académica de acento (marca, badges, KPIs, áreas del catálogo)
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
+          soft: "hsl(var(--gold-soft))",
+        },
+        forest: {
+          DEFAULT: "hsl(var(--forest))",
+          foreground: "hsl(var(--forest-foreground))",
+          soft: "hsl(var(--forest-soft))",
+        },
+        burgundy: {
+          DEFAULT: "hsl(var(--burgundy))",
+          foreground: "hsl(var(--burgundy-foreground))",
+          soft: "hsl(var(--burgundy-soft))",
+        },
+        teal: {
+          DEFAULT: "hsl(var(--teal))",
+          foreground: "hsl(var(--teal-foreground))",
+          soft: "hsl(var(--teal-soft))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -4,8 +4,10 @@ import { cn } from "@/lib/utils/cn";
 
 /**
  * Botón base del sistema de diseño BiblioTEC.
- * Variantes derivadas del prototipo (design/): primary, secondary, danger,
- * warning, ghost, link. Foco visible AA heredado de globals.css.
+ * Variantes: primary, secondary, success, gold, danger, warning, ghost, link.
+ * (success/gold añadidas en la paleta académica T-021.) Todas admiten un icono
+ * lucide como hijo (se dimensiona solo vía `[&_svg]`). Foco visible AA heredado
+ * de globals.css; los rellenos sólidos llevan texto blanco con contraste ≥4.5:1.
  */
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
@@ -16,6 +18,9 @@ const buttonVariants = cva(
           "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md",
         secondary:
           "border border-input bg-card text-foreground shadow-sm hover:border-primary/40 hover:bg-secondary",
+        success:
+          "bg-success text-success-foreground shadow-sm hover:bg-success/90 hover:shadow-md",
+        gold: "bg-gold text-gold-foreground shadow-sm hover:bg-gold/90 hover:shadow-md",
         danger:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 hover:shadow-md",
         warning:

@@ -39,6 +39,30 @@
     --warning: 32 95% 44%; /* ámbar #D97706 (reservado) */
     --warning-foreground: 0 0% 100%;
 
+    /*
+     * Paleta académica de acento (T-021 UX). El azul sigue siendo el color
+     * principal; estos acentos aportan variedad "de biblioteca" para marca,
+     * badges, KPIs y categorización de áreas del catálogo. Cada acento trae:
+     *   DEFAULT   → tono sólido, contraste AA (≥4.5:1) con texto blanco encima
+     *   soft      → fondo claro para badges/píldoras (texto oscuro encima)
+     *   foreground→ color del texto sobre el sólido (blanco)
+     */
+    --gold: 35 92% 33%; /* dorado #A16207 — sabiduría (búho) */
+    --gold-foreground: 0 0% 100%;
+    --gold-soft: 55 97% 88%; /* #FEF9C3 */
+
+    --forest: 142 72% 29%; /* verde bosque #15803D */
+    --forest-foreground: 0 0% 100%;
+    --forest-soft: 141 84% 93%; /* #DCFCE7 */
+
+    --burgundy: 343 80% 35%; /* burdeos #9F1239 */
+    --burgundy-foreground: 0 0% 100%;
+    --burgundy-soft: 356 100% 95%; /* #FFE4E6 */
+
+    --teal: 175 77% 26%; /* teal #0F766E */
+    --teal-foreground: 0 0% 100%;
+    --teal-soft: 168 84% 89%; /* #CCFBF1 */
+
     --border: 214 32% 91%; /* slate-200 #E2E8F0 */
     --input: 214 32% 91%;
     --ring: 224 76% 48%;
@@ -66,9 +90,19 @@
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
+  /* Movimiento reducido (WCAG 2.3.3): quien lo pide en su SO no recibe
+     animaciones, transiciones ni scroll suave (evita mareo/desorientación). */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }
