@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Check, Heart, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { OwlLogo } from "@/components/brand/OwlLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { StatusBadge } from "@/components/biblioteca/StatusBadge";
 import { BookCover } from "@/components/biblioteca/BookCover";
 import {
@@ -58,22 +58,31 @@ export default function KitchenSinkPage() {
 
       <div className="flex flex-col gap-8">
         <Section title="Marca">
-          <div className="flex flex-wrap items-center gap-6">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-              <OwlLogo className="h-7 w-7" title="Logo de BiblioTEC" />
-            </span>
-            <div className="flex items-center gap-2 text-primary">
-              <OwlLogo className="h-6 w-6" />
+          <div className="flex flex-wrap items-center gap-8">
+            {/* Sobre fondo oscuro: moneda blanca (como el sidebar) */}
+            <div className="flex items-center gap-2 rounded-lg bg-primary p-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white shadow-sm">
+                <BrandLogo className="h-7 w-7" alt="Logo de BiblioTEC" />
+              </span>
+              <span className="text-lg font-bold tracking-tight text-white">
+                BiblioTEC
+              </span>
+            </div>
+            {/* Sobre fondo claro: el búho va directo */}
+            <div className="flex items-center gap-2">
+              <BrandLogo className="h-9 w-9" />
               <span className="text-xl font-bold tracking-tight text-foreground">
                 BiblioTEC
               </span>
             </div>
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <OwlLogo className="h-4 w-4" />
-              <OwlLogo className="h-6 w-6" />
-              <OwlLogo className="h-9 w-9" />
-              <span className="text-sm">
-                Búho de la sabiduría, posado sobre un libro
+            {/* Varios tamaños */}
+            <div className="flex items-center gap-3">
+              <BrandLogo className="h-6 w-6" />
+              <BrandLogo className="h-10 w-10" />
+              <BrandLogo className="h-16 w-16" />
+              <span className="max-w-[16rem] text-sm text-muted-foreground">
+                Búho de la sabiduría: libro abierto con código binario y
+                circuitos (sabiduría + biblioteca + tecnología).
               </span>
             </div>
           </div>

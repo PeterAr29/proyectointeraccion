@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BookOpen, GraduationCap, Library } from "lucide-react";
-import { OwlLogo } from "@/components/brand/OwlLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 /**
  * Layout de las pantallas de acceso (login/registro/recuperar).
@@ -25,8 +25,8 @@ export default function AuthLayout({
           }}
         />
         <div className="relative flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
-            <OwlLogo className="h-6 w-6" />
+          <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm">
+            <BrandLogo className="h-9 w-9" />
           </span>
           <span className="text-xl font-bold tracking-tight">BiblioTEC</span>
         </div>
@@ -69,8 +69,8 @@ export default function AuthLayout({
         <div className="w-full max-w-md">
           {/* Marca compacta — visible cuando no está el panel lateral */}
           <div className="mb-8 flex flex-col items-center gap-2 text-center lg:hidden">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-              <OwlLogo className="h-6 w-6" />
+            <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-border">
+              <BrandLogo className="h-11 w-11" />
             </span>
             <h1 className="text-2xl font-bold tracking-tight">BiblioTEC</h1>
             <p className="text-sm text-muted-foreground">

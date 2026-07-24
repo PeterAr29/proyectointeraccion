@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 
 import type { Profile } from "@/lib/services/users";
-import { OwlLogo } from "@/components/brand/OwlLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { ToastProvider } from "@/components/feedback/Toast";
 import { logoutAction } from "@/app/(auth)/actions";
 import { getNavItems } from "./nav";
@@ -54,8 +54,8 @@ export function AppShell({
             href="/inicio"
             className="flex h-16 items-center gap-2 border-b border-white/10 px-4 transition-colors hover:bg-white/5"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white/15 text-white">
-              <OwlLogo className="h-5 w-5" />
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white shadow-sm">
+              <BrandLogo className="h-7 w-7" />
             </span>
             <span className="font-bold">BiblioTEC</span>
           </Link>

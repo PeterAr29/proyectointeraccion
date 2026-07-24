@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { X } from "lucide-react";
-import { OwlLogo } from "@/components/brand/OwlLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { SidebarNav } from "./Sidebar";
 import type { NavItem } from "./nav";
 
@@ -87,8 +87,8 @@ export function MobileNav({
         className="absolute inset-y-0 left-0 flex w-64 flex-col bg-gradient-to-b from-primary to-indigo-800 text-primary-foreground shadow-xl outline-none"
       >
         <div className="flex h-16 items-center gap-2 border-b border-white/10 px-4">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white/15 text-white">
-            <OwlLogo className="h-5 w-5" />
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white shadow-sm">
+            <BrandLogo className="h-7 w-7" />
           </span>
           <span className="font-bold">BiblioTEC</span>
           <button

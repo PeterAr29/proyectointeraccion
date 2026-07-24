@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-23 (iteración de UX/accesibilidad: paleta académica, logo búho, color por área/KPI + WCAG S1/S2/M1)
+**Última actualización:** 2026-07-23 (iteración de UX/accesibilidad: paleta académica, logo real del búho "biblioTec", color por área/KPI + WCAG S1/S2/M1)
 **Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última del plan)
 **Después del cierre formal:** iteración de UX del **2026-07-12** (5 commits) — registrada retroactivamente en `progreso/fase-7-ux.md`.
 
@@ -35,10 +35,15 @@ Sin tocar lógica de negocio. **145/145 unit**, typecheck/lint verdes.
   **burdeos** y **teal**, cada uno con variante `-soft` para badges. Contraste AA
   (≥4.5:1) con texto blanco. Expuestos como clases Tailwind (`bg-gold`,
   `text-forest`, `bg-teal-soft`…).
-- **Logo con búho** (`components/brand/OwlLogo.tsx`): SVG propio autocontenido
-  (compatible con la CSP), monocromo `currentColor`, estilo lucide, búho posado
-  sobre un libro (metáfora de sabiduría). Reemplaza el `BookOpen` de marca en
-  sidebar, drawer móvil y pantallas de acceso.
+- **Logo real de marca — búho "biblioTec"** (`components/brand/BrandLogo.tsx`):
+  búho ilustrado (libro abierto con código binario + circuitos = sabiduría +
+  biblioteca + tecnología). Fuente `logo.jpeg`; recortado con fondo transparente
+  a `public/logo-owl.png` (flood-fill desde los bordes con `sharp`). Como el búho
+  es azul/teal, sobre fondos oscuros va en una **moneda blanca** (sidebar, drawer,
+  panel de acceso) y directo sobre fondos claros. **Favicon y iconos PWA
+  regenerados** (`app/icon.png`, `public/icons/*`) con el búho sobre blanco;
+  maskable con zona segura. Sustituye al búho SVG de línea interino (OwlLogo
+  eliminado).
 - **Botón**: variantes nuevas `success` y `gold`.
 - **Color por área del catálogo** (`components/catalogo/areaStyle.ts`, mapa
   centralizado presentacional): cada área con su acento (Ing.=azul, Agrarias=
