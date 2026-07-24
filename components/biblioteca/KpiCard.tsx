@@ -7,13 +7,42 @@ import { cn } from "@/lib/utils/cn";
  * y valor. Si el valor es `null` (la consulta falló) muestra un guion en lugar
  * de romper la vista — así un KPI caído no tumba el resto del panel.
  */
-export type KpiTone = "primary" | "success" | "warning" | "danger";
+export type KpiTone =
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "gold"
+  | "forest"
+  | "burgundy"
+  | "teal";
 
+/**
+ * Acento del icono: fondo suave + color del token (contraste AA). Usa la paleta
+ * académica del sistema (globals.css) en lugar de colores sueltos de Tailwind,
+ * para que los KPIs sean coherentes con la marca y las áreas del catálogo.
+ */
 const TONE_CLASSES: Record<KpiTone, string> = {
-  primary: "bg-blue-100 text-blue-700",
-  success: "bg-green-100 text-green-700",
-  warning: "bg-amber-100 text-amber-700",
-  danger: "bg-red-100 text-red-700",
+  primary: "bg-primary-soft text-primary",
+  success: "bg-success/15 text-success",
+  warning: "bg-warning/15 text-warning",
+  danger: "bg-destructive/10 text-destructive",
+  gold: "bg-gold-soft text-gold",
+  forest: "bg-forest-soft text-forest",
+  burgundy: "bg-burgundy-soft text-burgundy",
+  teal: "bg-teal-soft text-teal",
+};
+
+/** Color de la barra de acento lateral, por tono. */
+const BAR_CLASSES: Record<KpiTone, string> = {
+  primary: "bg-primary",
+  success: "bg-success",
+  warning: "bg-warning",
+  danger: "bg-destructive",
+  gold: "bg-gold",
+  forest: "bg-forest",
+  burgundy: "bg-burgundy",
+  teal: "bg-teal",
 };
 
 export interface KpiCardProps {
@@ -31,7 +60,11 @@ export function KpiCard({
   tone = "primary",
 }: KpiCardProps) {
   return (
-    <div className="flex items-center gap-4 rounded-lg border bg-card p-5">
+    <div className="relative flex items-center gap-4 overflow-hidden rounded-lg border bg-card p-5 pl-6">
+      <span
+        aria-hidden="true"
+        className={cn("absolute inset-y-0 left-0 w-1.5", BAR_CLASSES[tone])}
+      />
       <span
         className={cn(
           "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg",

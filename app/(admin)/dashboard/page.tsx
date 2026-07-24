@@ -41,19 +41,19 @@ export default async function DashboardPage() {
           icon={Users}
           label="Usuarios registrados"
           value={kpis.totalUsers}
-          tone="success"
+          tone="teal"
         />
         <KpiCard
           icon={BookMarked}
           label="Préstamos activos"
           value={kpis.activeLoans}
-          tone="warning"
+          tone="gold"
         />
         <KpiCard
           icon={ReceiptText}
           label="Multas pendientes"
           value={kpis.pendingFines}
-          tone="danger"
+          tone="burgundy"
         />
       </section>
 

@@ -1,18 +1,8 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  BriefcaseBusiness,
-  HeartPulse,
-  Layers,
-  Search,
-  Sparkles,
-  Sprout,
-  Users2,
-  Wrench,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight, Layers, Search, Sparkles } from "lucide-react";
 
 import { AREAS, type AreaLabel } from "@/lib/domain/areas";
+import { AREA_STYLE } from "@/components/catalogo/areaStyle";
 import { BookCard } from "@/components/biblioteca/BookCard";
 import type { Book } from "@/lib/services/books";
 import { Input } from "@/components/ui/input";
@@ -22,39 +12,9 @@ import { Button } from "@/components/ui/button";
  * Hub del catálogo: entrada por ÁREAS académicas. Muestra un buscador global y
  * una tarjeta por área con su número de libros. Si el estudiante tiene carrera,
  * su área se destaca arriba (personalización). Cada tarjeta enlaza al listado
- * filtrado por esa área (`/catalogo?categoria=<área>`).
+ * filtrado por esa área (`/catalogo?categoria=<área>`). El color de cada área
+ * viene de la paleta académica compartida (`areaStyle.ts`).
  */
-
-const AREA_STYLE: Record<
-  AreaLabel,
-  { icon: LucideIcon; chip: string; ring: string }
-> = {
-  "Ingeniería y Tecnología": {
-    icon: Wrench,
-    chip: "bg-sky-100 text-sky-700",
-    ring: "hover:border-sky-300",
-  },
-  "Ciencias Agrarias": {
-    icon: Sprout,
-    chip: "bg-emerald-100 text-emerald-700",
-    ring: "hover:border-emerald-300",
-  },
-  "Ciencias de la Salud": {
-    icon: HeartPulse,
-    chip: "bg-rose-100 text-rose-700",
-    ring: "hover:border-rose-300",
-  },
-  "Ciencias Empresariales": {
-    icon: BriefcaseBusiness,
-    chip: "bg-amber-100 text-amber-700",
-    ring: "hover:border-amber-300",
-  },
-  "Ciencias Sociales": {
-    icon: Users2,
-    chip: "bg-violet-100 text-violet-700",
-    ring: "hover:border-violet-300",
-  },
-};
 
 function areaHref(label: string) {
   return `/catalogo?categoria=${encodeURIComponent(label)}`;
@@ -182,10 +142,15 @@ function AreaCard({
   return (
     <Link
       href={areaHref(label)}
-      className={`group flex flex-col gap-3 rounded-2xl border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+      className={`group relative flex flex-col gap-3 overflow-hidden rounded-2xl border bg-card p-5 pt-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
         highlight ? "border-primary ring-1 ring-primary/30" : style.ring
       }`}
     >
+      {/* Barra de acento con el color del área */}
+      <span
+        aria-hidden="true"
+        className={`absolute inset-x-0 top-0 h-1.5 ${style.bar}`}
+      />
       <div className="flex items-center justify-between">
         <span
           className={`flex h-11 w-11 items-center justify-center rounded-xl ${style.chip}`}
@@ -206,7 +171,9 @@ function AreaCard({
         <p className="font-semibold">{label}</p>
         <p className="text-sm text-muted-foreground">{descripcion}</p>
       </div>
-      <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-primary">
+      <span
+        className={`mt-auto inline-flex items-center gap-1 text-sm font-medium ${style.accent}`}
+      >
         {highlight ? `Ver libros · ${librosLabel(count)}` : "Ver libros"}
         <ArrowRight
           className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
@@ -219,6 +186,8 @@ function AreaCard({
 
 /** Chip de encabezado del listado cuando se navega dentro de un área. */
 export function AreaBreadcrumb({ label }: { label?: string }) {
+  const style =
+    label && label in AREA_STYLE ? AREA_STYLE[label as AreaLabel] : null;
   return (
     <div className="mb-4 flex items-center gap-2 text-sm">
       <Link
@@ -231,7 +200,15 @@ export function AreaBreadcrumb({ label }: { label?: string }) {
       {label && (
         <>
           <span className="text-muted-foreground">/</span>
-          <span className="font-medium text-foreground">{label}</span>
+          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+            {style && (
+              <span
+                aria-hidden="true"
+                className={`h-2 w-2 rounded-full ${style.bar}`}
+              />
+            )}
+            {label}
+          </span>
         </>
       )}
     </div>
