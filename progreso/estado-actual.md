@@ -1,6 +1,6 @@
 # Estado Actual del Proyecto
 
-**Última actualización:** 2026-07-23 (verificación de producción + cierre de C4)
+**Última actualización:** 2026-07-23 (iteración de UX/accesibilidad: paleta académica, logo búho, color por área/KPI + WCAG S1/S2/M1)
 **Última subfase completada:** F6.2 — Endurecimiento, PWA y despliegue (última del plan)
 **Después del cierre formal:** iteración de UX del **2026-07-12** (5 commits) — registrada retroactivamente en `progreso/fase-7-ux.md`.
 
@@ -26,6 +26,34 @@
   (`dias_prestamo` por defecto 2), RF-C04 (ampliar hasta 1 vez, +1 día), §7.2
   settings (`dias_prestamo` 2 / `max_renovaciones` 1) y regla de negocio 5. Nota de
   actualización en la cabecera. CLAUDE.md ⚠️ actualizada (ya no dice "pendiente").
+
+**Iteración de UX + accesibilidad (2026-07-23, 3 commits `9a0b0ac`/`a8ffe94`/`e00460d`).**
+Sin tocar lógica de negocio. **145/145 unit**, typecheck/lint verdes.
+
+- **Paleta académica de acento** (`globals.css` + `tailwind.config.ts`): el azul
+  sigue como principal; se añaden **dorado** (sabiduría), **verde bosque**,
+  **burdeos** y **teal**, cada uno con variante `-soft` para badges. Contraste AA
+  (≥4.5:1) con texto blanco. Expuestos como clases Tailwind (`bg-gold`,
+  `text-forest`, `bg-teal-soft`…).
+- **Logo con búho** (`components/brand/OwlLogo.tsx`): SVG propio autocontenido
+  (compatible con la CSP), monocromo `currentColor`, estilo lucide, búho posado
+  sobre un libro (metáfora de sabiduría). Reemplaza el `BookOpen` de marca en
+  sidebar, drawer móvil y pantallas de acceso.
+- **Botón**: variantes nuevas `success` y `gold`.
+- **Color por área del catálogo** (`components/catalogo/areaStyle.ts`, mapa
+  centralizado presentacional): cada área con su acento (Ing.=azul, Agrarias=
+  verde, Salud=burdeos, Empresariales=dorado, Sociales=teal). Tarjetas del
+  `AreaHub` con barra de acento + CTA en color; breadcrumb con punto de color.
+- **KPIs del dashboard**: `KpiCard` migrado a tokens del sistema + variantes
+  `gold/forest/burgundy/teal` y barra de acento lateral; colores repartidos por
+  KPI (usuarios=teal, préstamos activos=dorado, multas=burdeos).
+- **Accesibilidad WCAG 2.1 AA** (`docs/accesibilidad.md`): cerrados **S1** (errores
+  de formulario anunciados y asociados vía `FieldError` + `aria-describedby` en los
+  8 formularios — de paso arregla 3 errores de typecheck en `BookForm`), **S2**
+  (trampa de foco + retorno de foco en el drawer móvil) y **M1**
+  (`prefers-reduced-motion`). Quedan M2/M3 y menores N1–N4 en backlog.
+- **`/kitchen-sink`** ampliado: secciones de Marca (búho), Paleta y variantes de
+  botón.
 
 **Verificación de producción (2026-07-23):** ✅ Supabase `bibliotec`
 (`umjelnabjdvrsfnqoszt`) **`ACTIVE_HEALTHY`**; app Vercel `/inicio` responde (sirve
