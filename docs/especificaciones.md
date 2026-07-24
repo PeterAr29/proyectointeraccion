@@ -14,10 +14,10 @@ La **calidad de la experiencia de usuario** (heurísticas de Nielsen, metáforas
 
 ### 2.1 Definición de Roles
 
-| Rol                       | Puede                                                                                                                                              | NO puede                                                                             |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| **estudiante**            | Buscar catálogo, ver detalle, reservar, pedir préstamo, renovar, devolver, marcar favoritos, ver su historial, notificaciones y perfil             | Leer o escribir datos de otro usuario; acceder al panel admin; modificar el catálogo |
-| **bibliotecario** (admin) | Todo lo anterior + dashboard con KPIs, CRUD de libros y usuarios, gestión de préstamos/devoluciones con cálculo de multa, reportes y configuración | —                                                                                    |
+| Rol                       | Puede                                                                                                                                                                   | NO puede                                                                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **estudiante**            | Buscar catálogo, ver detalle, reservar, pedir préstamo, ampliar, **solicitar la devolución** (no cerrarla), marcar favoritos, ver su historial, notificaciones y perfil | Leer o escribir datos de otro usuario; **confirmar/cerrar devoluciones**; acceder al panel admin; modificar el catálogo |
+| **bibliotecario** (admin) | Todo lo anterior + dashboard con KPIs, CRUD de libros y usuarios, gestión de préstamos/devoluciones con cálculo de multa, reportes y configuración                      | —                                                                                                                       |
 
 La separación de permisos se garantiza con **Row Level Security en Postgres**, no con condicionales en la UI. Ocultar un botón es UX, no autorización.
 
@@ -55,7 +55,7 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 - **RF-C02.** El sistema calcula la fecha de devolución estimada (`dias_prestamo`, por defecto **2** — política 2+1 vigente desde 2026-07-12, ver §7.2).
 - **RF-C03.** El usuario reserva un libro no disponible y queda en cola.
 - **RF-C04.** El usuario **amplía** un préstamo hasta `max_renovaciones` veces (hoy **1**), sumando **1 día** cada vez; nunca si tiene multa pendiente. La UI y el dominio usan "ampliar"; la columna `max_renovaciones` conserva su nombre.
-- **RF-C05.** El usuario devuelve un libro; el sistema actualiza disponibilidad y estado.
+- **RF-C05.** Devolución en **dos pasos** (verificación física): el usuario **solicita** la devolución (marca la intención → estado derivado "Devolución solicitada"); el préstamo sigue a su nombre y el stock **no** se repone hasta que el bibliotecario **confirma la recepción física** (RF-E04). El usuario puede cancelar su solicitud mientras no se confirme.
 - **RF-C06.** El usuario ve sus préstamos activos y su historial completo.
 
 ### 3.4 Módulo D — Multas & Notificaciones
@@ -71,7 +71,7 @@ Contexto académico/piloto: decenas de usuarios concurrentes, no miles. No se re
 - **RF-E01.** El bibliotecario ve un dashboard con KPIs (total de libros, usuarios, préstamos activos, multas pendientes) y préstamos recientes.
 - **RF-E02.** El bibliotecario realiza CRUD de libros (incluye portada).
 - **RF-E03.** El bibliotecario realiza CRUD de usuarios y gestiona roles/activación.
-- **RF-E04.** El bibliotecario registra devoluciones y el sistema calcula la multa correspondiente.
+- **RF-E04.** El bibliotecario **confirma la recepción física** de un libro (única vía para cerrar la devolución): el sistema marca `devuelto`, repone el stock y calcula la multa según la **fecha de confirmación** (`dias_retraso × multa_diaria`). Las devoluciones solicitadas por estudiantes forman una cola priorizada; el bibliotecario también puede registrar devoluciones "walk-up" sin solicitud previa.
 - **RF-E05.** El bibliotecario consulta reportes (préstamos por periodo, libros más prestados, multas).
 - **RF-E06.** El bibliotecario ajusta la configuración (`dias_prestamo`, `multa_diaria`, `max_renovaciones`).
 
@@ -213,6 +213,7 @@ Tablas principales (todas con RLS activo):
 5. **Ampliación** máxima `max_renovaciones` veces (hoy 1); cada una suma **1 día** partiendo de `max(fecha_devolucion_estimada, hoy)`, y reinicia el aviso de vencimiento; nunca con multa pendiente.
 6. Reservar genera notificación cuando el libro pasa a disponible.
 7. El estudiante nunca lee/escribe datos de otro usuario (RLS).
+8. **Devolución en dos pasos:** el estudiante solo **solicita** la devolución (`request_return`, marca `loans.devolucion_solicitada_en`); solo el **bibliotecario** la cierra (`return_loan`, exige `is_librarian()`), reponiendo stock y calculando la multa a la fecha de confirmación. El estado "Devolución solicitada" se **deriva** en lectura (no es un valor de enum). La solicitud no repone stock ni bloquea el vencimiento (la multa sigue corriendo hasta la entrega real); mientras esté solicitada, **no** se puede ampliar.
 
 Moneda: soles (`S/`). Fechas UI: DD/MM/AAAA. BD: `timestamptz` ISO 8601.
 
