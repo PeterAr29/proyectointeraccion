@@ -13,7 +13,9 @@
  *  - Todo lo demás (incluido Supabase y las Server Actions POST): passthrough a
  *    la red, nunca se cachea.
  */
-const CACHE = "bibliotec-shell-v1";
+// v2: nuevo logo de marca (búho). Subir la versión purga el caché anterior en
+// `activate`, forzando a rebajar los iconos nuevos (antes servía el libro viejo).
+const CACHE = "bibliotec-shell-v2";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE = [OFFLINE_URL, "/icons/icon-192.png", "/manifest.webmanifest"];
 
