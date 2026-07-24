@@ -113,6 +113,8 @@ export type Database = {
           renovaciones: number;
           /** F4.2: cuándo se avisó del vencimiento próximo (null = aún no). */
           vencimiento_notificado_en: string | null;
+          /** Devolución 2 pasos: cuándo el estudiante solicitó devolver (null = no solicitada). */
+          devolucion_solicitada_en: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -126,6 +128,7 @@ export type Database = {
           estado?: LoanStatus;
           renovaciones?: number;
           vencimiento_notificado_en?: string | null;
+          devolucion_solicitada_en?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -254,8 +257,18 @@ export type Database = {
         Args: { p_book_id: string };
         Returns: Database["public"]["Tables"]["reservations"]["Row"];
       };
-      /** F3.2: registra la devolución y repone stock; devuelve la fila de `loans`. */
+      /** Devolución 2 pasos: el bibliotecario confirma la recepción y repone stock. */
       return_loan: {
+        Args: { p_loan_id: string };
+        Returns: Database["public"]["Tables"]["loans"]["Row"];
+      };
+      /** Devolución 2 pasos: el estudiante dueño solicita la devolución (marca intención). */
+      request_return: {
+        Args: { p_loan_id: string };
+        Returns: Database["public"]["Tables"]["loans"]["Row"];
+      };
+      /** Devolución 2 pasos: retira la solicitud de devolución (dueño o bibliotecario). */
+      cancel_return_request: {
         Args: { p_loan_id: string };
         Returns: Database["public"]["Tables"]["loans"]["Row"];
       };

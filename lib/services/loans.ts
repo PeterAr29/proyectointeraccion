@@ -40,35 +40,60 @@ export function computeDueDate(from: Date, diasPrestamo: number): Date {
 }
 
 /**
+ * Estado efectivo mostrado en la UI. Ensancha el enum de la BD con el estado
+ * DERIVADO `pendiente_devolucion` (el estudiante solicitó devolver y el
+ * bibliotecario aún no confirma la recepción física).
+ */
+export type EffectiveLoanStatus = LoanStatus | "pendiente_devolucion";
+
+/**
  * Estado EFECTIVO de un préstamo para mostrar en la UI (metáfora del semáforo):
  * - devuelto: ya tiene fecha de devolución real.
+ * - pendiente_devolucion: el estudiante solicitó devolver (falta confirmación).
  * - vencido: sigue activo y su fecha estimada quedó en el pasado (§7.2.3).
  * - activo: en curso y dentro de plazo (hoy aún cuenta como en plazo).
  * Se deriva en lectura para no depender de un `estado` persistido que podría
  * quedar desactualizado; D (F4.1) usa la misma regla al generar multas.
  */
 export function effectiveLoanStatus(
-  loan: Pick<Loan, "fecha_devolucion_real" | "fecha_devolucion_estimada">,
-): LoanStatus {
+  loan: Pick<
+    Loan,
+    | "fecha_devolucion_real"
+    | "fecha_devolucion_estimada"
+    | "devolucion_solicitada_en"
+  >,
+): EffectiveLoanStatus {
   if (loan.fecha_devolucion_real) return "devuelto";
+  if (loan.devolucion_solicitada_en) return "pendiente_devolucion";
   if (isPastDate(loan.fecha_devolucion_estimada)) return "vencido";
   return "activo";
 }
 
 /** Motivo por el que un préstamo no puede renovarse (para tooltip/UI). */
-export type RenewBlockReason = "returned" | "limit-reached" | "pending-fine";
+export type RenewBlockReason =
+  | "returned"
+  | "limit-reached"
+  | "pending-fine"
+  | "return-requested";
 
 /**
- * ¿Se puede renovar? (regla §7.2.5). No se puede si ya se devolvió, si alcanzó el
- * máximo de renovaciones, o si tiene una multa pendiente. La UI usa esto para
- * habilitar/deshabilitar el botón; la RPC `renew_loan` revalida lo mismo en BD.
+ * ¿Se puede renovar? (regla §7.2.5). No se puede si ya se devolvió, si hay una
+ * devolución solicitada (el estudiante ya está devolviendo), si alcanzó el máximo
+ * de renovaciones, o si tiene una multa pendiente. La UI usa esto para
+ * habilitar/deshabilitar el botón; la RPC `renew_loan` revalida el resto en BD.
  */
 export function canRenew(
-  loan: Pick<Loan, "fecha_devolucion_real" | "renovaciones">,
+  loan: Pick<
+    Loan,
+    "fecha_devolucion_real" | "renovaciones" | "devolucion_solicitada_en"
+  >,
   maxRenovaciones: number,
   hasPendingFine: boolean,
 ): { allowed: boolean; reason: RenewBlockReason | null } {
   if (loan.fecha_devolucion_real) return { allowed: false, reason: "returned" };
+  if (loan.devolucion_solicitada_en) {
+    return { allowed: false, reason: "return-requested" };
+  }
   if (hasPendingFine) return { allowed: false, reason: "pending-fine" };
   if (loan.renovaciones >= maxRenovaciones) {
     return { allowed: false, reason: "limit-reached" };
@@ -201,7 +226,15 @@ export type RenewFailureReason =
   | "no-session" // BT000
   | "error";
 export type ReturnFailureReason =
-  | "not-returnable" // BT200: inexistente, ajeno o ya devuelto
+  | "not-returnable" // BT200: inexistente, ya devuelto o no es bibliotecario
+  | "no-session" // BT000
+  | "error";
+export type RequestReturnFailureReason =
+  | "not-requestable" // BT300: inexistente, ajeno, ya devuelto o ya solicitada
+  | "no-session" // BT000
+  | "error";
+export type CancelReturnFailureReason =
+  | "not-cancelable" // BT301: inexistente, ajeno, ya devuelto o sin solicitud
   | "no-session" // BT000
   | "error";
 
@@ -231,12 +264,44 @@ export function mapReturnError(code: string | undefined): ReturnFailureReason {
   }
 }
 
+export function mapRequestReturnError(
+  code: string | undefined,
+): RequestReturnFailureReason {
+  switch (code) {
+    case "BT300":
+      return "not-requestable";
+    case "BT000":
+      return "no-session";
+    default:
+      return "error";
+  }
+}
+
+export function mapCancelReturnError(
+  code: string | undefined,
+): CancelReturnFailureReason {
+  switch (code) {
+    case "BT301":
+      return "not-cancelable";
+    case "BT000":
+      return "no-session";
+    default:
+      return "error";
+  }
+}
+
 export type RenewResult =
   | { ok: true; loan: Loan }
   | { ok: false; reason: RenewFailureReason };
 export type ReturnResult =
   | { ok: true; loan: Loan }
   | { ok: false; reason: ReturnFailureReason };
+export type RequestReturnResult =
+  | { ok: true; loan: Loan }
+  | { ok: false; reason: RequestReturnFailureReason };
+export type CancelReturnResult =
+  | { ok: true; loan: Loan }
+  | { ok: false; reason: CancelReturnFailureReason };
 
 // ---------------------------------------------------------------------------
 // Acceso a datos: listado, renovación, devolución
@@ -334,13 +399,46 @@ export async function renewLoan(loanId: string): Promise<RenewResult> {
   return { ok: true, loan: data };
 }
 
-/** Devuelve un préstamo del usuario y repone el stock (RPC `return_loan`). */
+/**
+ * Confirma la devolución y repone el stock (RPC `return_loan`). Devolución en
+ * dos pasos: la RPC exige rol bibliotecario, así que esto lo usa el flujo admin
+ * (`registerReturn`), no el estudiante.
+ */
 export async function returnLoan(loanId: string): Promise<ReturnResult> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("return_loan", {
     p_loan_id: loanId,
   });
   if (error) return { ok: false, reason: mapReturnError(error.code) };
+  if (!data) return { ok: false, reason: "error" };
+  return { ok: true, loan: data };
+}
+
+/**
+ * El estudiante SOLICITA devolver (marca intención). No repone stock ni cierra
+ * el préstamo; el bibliotecario confirma después. Delega en la RPC `request_return`.
+ */
+export async function requestReturn(
+  loanId: string,
+): Promise<RequestReturnResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("request_return", {
+    p_loan_id: loanId,
+  });
+  if (error) return { ok: false, reason: mapRequestReturnError(error.code) };
+  if (!data) return { ok: false, reason: "error" };
+  return { ok: true, loan: data };
+}
+
+/** Retira la solicitud de devolución (RPC `cancel_return_request`). */
+export async function cancelReturnRequest(
+  loanId: string,
+): Promise<CancelReturnResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("cancel_return_request", {
+    p_loan_id: loanId,
+  });
+  if (error) return { ok: false, reason: mapCancelReturnError(error.code) };
   if (!data) return { ok: false, reason: "error" };
   return { ok: true, loan: data };
 }

@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import type { LoanStatus } from "@/lib/supabase/database.types";
 import {
   effectiveLoanStatus,
   mergeLoansWithBooks,
   returnLoan,
+  type EffectiveLoanStatus,
   type LoanWithBook,
   type ReturnFailureReason,
 } from "@/lib/services/loans";
@@ -17,9 +17,10 @@ import { getCirculationSettings } from "@/lib/services/settings";
 /**
  * Circulación desde ADMINISTRACIÓN (Módulo E, F5.3). Parte del módulo C; se
  * separa de `loans.ts` por tamaño. El bibliotecario ve TODOS los préstamos (RLS
- * `loans_select_own_or_librarian` vía `is_librarian()`) y registra devoluciones
- * de cualquier usuario (la RPC `return_loan` acepta owner o bibliotecario). La
- * devolución integra el cálculo de multa (Módulo D) antes de reponer el stock.
+ * `loans_select_own_or_librarian` vía `is_librarian()`) y CONFIRMA devoluciones
+ * de cualquier usuario. Devolución en dos pasos: la RPC `return_loan` exige rol
+ * bibliotecario (el estudiante solo puede SOLICITAR con `request_return`). La
+ * confirmación integra el cálculo de multa (Módulo D) antes de reponer el stock.
  */
 
 /** Fila de préstamo lista para las tablas de admin (préstamos/devoluciones). */
@@ -30,8 +31,10 @@ export interface AdminLoanRow {
   fechaPrestamo: string;
   fechaDevolucionEstimada: string;
   fechaDevolucionReal: string | null;
-  estado: LoanStatus;
+  estado: EffectiveLoanStatus;
   renovaciones: number;
+  /** El estudiante solicitó devolver y falta confirmar la recepción física. */
+  devolucionSolicitada: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -53,6 +56,8 @@ export function buildAdminLoanRows(
     fechaDevolucionReal: loan.fecha_devolucion_real,
     estado: effectiveLoanStatus(loan),
     renovaciones: loan.renovaciones,
+    devolucionSolicitada:
+      Boolean(loan.devolucion_solicitada_en) && !loan.fecha_devolucion_real,
   }));
 }
 
@@ -75,15 +80,21 @@ export interface ReturnRow {
   bookTitle: string;
   userName: string;
   fechaDevolucionEstimada: string;
-  estado: LoanStatus;
+  estado: EffectiveLoanStatus;
   /** Días de retraso a hoy (0 si aún en plazo). */
   overdueDays: number;
   /** Multa que se generaría al devolver hoy (0 si no hay retraso). */
   estimatedFine: number;
+  /** El estudiante ya solicitó la devolución (falta confirmar recepción física). */
+  devolucionSolicitada: boolean;
+  /** Cuándo se solicitó (null si es una devolución "walk-up" sin solicitud). */
+  fechaSolicitud: string | null;
 }
 
 /**
  * Filas de devolución: solo préstamos NO devueltos, con la multa estimada a hoy.
+ * Las devoluciones YA SOLICITADAS por el estudiante van primero (cola de
+ * verificación); dentro de cada grupo, las más antiguas primero.
  * Pura y testeable (recibe préstamos, perfiles y la multa diaria vigente).
  */
 export function buildReturnRows(
@@ -109,7 +120,18 @@ export function buildReturnRows(
         estado: effectiveLoanStatus(loan),
         overdueDays: dias,
         estimatedFine: monto,
+        devolucionSolicitada: Boolean(loan.devolucion_solicitada_en),
+        fechaSolicitud: loan.devolucion_solicitada_en,
       };
+    })
+    .sort((a, b) => {
+      // Solicitadas primero; luego por fecha de solicitud / vencimiento ascendente.
+      if (a.devolucionSolicitada !== b.devolucionSolicitada) {
+        return a.devolucionSolicitada ? -1 : 1;
+      }
+      const aKey = a.fechaSolicitud ?? a.fechaDevolucionEstimada;
+      const bKey = b.fechaSolicitud ?? b.fechaDevolucionEstimada;
+      return aKey.localeCompare(bKey);
     });
 }
 

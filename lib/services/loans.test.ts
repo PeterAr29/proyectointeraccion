@@ -8,6 +8,8 @@ import {
   mapCreateLoanError,
   mapRenewError,
   mapReturnError,
+  mapRequestReturnError,
+  mapCancelReturnError,
   mergeLoansWithBooks,
   paginateList,
   type Loan,
@@ -27,6 +29,7 @@ function makeLoan(overrides: Partial<Loan> = {}): Loan {
     estado: "activo",
     renovaciones: 0,
     vencimiento_notificado_en: null,
+    devolucion_solicitada_en: null,
     created_at: "2026-07-01T00:00:00Z",
     updated_at: "2026-07-01T00:00:00Z",
     ...overrides,
@@ -107,6 +110,28 @@ describe("effectiveLoanStatus (estado efectivo derivado)", () => {
       ),
     ).toBe("activo");
   });
+
+  it("es 'pendiente_devolucion' si se solicitó la devolución (aunque esté vencido)", () => {
+    expect(
+      effectiveLoanStatus(
+        makeLoan({
+          fecha_devolucion_estimada: "2026-07-09", // ya vencido
+          devolucion_solicitada_en: "2026-07-08T10:00:00Z",
+        }),
+      ),
+    ).toBe("pendiente_devolucion");
+  });
+
+  it("'devuelto' tiene prioridad sobre una solicitud previa", () => {
+    expect(
+      effectiveLoanStatus(
+        makeLoan({
+          devolucion_solicitada_en: "2026-07-08T10:00:00Z",
+          fecha_devolucion_real: "2026-07-09T10:00:00Z",
+        }),
+      ),
+    ).toBe("devuelto");
+  });
 });
 
 describe("canRenew (regla §7.2.5)", () => {
@@ -136,6 +161,14 @@ describe("canRenew (regla §7.2.5)", () => {
     expect(canRenew(loan, 2, false)).toEqual({
       allowed: false,
       reason: "returned",
+    });
+  });
+
+  it("bloquea si ya se solicitó la devolución (el estudiante está devolviendo)", () => {
+    const loan = makeLoan({ devolucion_solicitada_en: "2026-07-08T00:00:00Z" });
+    expect(canRenew(loan, 2, false)).toEqual({
+      allowed: false,
+      reason: "return-requested",
     });
   });
 });
@@ -173,6 +206,15 @@ describe("mapRenewError / mapReturnError", () => {
     expect(mapReturnError("BT200")).toBe("not-returnable");
     expect(mapReturnError("BT000")).toBe("no-session");
     expect(mapReturnError(undefined)).toBe("error");
+  });
+
+  it("mapea los SQLSTATE de solicitar/cancelar devolución (2 pasos)", () => {
+    expect(mapRequestReturnError("BT300")).toBe("not-requestable");
+    expect(mapRequestReturnError("BT000")).toBe("no-session");
+    expect(mapRequestReturnError("999")).toBe("error");
+    expect(mapCancelReturnError("BT301")).toBe("not-cancelable");
+    expect(mapCancelReturnError("BT000")).toBe("no-session");
+    expect(mapCancelReturnError(undefined)).toBe("error");
   });
 });
 

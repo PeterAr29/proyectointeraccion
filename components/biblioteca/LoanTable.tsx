@@ -108,6 +108,7 @@ export function LoanTable({
                         titulo={book?.titulo ?? "este libro"}
                         renewable={renew.allowed}
                         renewBlockReason={renew.reason}
+                        devolucionSolicitada={status === "pendiente_devolucion"}
                       />
                     )}
                   </td>

@@ -23,6 +23,7 @@ function loanItem(
     estado: "activo",
     renovaciones: 0,
     vencimiento_notificado_en: null,
+    devolucion_solicitada_en: null,
     created_at: fechaPrestamo,
     updated_at: fechaPrestamo,
   } satisfies Loan;

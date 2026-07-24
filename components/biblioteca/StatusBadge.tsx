@@ -14,10 +14,11 @@ export type BadgeStatus =
   | "disponible"
   | "reservado"
   | "prestado"
-  // préstamo (loan_status)
+  // préstamo (loan_status + estado derivado de devolución en 2 pasos)
   | "activo"
   | "vencido"
   | "devuelto"
+  | "pendiente_devolucion"
   // reserva (reservation_status)
   | "activa"
   | "cumplida"
@@ -33,6 +34,10 @@ const STATUS_MAP: Record<BadgeStatus, { label: string; tone: BadgeTone }> = {
   activo: { label: "Activo", tone: "info" },
   vencido: { label: "Vencido", tone: "danger" },
   devuelto: { label: "Devuelto", tone: "success" },
+  pendiente_devolucion: {
+    label: "Devolución solicitada",
+    tone: "warning",
+  },
   activa: { label: "Activa", tone: "warning" },
   cumplida: { label: "Cumplida", tone: "success" },
   cancelada: { label: "Cancelada", tone: "neutral" },

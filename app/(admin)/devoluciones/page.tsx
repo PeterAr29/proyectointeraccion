@@ -36,8 +36,9 @@ export default async function DevolucionesPage() {
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Devoluciones</h1>
         <p className="mt-1 text-muted-foreground">
-          Registra la devolución de los préstamos pendientes. Los vencidos
-          generan multa automáticamente.
+          Confirma la recepción física de los libros. Las devoluciones
+          solicitadas por los estudiantes aparecen primero; los préstamos
+          vencidos generan multa automáticamente.
         </p>
       </header>
 

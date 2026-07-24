@@ -38,8 +38,10 @@ export async function registerReturnAction(
     return { ok: false, error: REASON_TEXT[result.reason] ?? GENERIC };
   }
 
+  // Confirmar repone stock: refresca devoluciones, préstamos, multas y catálogo.
   revalidatePath("/devoluciones");
   revalidatePath("/prestamos");
   revalidatePath("/multas");
+  revalidatePath("/catalogo");
   return { ok: true, fineAmount: result.fineAmount };
 }

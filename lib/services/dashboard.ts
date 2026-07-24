@@ -1,10 +1,10 @@
-import type { LoanStatus } from "@/lib/supabase/database.types";
 import { countBooks } from "@/lib/services/books";
 import { countUsers, getProfilesByIds } from "@/lib/services/users";
 import {
   countActiveLoans,
   effectiveLoanStatus,
   listRecentLoansWithBooks,
+  type EffectiveLoanStatus,
   type LoanWithBook,
 } from "@/lib/services/loans";
 import { countPendingFines } from "@/lib/services/fines";
@@ -33,7 +33,7 @@ export interface RecentLoanRow {
   fechaPrestamo: string;
   fechaDevolucionEstimada: string;
   /** Estado EFECTIVO (derivado de las fechas), coincide con la insignia. */
-  estado: LoanStatus;
+  estado: EffectiveLoanStatus;
 }
 
 export interface DashboardData {

@@ -61,7 +61,12 @@ export function ReturnsList({ rows }: { rows: ReturnRow[] }) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} className="border-b last:border-b-0">
+              <tr
+                key={row.id}
+                className={`border-b last:border-b-0 ${
+                  row.devolucionSolicitada ? "bg-warning/5" : ""
+                }`}
+              >
                 <td className="px-4 py-3 font-medium text-foreground">
                   {row.userName}
                 </td>
@@ -92,7 +97,9 @@ export function ReturnsList({ rows }: { rows: ReturnRow[] }) {
                       onClick={() => setTarget(row)}
                     >
                       <Undo2 aria-hidden="true" />
-                      Registrar devolución
+                      {row.devolucionSolicitada
+                        ? "Confirmar devolución"
+                        : "Registrar devolución"}
                     </Button>
                   </div>
                 </td>
@@ -106,15 +113,29 @@ export function ReturnsList({ rows }: { rows: ReturnRow[] }) {
         open={target !== null}
         onClose={() => setTarget(null)}
         variant="confirm"
-        title="Registrar devolución"
+        title={
+          target?.devolucionSolicitada
+            ? "Confirmar devolución"
+            : "Registrar devolución"
+        }
         message={
           target
-            ? target.estimatedFine > 0
-              ? `«${target.bookTitle}» de ${target.userName} tiene ${target.overdueDays} día(s) de retraso. Se generará una multa de ${formatCurrency(target.estimatedFine)} y el ejemplar volverá al catálogo. ¿Continuar?`
-              : `Vas a registrar la devolución de «${target.bookTitle}» de ${target.userName}. El ejemplar volverá al catálogo. ¿Continuar?`
+            ? `${
+                target.devolucionSolicitada
+                  ? `${target.userName} solicitó devolver «${target.bookTitle}». Confirma solo si recibiste el libro físicamente. `
+                  : ""
+              }${
+                target.estimatedFine > 0
+                  ? `Tiene ${target.overdueDays} día(s) de retraso: se generará una multa de ${formatCurrency(target.estimatedFine)} y el ejemplar volverá al catálogo. ¿Continuar?`
+                  : `El ejemplar volverá al catálogo. ¿Continuar?`
+              }`
             : ""
         }
-        confirmLabel="Registrar devolución"
+        confirmLabel={
+          target?.devolucionSolicitada
+            ? "Confirmar devolución"
+            : "Registrar devolución"
+        }
         onConfirm={confirmReturn}
       />
     </>

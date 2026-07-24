@@ -18,6 +18,7 @@ function makeLoan(overrides: Partial<Loan> = {}): Loan {
     estado: "activo",
     renovaciones: 0,
     vencimiento_notificado_en: null,
+    devolucion_solicitada_en: null,
     created_at: "2026-07-01T00:00:00Z",
     updated_at: "2026-07-01T00:00:00Z",
     ...overrides,
@@ -107,5 +108,27 @@ describe("buildReturnRows", () => {
     );
     expect(row?.overdueDays).toBe(5);
     expect(row?.estimatedFine).toBe(5);
+  });
+
+  it("pone las devoluciones SOLICITADAS primero (cola de verificación) y marca el flag", () => {
+    const rows = buildReturnRows(
+      [
+        item({ id: "walkup" }, { id: "b1", titulo: "A", autor: "x" }),
+        item(
+          {
+            id: "solicitada",
+            devolucion_solicitada_en: "2026-07-19T09:00:00Z",
+          },
+          { id: "b2", titulo: "B", autor: "x" },
+        ),
+      ],
+      [{ id: "u1", nombre: "María" }],
+      1,
+      now,
+    );
+    expect(rows.map((r) => r.id)).toEqual(["solicitada", "walkup"]);
+    expect(rows[0]?.devolucionSolicitada).toBe(true);
+    expect(rows[0]?.estado).toBe("pendiente_devolucion");
+    expect(rows[1]?.devolucionSolicitada).toBe(false);
   });
 });
