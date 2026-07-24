@@ -14,12 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
+import { FieldError } from "@/components/forms/FieldError";
 import { registerAction } from "../actions";
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="mt-1 text-xs text-destructive">{message}</p>;
-}
 
 export function RegisterForm() {
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -59,9 +55,10 @@ export function RegisterForm() {
           autoComplete="name"
           placeholder="Ej: María García López"
           aria-invalid={Boolean(errors.nombre)}
+          aria-describedby={errors.nombre ? "nombre-error" : undefined}
           {...register("nombre")}
         />
-        <FieldError message={errors.nombre?.message} />
+        <FieldError id="nombre-error" message={errors.nombre?.message} />
       </div>
 
       <div>
@@ -70,9 +67,10 @@ export function RegisterForm() {
           id="codigo"
           placeholder="Ej: 202100123"
           aria-invalid={Boolean(errors.codigo)}
+          aria-describedby={errors.codigo ? "codigo-error" : undefined}
           {...register("codigo")}
         />
-        <FieldError message={errors.codigo?.message} />
+        <FieldError id="codigo-error" message={errors.codigo?.message} />
       </div>
 
       <div>
@@ -80,6 +78,7 @@ export function RegisterForm() {
         <select
           id="carrera"
           aria-invalid={Boolean(errors.carrera)}
+          aria-describedby={errors.carrera ? "carrera-error" : undefined}
           defaultValue=""
           className="h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground aria-[invalid=true]:border-destructive"
           {...register("carrera")}
@@ -93,7 +92,7 @@ export function RegisterForm() {
             </option>
           ))}
         </select>
-        <FieldError message={errors.carrera?.message} />
+        <FieldError id="carrera-error" message={errors.carrera?.message} />
       </div>
 
       <div>
@@ -104,9 +103,10 @@ export function RegisterForm() {
           autoComplete="email"
           placeholder="tucorreo@univ.edu.pe"
           aria-invalid={Boolean(errors.correo)}
+          aria-describedby={errors.correo ? "correo-error" : undefined}
           {...register("correo")}
         />
-        <FieldError message={errors.correo?.message} />
+        <FieldError id="correo-error" message={errors.correo?.message} />
       </div>
 
       <div>
@@ -117,9 +117,10 @@ export function RegisterForm() {
           autoComplete="tel"
           placeholder="987 654 321"
           aria-invalid={Boolean(errors.telefono)}
+          aria-describedby={errors.telefono ? "telefono-error" : undefined}
           {...register("telefono")}
         />
-        <FieldError message={errors.telefono?.message} />
+        <FieldError id="telefono-error" message={errors.telefono?.message} />
       </div>
 
       <div>
@@ -130,9 +131,10 @@ export function RegisterForm() {
           autoComplete="new-password"
           placeholder="Mínimo 8 caracteres"
           aria-invalid={Boolean(errors.password)}
+          aria-describedby={errors.password ? "password-error" : undefined}
           {...register("password")}
         />
-        <FieldError message={errors.password?.message} />
+        <FieldError id="password-error" message={errors.password?.message} />
       </div>
 
       <div>
@@ -143,9 +145,15 @@ export function RegisterForm() {
           autoComplete="new-password"
           placeholder="Repite tu contraseña"
           aria-invalid={Boolean(errors.confirmPassword)}
+          aria-describedby={
+            errors.confirmPassword ? "confirmPassword-error" : undefined
+          }
           {...register("confirmPassword")}
         />
-        <FieldError message={errors.confirmPassword?.message} />
+        <FieldError
+          id="confirmPassword-error"
+          message={errors.confirmPassword?.message}
+        />
       </div>
 
       <Button type="submit" disabled={isSubmitting} className="w-full">

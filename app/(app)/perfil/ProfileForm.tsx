@@ -14,13 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
+import { FieldError } from "@/components/forms/FieldError";
 import { useToast } from "@/components/feedback/Toast";
 import { updateProfileAction } from "./actions";
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="mt-1 text-xs text-destructive">{message}</p>;
-}
 
 /** Formulario de edición de los datos de contacto del propio perfil. */
 export function ProfileForm({ profile }: { profile: Profile }) {
@@ -73,10 +69,12 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <Label htmlFor="nombre">Nombre completo</Label>
         <Input
           id="nombre"
+          autoComplete="name"
           aria-invalid={Boolean(errors.nombre)}
+          aria-describedby={errors.nombre ? "nombre-error" : undefined}
           {...register("nombre")}
         />
-        <FieldError message={errors.nombre?.message} />
+        <FieldError id="nombre-error" message={errors.nombre?.message} />
       </div>
 
       <div>
@@ -84,6 +82,8 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <select
           id="carrera"
           defaultValue={profile.carrera ?? ""}
+          aria-invalid={Boolean(errors.carrera)}
+          aria-describedby={errors.carrera ? "carrera-error" : undefined}
           className="h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground"
           {...register("carrera")}
         >
@@ -94,7 +94,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
             </option>
           ))}
         </select>
-        <FieldError message={errors.carrera?.message} />
+        <FieldError id="carrera-error" message={errors.carrera?.message} />
       </div>
 
       <div>
@@ -102,11 +102,13 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <Input
           id="telefono"
           type="tel"
+          autoComplete="tel"
           placeholder="987 654 321"
           aria-invalid={Boolean(errors.telefono)}
+          aria-describedby={errors.telefono ? "telefono-error" : undefined}
           {...register("telefono")}
         />
-        <FieldError message={errors.telefono?.message} />
+        <FieldError id="telefono-error" message={errors.telefono?.message} />
       </div>
 
       <div className="sm:col-span-2">
@@ -114,10 +116,12 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <Input
           id="correo"
           type="email"
+          autoComplete="email"
           aria-invalid={Boolean(errors.correo)}
+          aria-describedby={errors.correo ? "correo-error" : undefined}
           {...register("correo")}
         />
-        <FieldError message={errors.correo?.message} />
+        <FieldError id="correo-error" message={errors.correo?.message} />
       </div>
 
       <div className="mt-1 flex justify-end border-t pt-4 sm:col-span-2">

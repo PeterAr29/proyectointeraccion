@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
+import { FieldError } from "@/components/forms/FieldError";
 import { loginAction } from "../actions";
 
 export function LoginForm() {
@@ -52,14 +53,13 @@ export function LoginForm() {
           autoComplete="username"
           placeholder="Ej: 202100123"
           aria-invalid={Boolean(errors.codigo)}
+          aria-describedby={errors.codigo ? "codigo-error" : "codigo-help"}
           {...register("codigo")}
         />
         {errors.codigo ? (
-          <p className="mt-1 text-xs text-destructive">
-            {errors.codigo.message}
-          </p>
+          <FieldError id="codigo-error" message={errors.codigo.message} />
         ) : (
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p id="codigo-help" className="mt-1 text-xs text-muted-foreground">
             El mismo acceso para estudiantes y personal de biblioteca.
           </p>
         )}
@@ -75,6 +75,7 @@ export function LoginForm() {
             placeholder="••••••••"
             className="pr-10"
             aria-invalid={Boolean(errors.password)}
+            aria-describedby={errors.password ? "password-error" : undefined}
             {...register("password")}
           />
           <button
@@ -92,11 +93,7 @@ export function LoginForm() {
             )}
           </button>
         </div>
-        {errors.password && (
-          <p className="mt-1 text-xs text-destructive">
-            {errors.password.message}
-          </p>
-        )}
+        <FieldError id="password-error" message={errors.password?.message} />
       </div>
 
       <div className="text-right">

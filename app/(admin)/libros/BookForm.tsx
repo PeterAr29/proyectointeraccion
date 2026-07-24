@@ -13,17 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
 import { FormSection } from "@/components/forms/FormSection";
+import { FieldError } from "@/components/forms/FieldError";
 import { useToast } from "@/components/feedback/Toast";
 import {
   createBookAction,
   updateBookAction,
   uploadCoverAction,
 } from "./actions";
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="mt-1 text-xs text-destructive">{message}</p>;
-}
 
 /**
  * Formulario de alta/edición de libro (Módulo E, F5.2). La portada se sube al
@@ -108,23 +104,35 @@ export function BookForm({ book }: { book?: Book }) {
               <Input
                 id="titulo"
                 aria-invalid={Boolean(errors.titulo)}
+                aria-describedby={errors.titulo ? "titulo-error" : undefined}
                 {...register("titulo")}
               />
-              <FieldError message={errors.titulo?.message} />
+              <FieldError id="titulo-error" message={errors.titulo?.message} />
             </div>
             <div>
               <Label htmlFor="autor">Autor</Label>
               <Input
                 id="autor"
                 aria-invalid={Boolean(errors.autor)}
+                aria-describedby={errors.autor ? "autor-error" : undefined}
                 {...register("autor")}
               />
-              <FieldError message={errors.autor?.message} />
+              <FieldError id="autor-error" message={errors.autor?.message} />
             </div>
             <div>
               <Label htmlFor="editorial">Editorial</Label>
-              <Input id="editorial" {...register("editorial")} />
-              <FieldError message={errors.editorial?.message} />
+              <Input
+                id="editorial"
+                aria-invalid={Boolean(errors.editorial)}
+                aria-describedby={
+                  errors.editorial ? "editorial-error" : undefined
+                }
+                {...register("editorial")}
+              />
+              <FieldError
+                id="editorial-error"
+                message={errors.editorial?.message}
+              />
             </div>
             <div>
               <Label htmlFor="anio">Año</Label>
@@ -133,24 +141,29 @@ export function BookForm({ book }: { book?: Book }) {
                 type="number"
                 inputMode="numeric"
                 aria-invalid={Boolean(errors.anio)}
+                aria-describedby={errors.anio ? "anio-error" : undefined}
                 {...register("anio")}
               />
-              <FieldError message={errors.anio?.message} />
+              <FieldError id="anio-error" message={errors.anio?.message} />
             </div>
             <div>
               <Label htmlFor="isbn">ISBN</Label>
               <Input
                 id="isbn"
                 aria-invalid={Boolean(errors.isbn)}
+                aria-describedby={errors.isbn ? "isbn-error" : undefined}
                 {...register("isbn")}
               />
-              <FieldError message={errors.isbn?.message} />
+              <FieldError id="isbn-error" message={errors.isbn?.message} />
             </div>
             <div>
               <Label htmlFor="categoria">Área</Label>
               <select
                 id="categoria"
                 aria-invalid={Boolean(errors.categoria)}
+                aria-describedby={
+                  errors.categoria ? "categoria-error" : undefined
+                }
                 className="h-11 w-full rounded-md border border-input bg-card px-3 text-sm text-foreground aria-[invalid=true]:border-destructive"
                 {...register("categoria")}
               >
@@ -161,16 +174,26 @@ export function BookForm({ book }: { book?: Book }) {
                   </option>
                 ))}
               </select>
-              <FieldError message={errors.categoria?.message} />
+              <FieldError
+                id="categoria-error"
+                message={errors.categoria?.message}
+              />
             </div>
             <div>
               <Label htmlFor="ubicacion">Ubicación</Label>
               <Input
                 id="ubicacion"
                 placeholder="Ej: Estantería B-3"
+                aria-invalid={Boolean(errors.ubicacion)}
+                aria-describedby={
+                  errors.ubicacion ? "ubicacion-error" : undefined
+                }
                 {...register("ubicacion")}
               />
-              <FieldError message={errors.ubicacion?.message} />
+              <FieldError
+                id="ubicacion-error"
+                message={errors.ubicacion?.message}
+              />
             </div>
           </div>
         </FormSection>
@@ -188,9 +211,15 @@ export function BookForm({ book }: { book?: Book }) {
                 inputMode="numeric"
                 min={0}
                 aria-invalid={Boolean(errors.cantidad_total)}
+                aria-describedby={
+                  errors.cantidad_total ? "cantidad_total-error" : undefined
+                }
                 {...register("cantidad_total")}
               />
-              <FieldError message={errors.cantidad_total?.message} />
+              <FieldError
+                id="cantidad_total-error"
+                message={errors.cantidad_total?.message}
+              />
             </div>
             <div>
               <Label htmlFor="cantidad_disponible">
@@ -202,9 +231,17 @@ export function BookForm({ book }: { book?: Book }) {
                 inputMode="numeric"
                 min={0}
                 aria-invalid={Boolean(errors.cantidad_disponible)}
+                aria-describedby={
+                  errors.cantidad_disponible
+                    ? "cantidad_disponible-error"
+                    : undefined
+                }
                 {...register("cantidad_disponible")}
               />
-              <FieldError message={errors.cantidad_disponible?.message} />
+              <FieldError
+                id="cantidad_disponible-error"
+                message={errors.cantidad_disponible?.message}
+              />
             </div>
           </div>
         </FormSection>
@@ -214,10 +251,17 @@ export function BookForm({ book }: { book?: Book }) {
             id="descripcion"
             rows={4}
             aria-label="Descripción"
+            aria-invalid={Boolean(errors.descripcion)}
+            aria-describedby={
+              errors.descripcion ? "descripcion-error" : undefined
+            }
             className="w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground"
             {...register("descripcion")}
           />
-          <FieldError message={errors.descripcion?.message} />
+          <FieldError
+            id="descripcion-error"
+            message={errors.descripcion?.message}
+          />
         </FormSection>
 
         <FormSection title="Portada" hint="JPG, PNG o WebP, máx. 2 MB.">

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
+import { FieldError } from "@/components/forms/FieldError";
 import { recoverAction } from "../actions";
 
 export function RecoverForm() {
@@ -76,13 +77,10 @@ export function RecoverForm() {
           id="codigo"
           placeholder="Ej: 202100123"
           aria-invalid={Boolean(errors.codigo)}
+          aria-describedby={errors.codigo ? "codigo-error" : undefined}
           {...register("codigo")}
         />
-        {errors.codigo && (
-          <p className="mt-1 text-xs text-destructive">
-            {errors.codigo.message}
-          </p>
-        )}
+        <FieldError id="codigo-error" message={errors.codigo?.message} />
       </div>
 
       <Button type="submit" disabled={isSubmitting} className="w-full">

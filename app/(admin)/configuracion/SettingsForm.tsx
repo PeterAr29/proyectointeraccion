@@ -11,13 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
+import { FieldError } from "@/components/forms/FieldError";
 import { useToast } from "@/components/feedback/Toast";
 import { updateSettingsAction } from "./actions";
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="mt-1 text-xs text-destructive">{message}</p>;
-}
 
 /**
  * Formulario de configuración de circulación (Módulo E, F5.4). Edita los tres
@@ -69,12 +65,23 @@ export function SettingsForm({ settings }: { settings: CirculationSettings }) {
           min={1}
           max={2}
           aria-invalid={Boolean(errors.diasPrestamo)}
+          aria-describedby={
+            errors.diasPrestamo
+              ? "diasPrestamo-help diasPrestamo-error"
+              : "diasPrestamo-help"
+          }
           {...register("diasPrestamo")}
         />
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p
+          id="diasPrestamo-help"
+          className="mt-1 text-xs text-muted-foreground"
+        >
           Plazo de devolución de un préstamo nuevo (máximo 2 días).
         </p>
-        <FieldError message={errors.diasPrestamo?.message} />
+        <FieldError
+          id="diasPrestamo-error"
+          message={errors.diasPrestamo?.message}
+        />
       </div>
 
       <div>
@@ -86,12 +93,20 @@ export function SettingsForm({ settings }: { settings: CirculationSettings }) {
           step="0.01"
           min={0}
           aria-invalid={Boolean(errors.multaDiaria)}
+          aria-describedby={
+            errors.multaDiaria
+              ? "multaDiaria-help multaDiaria-error"
+              : "multaDiaria-help"
+          }
           {...register("multaDiaria")}
         />
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p id="multaDiaria-help" className="mt-1 text-xs text-muted-foreground">
           Monto por cada día de retraso.
         </p>
-        <FieldError message={errors.multaDiaria?.message} />
+        <FieldError
+          id="multaDiaria-error"
+          message={errors.multaDiaria?.message}
+        />
       </div>
 
       <div>
@@ -103,13 +118,24 @@ export function SettingsForm({ settings }: { settings: CirculationSettings }) {
           min={0}
           max={1}
           aria-invalid={Boolean(errors.maxRenovaciones)}
+          aria-describedby={
+            errors.maxRenovaciones
+              ? "maxRenovaciones-help maxRenovaciones-error"
+              : "maxRenovaciones-help"
+          }
           {...register("maxRenovaciones")}
         />
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p
+          id="maxRenovaciones-help"
+          className="mt-1 text-xs text-muted-foreground"
+        >
           Cuántas veces se puede ampliar un préstamo (cada ampliación suma 1
           día; máximo 1).
         </p>
-        <FieldError message={errors.maxRenovaciones?.message} />
+        <FieldError
+          id="maxRenovaciones-error"
+          message={errors.maxRenovaciones?.message}
+        />
       </div>
 
       <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">

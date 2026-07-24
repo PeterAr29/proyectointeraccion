@@ -19,13 +19,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormAlert } from "@/components/feedback/FormAlert";
 import { FormSection } from "@/components/forms/FormSection";
+import { FieldError } from "@/components/forms/FieldError";
 import { useToast } from "@/components/feedback/Toast";
 import { adminCreateUserAction, adminUpdateUserAction } from "./actions";
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="mt-1 text-xs text-destructive">{message}</p>;
-}
 
 const ROL_LABEL: Record<(typeof ROLES)[number], string> = {
   estudiante: "Estudiante",
@@ -101,43 +97,62 @@ export function UserCreateForm() {
               <Input
                 id="nombre"
                 aria-invalid={Boolean(errors.nombre)}
+                aria-describedby={errors.nombre ? "nombre-error" : undefined}
                 {...register("nombre")}
               />
-              <FieldError message={errors.nombre?.message} />
+              <FieldError id="nombre-error" message={errors.nombre?.message} />
             </div>
             <div>
               <Label htmlFor="codigo">Código universitario</Label>
               <Input
                 id="codigo"
                 aria-invalid={Boolean(errors.codigo)}
+                aria-describedby={errors.codigo ? "codigo-error" : undefined}
                 {...register("codigo")}
               />
-              <FieldError message={errors.codigo?.message} />
+              <FieldError id="codigo-error" message={errors.codigo?.message} />
             </div>
             <div>
               <Label htmlFor="correo">Correo institucional</Label>
               <Input
                 id="correo"
                 type="email"
+                autoComplete="email"
                 aria-invalid={Boolean(errors.correo)}
+                aria-describedby={errors.correo ? "correo-error" : undefined}
                 {...register("correo")}
               />
-              <FieldError message={errors.correo?.message} />
+              <FieldError id="correo-error" message={errors.correo?.message} />
             </div>
             <div>
               <Label htmlFor="carrera">Carrera</Label>
-              <CarreraSelect id="carrera" {...register("carrera")} />
-              <FieldError message={errors.carrera?.message} />
+              <CarreraSelect
+                id="carrera"
+                aria-invalid={Boolean(errors.carrera)}
+                aria-describedby={errors.carrera ? "carrera-error" : undefined}
+                {...register("carrera")}
+              />
+              <FieldError
+                id="carrera-error"
+                message={errors.carrera?.message}
+              />
             </div>
             <div>
               <Label htmlFor="telefono">Teléfono</Label>
               <Input
                 id="telefono"
                 type="tel"
+                autoComplete="tel"
                 aria-invalid={Boolean(errors.telefono)}
+                aria-describedby={
+                  errors.telefono ? "telefono-error" : undefined
+                }
                 {...register("telefono")}
               />
-              <FieldError message={errors.telefono?.message} />
+              <FieldError
+                id="telefono-error"
+                message={errors.telefono?.message}
+              />
             </div>
           </div>
         </FormSection>
@@ -149,8 +164,13 @@ export function UserCreateForm() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="rol">Rol</Label>
-              <RolSelect id="rol" {...register("rol")} />
-              <FieldError message={errors.rol?.message} />
+              <RolSelect
+                id="rol"
+                aria-invalid={Boolean(errors.rol)}
+                aria-describedby={errors.rol ? "rol-error" : undefined}
+                {...register("rol")}
+              />
+              <FieldError id="rol-error" message={errors.rol?.message} />
             </div>
             <div>
               <Label htmlFor="password">Contraseña inicial</Label>
@@ -158,9 +178,15 @@ export function UserCreateForm() {
                 id="password"
                 type="password"
                 aria-invalid={Boolean(errors.password)}
+                aria-describedby={
+                  errors.password ? "password-error" : undefined
+                }
                 {...register("password")}
               />
-              <FieldError message={errors.password?.message} />
+              <FieldError
+                id="password-error"
+                message={errors.password?.message}
+              />
             </div>
           </div>
         </FormSection>
@@ -248,9 +274,10 @@ export function UserEditForm({ user }: { user: Profile }) {
               <Input
                 id="nombre"
                 aria-invalid={Boolean(errors.nombre)}
+                aria-describedby={errors.nombre ? "nombre-error" : undefined}
                 {...register("nombre")}
               />
-              <FieldError message={errors.nombre?.message} />
+              <FieldError id="nombre-error" message={errors.nombre?.message} />
             </div>
             <div>
               <Label htmlFor="carrera">Carrera</Label>
@@ -259,17 +286,27 @@ export function UserEditForm({ user }: { user: Profile }) {
                 defaultValue={user.carrera ?? ""}
                 {...register("carrera")}
               />
-              <FieldError message={errors.carrera?.message} />
+              <FieldError
+                id="carrera-error"
+                message={errors.carrera?.message}
+              />
             </div>
             <div>
               <Label htmlFor="telefono">Teléfono</Label>
               <Input
                 id="telefono"
                 type="tel"
+                autoComplete="tel"
                 aria-invalid={Boolean(errors.telefono)}
+                aria-describedby={
+                  errors.telefono ? "telefono-error" : undefined
+                }
                 {...register("telefono")}
               />
-              <FieldError message={errors.telefono?.message} />
+              <FieldError
+                id="telefono-error"
+                message={errors.telefono?.message}
+              />
             </div>
           </div>
         </FormSection>
@@ -283,7 +320,7 @@ export function UserEditForm({ user }: { user: Profile }) {
                 defaultValue={user.rol}
                 {...register("rol")}
               />
-              <FieldError message={errors.rol?.message} />
+              <FieldError id="rol-error" message={errors.rol?.message} />
             </div>
           </div>
           <label className="mt-4 flex items-center gap-2.5 rounded-lg border bg-secondary/40 px-3 py-2.5 text-sm">
