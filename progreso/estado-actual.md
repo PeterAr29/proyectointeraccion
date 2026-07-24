@@ -34,8 +34,8 @@ libro (reponía stock y evitaba la multa). Ahora:
 - **Migración** `20260723120000_two_step_return.sql`: columna `loans.devolucion_solicitada_en`;
   RPC `request_return` (estudiante solicita) y `cancel_return_request`; **`return_loan`
   redefinida a SOLO bibliotecario** (cierra el hueco de seguridad). El estado
-  "Devolución solicitada" se **deriva** en lectura (no es enum). ⚠️ **Pendiente de aplicar
-  al remoto** (ver Próximo trabajo).
+  "Devolución solicitada" se **deriva** en lectura (no es enum). ✅ **Aplicada al remoto
+  y verificada** (columna + 2 RPC + `return_loan` gated por `is_librarian`).
 - **Servicios:** `loans.ts` (`EffectiveLoanStatus`, `effectiveLoanStatus` con el estado
   derivado, `requestReturn`/`cancelReturnRequest` + mappers BT300/BT301, `canRenew` bloquea
   si hay solicitud); `loans-admin.ts` (`ReturnRow.devolucionSolicitada`, cola de solicitudes
@@ -45,8 +45,10 @@ libro (reponía stock y evitaba la multa). Ahora:
   cola priorizada, filas resaltadas, botón "Confirmar devolución" y diálogo que pide verificar
   la entrega física.
 - **StatusBadge** `pendiente_devolucion`. **Specs** RF-C05/RF-E04/§7.2 (regla 8) alineadas.
-- **Verificado local:** typecheck/lint verdes, **150/150 unit** (+5). Falta aplicar la
-  migración al remoto y el e2e manual con rollback.
+- **Verificado:** typecheck/lint verdes, **150/150 unit** (+5); CI verde; migración
+  aplicada al remoto; **e2e manual en producción con rollback** OK (María solicita →
+  admin ve la cola priorizada con "Confirmar devolución" → María cancela; préstamo de
+  prueba borrado, stock intacto). En producción (Vercel) desde el 2026-07-23.
 
 **Iteración de UX + accesibilidad (2026-07-23, 3 commits `9a0b0ac`/`a8ffe94`/`e00460d`).**
 Sin tocar lógica de negocio. **145/145 unit**, typecheck/lint verdes.
