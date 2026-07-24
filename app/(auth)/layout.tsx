@@ -13,15 +13,31 @@ export default function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <main className="flex min-h-screen bg-background">
+    <main
+      className="flex min-h-screen"
+      style={{
+        background:
+          "radial-gradient(900px 480px at 82% -12%, rgba(37,99,235,0.10), transparent 60%), linear-gradient(180deg, #EEF2FF 0%, #F5F7FB 42%, #F8FAFC 100%)",
+      }}
+    >
       {/* Panel de marca — solo escritorio */}
-      <aside className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-primary p-12 text-primary-foreground lg:flex">
+      <aside className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-primary to-indigo-800 p-12 text-primary-foreground lg:flex">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-20"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35), transparent 45%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.25), transparent 40%)",
+              "radial-gradient(circle at 20% 15%, rgba(255,255,255,0.35), transparent 45%), radial-gradient(circle at 85% 85%, rgba(255,255,255,0.22), transparent 42%)",
+          }}
+        />
+        {/* Textura sutil de puntos, refuerza el aire "de biblioteca" sin cargar */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1.4px)",
+            backgroundSize: "22px 22px",
           }}
         />
         <div className="relative flex items-center gap-3">
@@ -35,7 +51,7 @@ export default function AuthLayout({
           <h2 className="text-3xl font-bold leading-tight">
             Tu biblioteca universitaria, en un solo lugar.
           </h2>
-          <p className="mt-4 text-base text-primary-foreground/80">
+          <p className="mt-4 text-base text-primary-foreground/85">
             Explora el catálogo, gestiona tus préstamos y reservas, y recibe
             avisos de vencimiento sin filas ni papeleo.
           </p>
@@ -43,16 +59,19 @@ export default function AuthLayout({
           <ul className="mt-8 space-y-4">
             <Feature
               icon={Library}
+              accent="text-teal"
               title="Catálogo completo"
               text="Busca por título, autor o ISBN en segundos."
             />
             <Feature
               icon={BookOpen}
+              accent="text-gold"
               title="Préstamos al día"
               text="Renueva o devuelve tus libros desde el celular."
             />
             <Feature
               icon={GraduationCap}
+              accent="text-forest"
               title="Pensado para estudiantes"
               text="Una interfaz clara, rápida y fácil de aprender."
             />
@@ -78,7 +97,7 @@ export default function AuthLayout({
             </p>
           </div>
 
-          <div className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
+          <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-xl shadow-primary/5 sm:p-8">
             {children}
           </div>
 
@@ -98,17 +117,20 @@ export default function AuthLayout({
 
 function Feature({
   icon: Icon,
+  accent,
   title,
   text,
 }: {
   icon: typeof BookOpen;
+  /** Color del icono en el medallón blanco (token de la paleta académica). */
+  accent: string;
   title: string;
   text: string;
 }) {
   return (
     <li className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/15">
-        <Icon className="h-5 w-5" aria-hidden="true" />
+      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm">
+        <Icon className={`h-5 w-5 ${accent}`} aria-hidden="true" />
       </span>
       <div>
         <p className="font-semibold">{title}</p>

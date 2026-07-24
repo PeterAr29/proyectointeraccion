@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, IdCard, Lock } from "lucide-react";
 
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export function LoginForm() {
       className="flex flex-col gap-4"
     >
       <div>
-        <h2 className="text-xl font-bold tracking-tight">Iniciar sesión</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Iniciar sesión</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Bienvenido de nuevo a tu biblioteca.
         </p>
@@ -48,14 +48,21 @@ export function LoginForm() {
 
       <div>
         <Label htmlFor="codigo">Código universitario</Label>
-        <Input
-          id="codigo"
-          autoComplete="username"
-          placeholder="Ej: 202100123"
-          aria-invalid={Boolean(errors.codigo)}
-          aria-describedby={errors.codigo ? "codigo-error" : "codigo-help"}
-          {...register("codigo")}
-        />
+        <div className="relative">
+          <IdCard
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            id="codigo"
+            autoComplete="username"
+            placeholder="Ej: 202100123"
+            className="pl-9"
+            aria-invalid={Boolean(errors.codigo)}
+            aria-describedby={errors.codigo ? "codigo-error" : "codigo-help"}
+            {...register("codigo")}
+          />
+        </div>
         {errors.codigo ? (
           <FieldError id="codigo-error" message={errors.codigo.message} />
         ) : (
@@ -68,12 +75,16 @@ export function LoginForm() {
       <div>
         <Label htmlFor="password">Contraseña</Label>
         <div className="relative">
+          <Lock
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             placeholder="••••••••"
-            className="pr-10"
+            className="pl-9 pr-10"
             aria-invalid={Boolean(errors.password)}
             aria-describedby={errors.password ? "password-error" : undefined}
             {...register("password")}
